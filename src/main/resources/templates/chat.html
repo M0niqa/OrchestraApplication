@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <script th:inline="javascript">
+        let stompClient = null;
+        let receiverId = [[${receiverId}]];
+        let senderId = [[${senderId}]];
+
+        function connect() {
+            let socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function () {
+                stompClient.subscribe('/topic/messages', function (message) {
+                    showMessage(JSON.parse(message.body));
+                });
+            });
+        }
+
+        function sendMessage() {
+            let messageContent = document.getElementById("message").value;
+            if (!receiverId || !messageContent) return;
+
+            let message = {
+                senderId: senderId,
+                receiverId: receiverId,
+                messageContent: messageContent
+            };
+
+            stompClient.send("/app/chat", {}, JSON.stringify(message));
+            document.getElementById("message").value = "";
+        }
+
+        function showMessage(message) {
+            let messagesDiv = document.getElementById("messages");
+            let messageElement = document.createElement("div");
+            messageElement.classList.add("message");
+
+            if (message.senderId === senderId) {
+                messageElement.classList.add("sender-message");
+                messageElement.innerHTML = `<div class="text-end"><span class="badge bg-primary">${message.messageContent}</span></div>`;
+            } else {
+                messageElement.classList.add("receiver-message");
+                messageElement.innerHTML = `<div class="text-start"><span class="badge bg-secondary">${message.messageContent}</span></div>`;
+            }
+
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        window.onload = connect;
+    </script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .message {
+            margin: 5px 0;
+        }
+
+        .sender-message {
+            text-align: right;
+        }
+
+        .receiver-message {
+            text-align: left;
+        }
+
+        #message {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="pt-3">
+        <a th:href="@{/musicianPage}" class="btn btn-secondary btn-sm">← Back to Home</a>
+    </div>
+
+    <div class="chat-container">
+        <h4 class="text-center">Chat with <span th:text="${receiver.firstName}"></span> <span th:text="${receiver.lastName}"></span></h4>
+        <div id="messages" class="mt-3">
+            <th:block th:each="message : ${messages}">
+                <div th:class="${message.senderId == senderId} ? 'sender-message' : 'receiver-message'">
+                    <span th:class="${message.senderId == senderId} ? 'badge bg-primary' : 'badge bg-secondary'"
+                          th:text="${message.messageContent}"></span>
+                </div>
+            </th:block>
+        </div>
+
+        <div class="mt-3 d-flex">
+            <textarea id="message" rows="2" class="form-control me-2" placeholder="Type a message..."></textarea>
+            <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

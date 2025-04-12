@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Music Score</title>
+</head>
+<body>
+<h2>Upload Music Score</h2>
+
+<form th:action="@{/projects/{projectId}/files/upload(projectId=${projectId})}"
+      method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+</form>
+
+<a th:href="@{/projects/{projectId}/files/view(projectId=${projectId})}">Back to Music Scores</a>
+</body>
+</html>

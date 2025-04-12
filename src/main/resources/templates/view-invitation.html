@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Project Invitation: <span th:text="${project.name}"></span></title>
+    <style>
+        .agreement-content {
+            border: 1px solid #eee;
+            padding: 1em;
+            margin-top: 1em;
+            background-color: #f9f9f9;
+            white-space: pre-wrap; /* Preserve formatting */
+            max-height: 400px; /* Example height */
+            overflow-y: auto;  /* Allow scrolling */
+        }
+    </style>
+</head>
+<body>
+<h1>Project Invitation</h1>
+<h2 th:text="${project.name}">Project Name</h2>
+
+<p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
+<p><strong>Dates:</strong> <span th:text="${#temporals.format(project.startDate, 'yyyy-MM-dd')}"></span> - <span th:text="${#temporals.format(project.endDate, 'yyyy-MM-dd')}"></span></p>
+<!--<p><strong>Location:</strong> <span th:text="${project.location}"></span></p>-->
+<!--<p><strong>Wage:</strong> <span th:text="${project.wage}"></span></p> <hr>-->
+
+<h2>Agreement</h2>
+<div class="agreement-content">
+    <p th:utext="${#strings.replace(agreementContent, '\n', '<br/>')}">Agreement text will load here</p>
+</div>
+
+<hr>
+
+<div>
+    <form th:action="@{/project/{id}/invitation/accept(id=${project.id})}" method="post" style="display: inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit">Accept Project & Agreement</button>
+    </form>
+
+    <form th:action="@{/project/{id}/invitation/reject(id=${project.id})}" method="post" style="display: inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit">Reject Project</button>
+    </form>
+</div>
+
+<p><a th:href="@{/musician/dashboard}">Back to Dashboard</a></p> </body>
+</html>

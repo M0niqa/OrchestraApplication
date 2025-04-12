@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Musician Status</title>
+</head>
+<body>
+<h1>Musician Status for Project: <span th:text="${project.name}"></span></h1>
+
+<h2>Accepted Musicians</h2>
+<ul th:if="${not projectMembers.isEmpty()}">
+    <li th:each="musician : ${projectMembers}" th:text="${musician.firstName} + ' ' + ${musician.lastName}"></li>
+</ul>
+<p th:if="${projectMembers.isEmpty()}">No musicians have accepted yet.</p>
+
+<h2>Refused Musicians</h2>
+<ul th:if="${not refusedMusicians.isEmpty()}">
+    <li th:each="musician : ${refusedMusicians}" th:text="${musician.firstName} + ' ' + ${musician.lastName}"></li>
+</ul>
+<p th:if="${refusedMusicians.isEmpty()}">No musicians have refused yet.</p>
+
+<h2>Pending Invitations</h2>
+<ul th:if="${not pendingMusicians.isEmpty()}">
+    <li th:each="musician : ${pendingMusicians}" th:text="${musician.firstName} + ' ' + ${musician.lastName}"></li>
+</ul>
+<p th:if="${pendingMusicians.isEmpty()}">No musicians have pending invitations.</p>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Musicians</title>
+</head>
+<body>
+<h1>Add Musicians</h1>
+
+<form th:action="@{'/project/' + ${projectId} + '/inviteMusicians'}" method="post">
+    <input type="hidden" name="projectId" th:value="${projectId}"/>
+    <div th:each="instrument : ${musiciansByInstrument.keySet()}">
+        <h2><span th:text="${instrument.getDisplayName()}"></span></h2>
+        <ul>
+            <li th:each="musician : ${musiciansByInstrument.get(instrument)}">
+                <label>
+                    <input type="checkbox" name="musicianIds" th:value="${musician.id}" />
+                    <span th:text="${musician.firstName} + ' ' + ${musician.lastName}"></span>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <button type="submit">Invite Selected Musicians</button>
+</form>
+</body>
+</html>
