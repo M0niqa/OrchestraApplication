@@ -1,5 +1,8 @@
 package com.monika.worek.orchestra.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Instrument {
     VIOLIN("Violin"),
     VIOLA("Viola"),
@@ -23,7 +26,9 @@ public enum Instrument {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         return displayName;
     }
+
 }

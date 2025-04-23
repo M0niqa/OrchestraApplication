@@ -67,6 +67,9 @@
                             <div th:if="${param.verified}" class="alert alert-success mt-3">
                                 2FA verified successfully!
                             </div>
+                            <div th:if="${param.resetSuccess}" class="alert alert-success">
+                                Your password has been successfully reset. Please log in with your new password.
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -21,14 +21,10 @@ import java.util.Optional;
 public class MusicianService {
     private final UserRepository userRepository;
     private final MusicianRepository musicianRepository;
-    private final UserRoleRepository userRoleRepository;
-    private final UserRoleRepository roleRepository;
 
-    public MusicianService(UserRepository userRepository, MusicianRepository musicianRepository, UserRoleRepository userRoleRepository, UserRoleRepository roleRepository) {
+    public MusicianService(UserRepository userRepository, MusicianRepository musicianRepository) {
         this.userRepository = userRepository;
         this.musicianRepository = musicianRepository;
-        this.userRoleRepository = userRoleRepository;
-        this.roleRepository = roleRepository;
     }
 
     public Optional<MusicianDTO> findMusicianByEmail(String mail) {
@@ -41,37 +37,6 @@ public class MusicianService {
 //            userRepository.deleteByEmail(email);
 //    }
 
-
-//    @Transactional
-//    public void register(MusicianRegisterDTO userDTO){
-//        Musician musician = new Musician();
-//        musician.setFirstName(userDTO.getFirstName());
-//        musician.setLastName(userDTO.getLastName());
-//        musician.setEmail(userDTO.getEmail());
-//        musician.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(userDTO.getPassword()));
-//        Optional<UserRole> userRole = userRoleRepository.findByName("USER");
-//        userRole.ifPresentOrElse(role -> musician.getRoles().add(role), NoSuchElementException::new);
-//        musicianRepository.save(musician);
-//    }
-
-    @Transactional
-    public void createMusician(MusicianRegisterDTO musicianRegisterDTO) {
-        if (userRepository.findByEmail(musicianRegisterDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Musician already exists.");
-        }
-
-        Musician musician = new Musician();
-        musician.setFirstName(musicianRegisterDTO.getFirstName());
-        musician.setLastName(musicianRegisterDTO.getLastName());
-        musician.setEmail(musicianRegisterDTO.getEmail());
-
-        UserRole musicianRole = roleRepository.findByName(Role.MUSICIAN)
-                .orElseThrow(() -> new IllegalStateException("Role MUSICIAN not found"));
-
-        musician.getRoles().add(musicianRole);
-        userRepository.save(musician);
-    }
-
     @Transactional
     public void updateUserData(String currentEmail, MusicianDTO userDTO) {
         Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -80,7 +45,9 @@ public class MusicianService {
         user.setBirthdate(userDTO.getBirthdate());
         user.setAddress(userDTO.getAddress());
         user.setPesel(userDTO.getPesel());
+        user.setBankAccountNumber(user.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
+        user.setInstrument(userDTO.getInstrument());
 
         userRepository.save(user);
     }

@@ -68,7 +68,7 @@ public class AgreementGenerationService {
         valuesMap.put("musician.pesel", maskData(musician.getPesel()));
         valuesMap.put("musician.address", musician.getAddress() != null ? musician.getAddress() : na);
         valuesMap.put("musician.bankAccountNumber", maskData(musician.getBankAccountNumber()));
-        valuesMap.put("musician.taxOffice", musician.getTaxOffice() != null ? musician.getTaxOffice() : na);
+        valuesMap.put("musician.taxOffice", musician.getTaxOffice() != null ? musician.getTaxOffice().getDisplayName() : na);
 
         valuesMap.put("project.name", Objects.toString(project.getName(), na));
         valuesMap.put("project.description", Objects.toString(project.getDescription(), na));

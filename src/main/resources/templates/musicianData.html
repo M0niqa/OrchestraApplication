@@ -34,44 +34,57 @@
                             <div class="form-outline mb-4">
                                 <input th:field="*{firstName}" type="text" class="form-control"/>
                                 <label class="form-label">First name</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
                             </div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{lastName}" type="text" class="form-control"/>
                                 <label class="form-label">Last name</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
                             </div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{birthdate}" type="date" class="form-control"/>
                                 <label class="form-label">Birthdate</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}"></div>
                             </div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{address}" type="text" class="form-control"/>
                                 <label class="form-label">Address</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+
                             </div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{pesel}" type="text" class="form-control"/>
                                 <label class="form-label">PESEL</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('pesel')}" th:errors="*{pesel}"></div>
+
                             </div>
 
                             <div class="form-outline mb-4">
-                                <input th:field="*{taxOffice}" type="text" class="form-control"/>
                                 <label class="form-label">Tax Office</label>
+                                    <select th:field="*{taxOffice}" class="form-control">
+                                        <option th:each="office : ${taxOffices}" th:value="${office.name}" th:text="${office.displayName}"></option>
+                                    </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('taxOffice')}" th:errors="*{taxOffice}"></div>
+
                             </div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{bankAccountNumber}" type="text" class="form-control"/>
                                 <label class="form-label">Bank account number</label>
+                                <div class="text-danger" th:if="${#fields.hasErrors('bankAccountNumber')}" th:errors="*{bankAccountNumber}"></div>
+
                             </div>
 
                             <div class="form-outline mb-4">
                                 <select th:field="*{instrument}" class="form-control">
-                                    <option th:each="instrument : ${instruments}"
-                                            th:value="${instrument}"
-                                            th:text="${instrument.getDisplayName()}"></option>
+                                    <option th:each="instrument : ${instruments}" th:value="${instrument.name}" th:text="${instrument.displayName}"></option>
                                 </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('instrument')}" th:errors="*{instrument}"></div>
+
                                 <label class="form-label">Instrument</label>
                             </div>
 

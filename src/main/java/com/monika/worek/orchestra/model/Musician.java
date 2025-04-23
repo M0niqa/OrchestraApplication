@@ -23,7 +23,8 @@ public class Musician extends User {
     private String address;
     @PESEL
     private String pesel;
-    private String taxOffice;
+    @Enumerated(EnumType.STRING)
+    private TaxOffice taxOffice;
     private String bankAccountNumber;
     @Enumerated(EnumType.STRING)
     private Instrument instrument;

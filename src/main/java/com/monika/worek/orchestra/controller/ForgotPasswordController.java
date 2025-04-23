@@ -1,11 +1,15 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.dto.PasswordResetDTO;
 import com.monika.worek.orchestra.service.PasswordResetService;
 import com.monika.worek.orchestra.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,32 +40,38 @@ public class ForgotPasswordController {
         if (passwordResetService.getEmailForToken(token) == null) {
             return "token-invalid";
         }
+        model.addAttribute("passwordForm", new PasswordResetDTO());
         model.addAttribute("token", token);
         return "reset-password";
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam String token,
-                                @RequestParam String newPassword,
-                                @RequestParam String confirmNewPassword,
+    public String resetPassword(@Valid @ModelAttribute("passwordForm") PasswordResetDTO form,
+                                BindingResult bindingResult,
                                 Model model) {
 
-        String email = passwordResetService.getEmailForToken(token);
+        model.addAttribute("token", form.getToken());
+
+        if (bindingResult.hasErrors()) {
+            return "reset-password";
+        }
+
+        String email = passwordResetService.getEmailForToken(form.getToken());
         if (email == null) {
             model.addAttribute("error", "Invalid or expired reset token.");
             return "reset-password";
         }
 
-        if (!newPassword.equals(confirmNewPassword)) {
-            model.addAttribute("error", "Passwords do not match.");
-            model.addAttribute("token", token);
+        if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
+            bindingResult.rejectValue("confirmNewPassword", "error.confirmNewPassword", "Passwords do not match.");
             return "reset-password";
         }
 
-        userService.updatePassword(email, newPassword);
-        passwordResetService.invalidateToken(token);
+        userService.updatePassword(email, form.getNewPassword());
+        passwordResetService.invalidateToken(form.getToken());
 
-        return "redirect:/login?resetSuccess";
+        return "redirect:/login-form?resetSuccess";
     }
+
 }
 

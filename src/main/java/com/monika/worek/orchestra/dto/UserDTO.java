@@ -1,6 +1,7 @@
 package com.monika.worek.orchestra.dto;
 
 import com.monika.worek.orchestra.model.UserRole;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 import java.util.Set;
@@ -9,7 +10,9 @@ import java.util.Set;
 public class UserDTO {
 
     private Long id;
+    @NotBlank(message = "First name is required")
     private String firstName;
+    @NotBlank(message = "Last name is required")
     private String lastName;
     private String email;
     private String password;
