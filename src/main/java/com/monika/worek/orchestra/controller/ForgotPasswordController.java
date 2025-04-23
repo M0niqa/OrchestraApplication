@@ -2,6 +2,7 @@ package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.PasswordResetDTO;
 import com.monika.worek.orchestra.service.PasswordResetService;
+import com.monika.worek.orchestra.service.TokenService;
 import com.monika.worek.orchestra.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,12 @@ public class ForgotPasswordController {
 
     private final PasswordResetService passwordResetService;
     private final UserService userService;
+    private final TokenService tokenService;
 
-    public ForgotPasswordController(PasswordResetService passwordResetService, UserService userService) {
+    public ForgotPasswordController(PasswordResetService passwordResetService, UserService userService, TokenService tokenService) {
         this.passwordResetService = passwordResetService;
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/forgot-password")
@@ -37,11 +40,12 @@ public class ForgotPasswordController {
 
     @GetMapping("/reset-password")
     public String resetPasswordPage(@RequestParam String token, Model model) {
-        if (passwordResetService.getEmailForToken(token) == null) {
+        if (tokenService.getEmailForToken(token) == null) {
             return "token-invalid";
         }
-        model.addAttribute("passwordForm", new PasswordResetDTO());
-        model.addAttribute("token", token);
+        PasswordResetDTO form = new PasswordResetDTO();
+        form.setToken(token);
+        model.addAttribute("passwordForm", form);
         return "reset-password";
     }
 
@@ -56,10 +60,9 @@ public class ForgotPasswordController {
             return "reset-password";
         }
 
-        String email = passwordResetService.getEmailForToken(form.getToken());
+        String email = tokenService.getEmailForToken(form.getToken());
         if (email == null) {
-            model.addAttribute("error", "Invalid or expired reset token.");
-            return "reset-password";
+            return "token-invalid";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
@@ -68,9 +71,8 @@ public class ForgotPasswordController {
         }
 
         userService.updatePassword(email, form.getNewPassword());
-        passwordResetService.invalidateToken(form.getToken());
-
-        return "redirect:/login-form?resetSuccess";
+        tokenService.invalidateToken(form.getToken());
+        return "redirect:/login?resetSuccess";
     }
 
 }

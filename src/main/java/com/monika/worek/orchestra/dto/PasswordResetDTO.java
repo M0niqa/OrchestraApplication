@@ -17,6 +17,6 @@ public class PasswordResetDTO {
     @NotBlank(message = "Please confirm the new password")
     private String confirmNewPassword;
 
-    @NotBlank // Hidden field for the token
+    @NotBlank
     private String token;
 }

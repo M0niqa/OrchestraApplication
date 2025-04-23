@@ -33,18 +33,18 @@ public class RegistrationController {
                                    BindingResult bindingResult,
                                    RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.musician", bindingResult);
+            redirectAttributes.addFlashAttribute("musician", bindingResult);
             redirectAttributes.addFlashAttribute("musician", dto);
-            return "redirect:/registerMusician";
+            return "registration-form";
         }
         try {
             registrationService.createMusician(dto);
             registrationService.sendLink(dto.getEmail());
-            return "redirect:/registration-confirm";
+            return "registration-confirm";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addAttribute("error", e.getMessage().contains("Musician already exists") ? "UserExists" : "RegistrationFailed");
             redirectAttributes.addFlashAttribute("musician", dto);
-            return "redirect:/registerMusician";
+            return "registration-form";
         }
     }
 }

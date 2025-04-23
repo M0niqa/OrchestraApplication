@@ -30,7 +30,6 @@
                 <div class="col-md-6 col-lg-7 d-flex align-items-center">
                     <div class="card-body p-4 p-lg-5 text-black">
                         <form th:action="@{/registerMusician}" th:object="${musician}" method="post">
-
                             <div th:if="${param.error}" class="alert alert-danger mb-4">
         <span th:switch="${param.error}">
             <span th:case="'UserExists'">A musician with this email already exists.</span>

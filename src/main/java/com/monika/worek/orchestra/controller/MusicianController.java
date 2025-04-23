@@ -1,11 +1,9 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.dto.MusicianRegisterDTO;
-import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.dto.MusicianDTO;
+import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.TaxOffice;
 import com.monika.worek.orchestra.service.MusicianService;
-import com.monika.worek.orchestra.service.PasswordResetService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class MusicianController {
