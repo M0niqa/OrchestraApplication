@@ -25,7 +25,7 @@ public class MusicianDTO extends UserDTO {
     private String pesel;
     @NotNull(message = "Tax office must be selected")
     private TaxOffice taxOffice;
-    @NotNull(message = "Bank account number is required")
+    @NotBlank(message = "Bank account number is required")
     private String bankAccountNumber;
     @NotNull(message = "Instrument must be selected")
     private Instrument instrument;

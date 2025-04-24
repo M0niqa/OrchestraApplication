@@ -44,7 +44,10 @@
                             </div>
 
                             <div class="form-outline mb-4">
-                                <input th:field="*{birthdate}" type="date" class="form-control"/>
+                                <input th:field="*{birthdate}"
+                                       type="date"
+                                       class="form-control"
+                                       th:value="${musician.birthdate != null} ? ${#temporals.format(musician.birthdate, 'yyyy-MM-dd')} : ''" />
                                 <label class="form-label">Birthdate</label>
                                 <div class="text-danger" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}"></div>
                             </div>

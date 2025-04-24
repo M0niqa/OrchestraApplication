@@ -30,7 +30,7 @@ public class TwoFactorAuthService {
     public boolean verifyCode(String userEmail, String userEnteredCode) {
         String storedCode = otpStorage.get(userEmail);
         if (storedCode != null && storedCode.equals(userEnteredCode)) {
-            otpStorage.remove(userEmail); // One-time use
+            otpStorage.remove(userEmail);
             return true;
         }
         return false;

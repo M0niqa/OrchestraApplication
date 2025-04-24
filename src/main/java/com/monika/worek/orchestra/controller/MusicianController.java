@@ -25,9 +25,9 @@ public class MusicianController {
     @GetMapping("/musicianPage")
     public String showUserPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
-        MusicianDTO userDTO = musicianService.findMusicianByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        MusicianDTO musicianDTO = musicianService.findMusicianByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        model.addAttribute("musician", userDTO);
+        model.addAttribute("musician", musicianDTO);
         return "musician";
     }
 

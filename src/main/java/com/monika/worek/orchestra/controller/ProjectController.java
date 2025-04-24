@@ -1,9 +1,8 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.dto.MusicianDTO;
-import com.monika.worek.orchestra.model.Instrument;
-import com.monika.worek.orchestra.auth.*;
+import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.ProjectDTO;
+import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicianRepository;
@@ -25,8 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-public class
-ProjectController {
+public class ProjectController {
 
     private final ProjectRepository projectRepository;
     private final ProjectService projectService;

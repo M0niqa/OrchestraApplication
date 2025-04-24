@@ -45,7 +45,7 @@ public class MusicianService {
         user.setBirthdate(userDTO.getBirthdate());
         user.setAddress(userDTO.getAddress());
         user.setPesel(userDTO.getPesel());
-        user.setBankAccountNumber(user.getBankAccountNumber());
+        user.setBankAccountNumber(userDTO.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
         user.setInstrument(userDTO.getInstrument());
 

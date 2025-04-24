@@ -1,6 +1,9 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.dto.UserDTO;
+import com.monika.worek.orchestra.model.Role;
 import com.monika.worek.orchestra.service.TwoFactorAuthService;
+import com.monika.worek.orchestra.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class TwoFactorAuthController {
 
     private final TwoFactorAuthService twoFactorAuthService;
+    private final UserService userService;
 
-    public TwoFactorAuthController(TwoFactorAuthService twoFactorAuthService) {
+    public TwoFactorAuthController(TwoFactorAuthService twoFactorAuthService, UserService userService) {
         this.twoFactorAuthService = twoFactorAuthService;
+        this.userService = userService;
     }
 
     @GetMapping("/2fa-page")
@@ -34,7 +39,14 @@ public class TwoFactorAuthController {
                          @RequestParam String code,
                          Model model) {
         if (twoFactorAuthService.verifyCode(email, code)) {
-            return "redirect:/musicianPage"; // or /adminPage
+            System.out.println("Verifying 2FA for email: " + email);
+            UserDTO user = userService.findUserByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            boolean isAdmin = user.getRoles().stream()
+                    .anyMatch(role -> role.getName().equals(Role.ADMIN));
+
+            return isAdmin ? "redirect:/adminPage" : "redirect:/musicianPage";
         } else {
             model.addAttribute("email", email);
             model.addAttribute("error", "Invalid code. Please try again.");

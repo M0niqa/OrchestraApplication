@@ -6,7 +6,7 @@ VALUES
     ('Musician','Alex', 'King', 'alex@pja.edu.pl',
      '{MD5}{rT4wBLjXEvWpB8F0MgvLUDt8v36HSZoTWcDiusl7jh4=}fda9321dca602a2bb6c42955a315a3fa', 'TUBA'),
     -- sj@my.com / 2222
-    ('Musician', 'Stephen', 'Jones', 'monikwor91@gmail.com', '{noop}2222', 'OBOE');
+    ('User', 'Stephen', 'Jones', 'monikwor91@gmail.com', '{noop}2222', 'OBOE');
 
 INSERT INTO UserRole (name, description)
 VALUES ('ADMIN', 'Adding/updating projects'),
@@ -17,7 +17,7 @@ INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 1),
        (1, 2),
        (2, 2),
-       (3, 2);
+       (3, 1);
 
 
 --
