@@ -9,7 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegistrationController {
@@ -31,10 +30,9 @@ public class RegistrationController {
     @PostMapping("/registerMusician")
     public String registerMusician(@Valid @ModelAttribute("musician") MusicianRegisterDTO dto,
                                    BindingResult bindingResult,
-                                   RedirectAttributes redirectAttributes) {
+                                   Model model) {
+
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("musician", bindingResult);
-            redirectAttributes.addFlashAttribute("musician", dto);
             return "registration-form";
         }
         try {
@@ -42,8 +40,8 @@ public class RegistrationController {
             registrationService.sendLink(dto.getEmail());
             return "registration-confirm";
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addAttribute("error", e.getMessage().contains("Musician already exists") ? "UserExists" : "RegistrationFailed");
-            redirectAttributes.addFlashAttribute("musician", dto);
+            System.out.println("exception");
+            model.addAttribute("error", e.getMessage().contains("Musician already exists") ? "UserExists" : "RegistrationFailed");
             return "registration-form";
         }
     }
