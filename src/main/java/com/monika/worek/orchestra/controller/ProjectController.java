@@ -1,6 +1,8 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.auth.NewProjectDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectDTOMapper;
+import com.monika.worek.orchestra.dto.NewProjectDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
@@ -9,12 +11,15 @@ import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import com.monika.worek.orchestra.service.AgreementGenerationService;
 import com.monika.worek.orchestra.service.ProjectService;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -40,13 +45,13 @@ public class ProjectController {
 
     @GetMapping("/addProject")
     public String showAddProjectForm(Model model) {
-        model.addAttribute("projectDTO", new ProjectDTO());
+        model.addAttribute("projectDTO", new NewProjectDTO());
         return "addProject";
     }
 
     @PostMapping("/addProject")
-    public String addProject(@ModelAttribute ProjectDTO projectDTO) {
-        Project project = ProjectDTOMapper.mapToEntity(projectDTO);
+    public String addProject(@ModelAttribute NewProjectDTO projectDTO) {
+        Project project = NewProjectDTOMapper.mapToEntity(projectDTO);
         projectRepository.save(project);
         return "redirect:/";
     }
@@ -151,5 +156,40 @@ public class ProjectController {
             // Redirect to an error page or back to invitation view with error message
             return "redirect:/project/" + projectId + "/invitation/view?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
+    }
+
+    @PostMapping("/project/{id}/delete")
+    public String deleteProject(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            projectService.deleteProjectById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Project deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete project.");
+        }
+        return "redirect:/adminPage";
+    }
+
+    @GetMapping("/project/{id}")
+    public String viewProject(@PathVariable Long id, Model model) {
+        Project project = projectService.getProjectById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        model.addAttribute("project", projectDTO);
+        model.addAttribute("projectId", id);
+        return "project-details";
+    }
+
+    @PostMapping("/project/{id}/update")
+    public String updateProject(@PathVariable Long id,
+                                @Valid @ModelAttribute("project") ProjectDTO projectDTO,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes,
+                                Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("projectId", id);
+            return "project-details";
+        }
+        projectService.updateProject(id, projectDTO);
+        redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully.");
+        return "redirect:/project/" + id;
     }
 }

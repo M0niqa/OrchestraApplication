@@ -1,27 +1,35 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.dto.UserDTO;
-import com.monika.worek.orchestra.service.UserService;
-import org.springframework.security.core.Authentication;
+import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
 public class AdminController {
 
-    UserService userService;
+    private final ProjectService projectService;
 
-    public AdminController(UserService userService) {
-        this.userService = userService;
+    public AdminController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @GetMapping("/adminPage")
-    public String showUserPage(Model model, Authentication authentication) {
-        String currentEmail = authentication.getName();
-        UserDTO userDTO = userService.findUserByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public String showAdminPage(Model model) {
+        List<Project> ongoingProjects = projectService.getOngoingProjects();
+        List<Project> futureProjects = projectService.getFutureProjects();
 
-        model.addAttribute("user", userDTO);
+        model.addAttribute("ongoingProjects", ongoingProjects);
+        model.addAttribute("futureProjects", futureProjects);
         return "admin";
+    }
+
+    @GetMapping("/archivedProjects")
+    public String showArchivedProjects(Model model) {
+        model.addAttribute("archivedProjects", projectService.getArchivedProjects());
+        return "archived-projects";
     }
 }

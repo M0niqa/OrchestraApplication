@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.model.Status;
@@ -8,7 +9,9 @@ import com.monika.worek.orchestra.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,5 +93,42 @@ public class ProjectService {
                         !project.getMusiciansWhoRefused().contains(musician) &&
                         !project.getInvited().contains(musician))
                 .collect(Collectors.toList());
+    }
+
+    public List<Project> getOngoingProjects() {
+        LocalDate today = LocalDate.now();
+        return projectRepository.findByStartDateBeforeAndEndDateAfter(today, today);
+    }
+
+    public List<Project> getFutureProjects() {
+        LocalDate today = LocalDate.now();
+        return projectRepository.findByStartDateAfter(today);
+    }
+
+    public List<Project> getArchivedProjects() {
+        LocalDate today = LocalDate.now();
+        return projectRepository.findByEndDateBefore(today);
+    }
+
+    @Transactional
+    public void deleteProjectById(Long id) {
+        projectRepository.deleteById(id);
+    }
+
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
+
+    }
+
+    @Transactional
+    public void updateProject(Long id, ProjectDTO dto) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
+        project.setStartDate(dto.getStartDate());
+        project.setEndDate(dto.getEndDate());
+        project.setStatus(dto.getStatus());
+        project.setMusicScores(dto.getMusicScores());
+        project.setAgreementTemplate(dto.getAgreementTemplate());
     }
 }

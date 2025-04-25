@@ -31,7 +31,7 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private Status status;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MusicScore> files = new HashSet<>();
+    private Set<MusicScore> musicScores = new HashSet<>();
     @ManyToOne
     private AgreementTemplate agreementTemplate;
 }

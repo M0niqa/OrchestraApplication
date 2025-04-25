@@ -45,14 +45,14 @@ VALUES (1, 1),
 --     ('Noah', 'Garcia', 'noah.garcia@example.com', 'passN202', '1998-04-02', '1515 Maple Ln', '22334455688', '2121', 'VIOLIN', '10987654328765432109876543'),
 --     ('Olivia', 'Perez', 'olivia.perez@example.com', 'passO303', '1983-11-24', '1616 Pine Ave', '33445566778', '2222', 'VIOLA', '65432109873210987654321098');
 
-INSERT INTO App_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, taxOffice, instrument, bankAccountNumber)
+INSERT INTO App_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, instrument, bankAccountNumber)
 VALUES
-    ('Musician', 'Jane', 'Doe', 'jane.doe@example.com', '{noop}ss', '1985-12-01', '456 Oak Ave', '98765432109', '202', 'CELLO', '12345678901234567890123456'),
-    ('Musician', 'David', 'Lee', 'david.lee@example.com', 'pass456', '1992-08-22', '789 Pine Ln', '56789012345', '303', 'FLUTE', '98765432109876543210987654'),
-    ('Musician', 'Emily', 'Chen', 'emily.chen@example.com', 'pass789', '1988-03-10', '1011 Maple Dr', '34567890123', '404', 'TRUMPET', '56789012345678901234567890'),
-    ('Musician', 'Michael', 'Brown', 'michael.brown@example.com', 'pass101', '1995-11-28', '1213 Cedar Rd', '78901234567', '505', 'PIANO', '10987654321098765432109876'),
-    ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', 'pass202', '1983-07-05', '1415 Birch Ct', '10123456789', '606', 'PERCUSSION', '65432109876543210987654321'),
-    ('Musician', 'Robert', 'Garcia', 'robert.garcia@example.com', 'pass303', '1998-01-18', '1617 Willow Pl', '23456789012', '707', 'VIOLA', '21098765432109876543210987');
+    ('Musician', 'Jane', 'Doe', 'jane.doe@example.com', '{noop}ss', '1985-12-01', '456 Oak Ave', '98765432109', 'CELLO', '12345678901234567890123456'),
+    ('Musician', 'David', 'Lee', 'david.lee@example.com', 'pass456', '1992-08-22', '789 Pine Ln', '56789012345', 'FLUTE', '98765432109876543210987654'),
+    ('Musician', 'Emily', 'Chen', 'emily.chen@example.com', 'pass789', '1988-03-10', '1011 Maple Dr', '34567890123', 'TRUMPET', '56789012345678901234567890'),
+    ('Musician', 'Michael', 'Brown', 'michael.brown@example.com', 'pass101', '1995-11-28', '1213 Cedar Rd', '78901234567', 'PIANO', '10987654321098765432109876'),
+    ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', 'pass202', '1983-07-05', '1415 Birch Ct', '10123456789', 'PERCUSSION', '65432109876543210987654321'),
+    ('Musician', 'Robert', 'Garcia', 'robert.garcia@example.com', 'pass303', '1998-01-18', '1617 Willow Pl', '23456789012', 'VIOLA', '21098765432109876543210987');
 
 
 INSERT INTO AgreementTemplate (content) VALUES
@@ -62,8 +62,8 @@ INSERT INTO AgreementTemplate (content) VALUES
 INSERT INTO Project (name, description, startDate, endDate, status, agreementTemplate_id)
 VALUES
     ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2024-07-31', 'ACTIVE', 1),
-    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2024-08-05', '2024-08-26', 'ACTIVE', 1),
-    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2024-09-15', '2024-09-17', 'ACTIVE', 1);
+    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-26', 'ACTIVE', 1),
+    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 'ACTIVE', 1);
 
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES
