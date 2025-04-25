@@ -12,6 +12,7 @@ public class ProjectDTOMapper {
             return null;
         }
         return ProjectDTO.builder()
+                .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())
                 .startDate(project.getStartDate())
@@ -30,6 +31,7 @@ public class ProjectDTOMapper {
             return null;
         }
         return Project.builder()
+                .id(dto.getId())
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .startDate(dto.getStartDate())

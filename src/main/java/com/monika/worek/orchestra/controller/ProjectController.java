@@ -4,9 +4,11 @@ import com.monika.worek.orchestra.auth.NewProjectDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.NewProjectDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
+import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import com.monika.worek.orchestra.service.AgreementGenerationService;
@@ -35,12 +37,14 @@ public class ProjectController {
     private final ProjectService projectService;
     private final MusicianRepository musicianRepository;
     private final AgreementGenerationService agreementGenerationService;
+    private final AgreementTemplateRepository agreementTemplateRepository;
 
-    public ProjectController(ProjectRepository projectRepository, ProjectService projectService, MusicianRepository musicianRepository, AgreementGenerationService agreementGenerationService) {
+    public ProjectController(ProjectRepository projectRepository, ProjectService projectService, MusicianRepository musicianRepository, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository) {
         this.projectRepository = projectRepository;
         this.projectService = projectService;
         this.musicianRepository = musicianRepository;
         this.agreementGenerationService = agreementGenerationService;
+        this.agreementTemplateRepository = agreementTemplateRepository;
     }
 
     @GetMapping("/addProject")
@@ -174,7 +178,6 @@ public class ProjectController {
         Project project = projectService.getProjectById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
         ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
         model.addAttribute("project", projectDTO);
-        model.addAttribute("projectId", id);
         return "project-details";
     }
 
@@ -191,5 +194,31 @@ public class ProjectController {
         projectService.updateProject(id, projectDTO);
         redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully.");
         return "redirect:/project/" + id;
+    }
+
+    @GetMapping("/project/{id}/template/edit")
+    public String editTemplateForm(@PathVariable Long id, Model model) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        AgreementTemplate template = project.getAgreementTemplate();
+
+        model.addAttribute("project", project);
+        model.addAttribute("templateContent", template.getContent());
+        return "edit-template";
+    }
+
+    @PostMapping("/project/{id}/template/edit")
+    public String updateTemplate(@PathVariable Long id,
+                                 @RequestParam String templateContent,
+                                 RedirectAttributes redirectAttributes) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        AgreementTemplate template = project.getAgreementTemplate();
+
+        template.setContent(templateContent);
+        agreementTemplateRepository.save(template);
+
+        redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
+        return "redirect:/project/" + id + "/template/edit";
     }
 }

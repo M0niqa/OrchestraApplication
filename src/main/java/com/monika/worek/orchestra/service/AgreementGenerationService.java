@@ -17,38 +17,26 @@ import java.util.Objects;
 @Service
 public class AgreementGenerationService {
 
-    private static final Logger log = LoggerFactory.getLogger(AgreementGenerationService.class);
-
     public String generateAgreementContent(Project project, Musician musician) {
         Objects.requireNonNull(project, "Project cannot be null");
         Objects.requireNonNull(musician, "Musician cannot be null");
-        log.info("Generating agreement content for Project ID: {} and Musician ID: {}", project.getId(), musician.getId());
 
         AgreementTemplate template = project.getAgreementTemplate();
 
         if (template == null) {
-            log.error("Project ID {} ('{}') has no assigned agreement template.", project.getId(), project.getName());
             throw new IllegalStateException("Cannot generate agreement: Project '" + project.getName() + "' does not have an assigned template.");
         }
-        log.debug("Using Template ID: {}", template.getId());
 
         String templateContent = template.getContent();
         if (templateContent == null || templateContent.isBlank()) {
-            log.error("Template ID {} assigned to Project ID {} has no content.", template.getId(), project.getId());
             throw new IllegalStateException("Cannot generate agreement: The assigned template '" + "' is empty.");
         }
 
         Map<String, String> valuesMap = prepareValueMap(project, musician);
-        log.debug("Prepared values map for substitution."); // Avoid logging the map itself if it contains sensitive data
 
+        StringSubstitutor sub = new StringSubstitutor(valuesMap, "${", "}");
 
-        // 3. Perform substitution using Apache Commons Text StringSubstitutor
-        //    Assumes placeholders in template are like ${key}
-        StringSubstitutor sub = new StringSubstitutor(valuesMap, "${", "}"); // Define prefix/suffix for placeholders
-        String generatedText = sub.replace(templateContent);
-        log.info("Successfully generated agreement content for Project ID: {}", project.getId());
-
-        return generatedText;
+        return sub.replace(templateContent);
     }
 
     private Map<String, String> prepareValueMap(Project project, Musician musician) {
