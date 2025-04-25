@@ -32,7 +32,6 @@ CREATE TABLE Project (
          description TEXT,
          startDate DATE,
          endDate DATE,
-         status VARCHAR(50) NOT NULL,
          agreementTemplate_id BIGINT,
          CONSTRAINT fk_project_agreement_template
              FOREIGN KEY (agreementTemplate_id)

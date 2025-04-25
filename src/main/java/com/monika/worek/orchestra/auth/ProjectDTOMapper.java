@@ -20,7 +20,6 @@ public class ProjectDTOMapper {
                 .projectMembers(project.getProjectMembers() != null ? new HashSet<>(project.getProjectMembers()) : null)
                 .musiciansWhoRefused(project.getMusiciansWhoRefused() != null ? new HashSet<>(project.getMusiciansWhoRefused()) : null)
                 .invited(project.getInvited() != null ? new HashSet<>(project.getInvited()) : null)
-                .status(project.getStatus())
                 .musicScores(project.getMusicScores())
                 .agreementTemplate(project.getAgreementTemplate())
                 .build();
@@ -39,7 +38,6 @@ public class ProjectDTOMapper {
                 .projectMembers(dto.getProjectMembers() != null ? new HashSet<>(dto.getProjectMembers()) : null)
                 .musiciansWhoRefused(dto.getMusiciansWhoRefused() != null ? new HashSet<>(dto.getMusiciansWhoRefused()) : null)
                 .invited(dto.getInvited() != null ? new HashSet<>(dto.getInvited()) : null)
-                .status(dto.getStatus())
                 .musicScores(dto.getMusicScores())
                 .agreementTemplate(dto.getAgreementTemplate())
                 .build();

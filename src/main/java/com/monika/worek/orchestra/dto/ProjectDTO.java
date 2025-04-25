@@ -3,7 +3,6 @@ package com.monika.worek.orchestra.dto;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.MusicScore;
 import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,6 @@ public class ProjectDTO {
     private Set<Musician> projectMembers;
     private Set<Musician> musiciansWhoRefused;
     private Set<Musician> invited;
-    private Status status;
     private Set<MusicScore> musicScores;
     private AgreementTemplate agreementTemplate;
 }

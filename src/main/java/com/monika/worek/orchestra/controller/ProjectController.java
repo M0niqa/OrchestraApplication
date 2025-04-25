@@ -60,17 +60,6 @@ public class ProjectController {
         return "redirect:/";
     }
 
-    @GetMapping("/projects")
-    public String showAllActiveProjects(Model model) {
-        List<ProjectDTO> activeProjects = projectService.getAllActiveProjects()
-                .stream()
-                .map(ProjectDTOMapper::mapToDTO)
-                .toList();
-
-        model.addAttribute("activeProjects", activeProjects);
-        return "activeProjects";
-    }
-
     @GetMapping("/project/{projectId}/inviteMusicians")
     public String showAddMusiciansPage(@PathVariable Long projectId, Model model) {
         List<Musician> availableMusicians = projectService.getAvailableMusicians(projectId);
@@ -137,9 +126,7 @@ public class ProjectController {
             // Redirect to a confirmation page or the musician's dashboard/project list
             return "redirect:/musician/dashboard?acceptSuccess";
         } catch (Exception e) {
-            // Log error
-            // Redirect to an error page or back to invitation view with error message
-            return "redirect:/project/" + projectId + "/invitation/view?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            return "redirect:/project/" + projectId + "/invitation/view?error=" + e.getMessage();
         }
     }
 
@@ -161,6 +148,10 @@ public class ProjectController {
             return "redirect:/project/" + projectId + "/invitation/view?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
     }
+
+
+
+
 
     @PostMapping("/project/{id}/delete")
     public String deleteProject(@PathVariable Long id, RedirectAttributes redirectAttributes) {

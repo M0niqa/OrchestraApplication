@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Page</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+        }
+
+        .btn-purple {
+            background-color: #800080;
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background-color: #9932cc;
+        }
+    </style>
+</head>
+<body>
+<div class="container text-center">
+    <div class="btn-container">
+        <a th:href="@{/musicianPage}" class="btn btn-purple btn-lg m-2">Musician dashboard</a>
+    </div>
+
+    <div class="container mt-4">
+        <h2>Future Projects</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Project Name</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="project : ${projects}">
+                <td th:text="${project.name}"></td>
+                <td>
+                    <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-primary">View Status</a>
+                    <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}" class="btn btn-secondary">Invite Musicians</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>

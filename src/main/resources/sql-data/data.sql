@@ -14,11 +14,10 @@ VALUES ('ADMIN', 'Adding/updating projects'),
        ('MUSICIAN', 'Regular user privileges');
 
 INSERT INTO App_user_roles (User_id, roles_id)
-VALUES (1, 1),
-       (1, 2),
-       (2, 2),
-       (3, 1);
-
+VALUES (1, 3),
+       (2, 3),
+       (3, 3),
+       (3, 2);
 
 --
 -- INSERT INTO Musician (firstName, lastName, email, password, birthdate, address, pesel, taxOffice, instrument, bankAccountNumber)
@@ -59,11 +58,11 @@ INSERT INTO AgreementTemplate (content) VALUES
     ('AGREEMENT\n\nThis agreement is made on ${current.date} between:\n1. The Orchestra Management (hereinafter "Orchestra")\nand\n2. ${musician.fullName}, residing at ${musician.address} (hereinafter "Musician")\n\nRegarding participation in the project: ${project.name}\nProject Dates: ${project.startDate} to ${project.endDate}\nLocation: ${project.location}\n\nWage: ${project.wage} PLN\n\nMusician PESEL (for records): ${musician.pesel}\nPayment will be made to Bank Account: ${musician.bankAccountNumber}\n\n[... Add many more standard clauses here ...]\n\nSigned:\n\n_____________________\nOrchestra Representative\n\n_____________________\nMusician (Acceptance via system)');
 
 
-INSERT INTO Project (name, description, startDate, endDate, status, agreementTemplate_id)
+INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)
 VALUES
-    ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2024-07-31', 'ACTIVE', 1),
-    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-26', 'ACTIVE', 1),
-    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 'ACTIVE', 1);
+    ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2024-07-31', 1),
+    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-26', 1),
+    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
 
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES

@@ -39,14 +39,31 @@ public class TwoFactorAuthController {
                          @RequestParam String code,
                          Model model) {
         if (twoFactorAuthService.verifyCode(email, code)) {
-            System.out.println("Verifying 2FA for email: " + email);
             UserDTO user = userService.findUserByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             boolean isAdmin = user.getRoles().stream()
                     .anyMatch(role -> role.getName().equals(Role.ADMIN));
+            boolean isInspector = user.getRoles().stream()
+                    .anyMatch(role -> role.getName().equals(Role.INSPECTOR));
+            boolean isMusician = user.getRoles().stream()
+                    .anyMatch(role -> role.getName().equals(Role.MUSICIAN));
 
-            return isAdmin ? "redirect:/adminPage" : "redirect:/musicianPage";
+            if (isAdmin) {
+                return "redirect:/adminPage";
+            }
+
+            model.addAttribute("isInspector", isInspector);
+            model.addAttribute("isMusician", isMusician);
+            model.addAttribute("user", user);
+
+            if (isInspector) {
+                return "redirect:/inspectorPage";
+            } else if (isMusician) {
+                return "redirect:/musicianPage";
+            } else {
+                throw new IllegalStateException("No valid role assigned.");
+            }
         } else {
             model.addAttribute("email", email);
             model.addAttribute("error", "Invalid code. Please try again.");

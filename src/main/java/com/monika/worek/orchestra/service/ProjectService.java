@@ -3,7 +3,6 @@ package com.monika.worek.orchestra.service;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
-import com.monika.worek.orchestra.model.Status;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
@@ -25,10 +24,6 @@ public class ProjectService {
         this.projectRepository = projectRepository;
         this.musicianRepository = musicianRepository;
         this.emailService = emailService;
-    }
-
-    public List<Project> getAllActiveProjects() {
-        return projectRepository.findAllByStatus(Status.ACTIVE);
     }
 
     public void inviteMusician(Long projectId, Long musicianId) {
@@ -127,7 +122,6 @@ public class ProjectService {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
-        project.setStatus(dto.getStatus());
         project.setMusicScores(dto.getMusicScores());
         project.setAgreementTemplate(dto.getAgreementTemplate());
     }

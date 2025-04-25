@@ -28,8 +28,6 @@ public class Project {
     private Set<Musician> musiciansWhoRefused;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Musician> invited;
-    @Enumerated(EnumType.STRING)
-    private Status status;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MusicScore> musicScores = new HashSet<>();
     @ManyToOne
