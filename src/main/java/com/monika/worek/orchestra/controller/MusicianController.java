@@ -28,7 +28,7 @@ public class MusicianController {
         MusicianDTO musicianDTO = musicianService.findMusicianByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         model.addAttribute("musician", musicianDTO);
-        return "musician";
+        return "musicianPage";
     }
 
     @GetMapping("/userData")

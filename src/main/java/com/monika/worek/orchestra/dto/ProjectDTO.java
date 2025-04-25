@@ -28,7 +28,7 @@ public class ProjectDTO {
     @NotNull(message = "End date is required")
     private LocalDate endDate;
     private Set<Musician> projectMembers;
-    private Set<Musician> musiciansWhoRefused;
+    private Set<Musician> musiciansWhoRejected;
     private Set<Musician> invited;
     private Set<MusicScore> musicScores;
     private AgreementTemplate agreementTemplate;

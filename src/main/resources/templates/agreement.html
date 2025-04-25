@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-<h1>Project Invitation</h1>
+<h1>Project Agreement</h1>
 <h2 th:text="${project.name}">Project Name</h2>
 
 <p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
@@ -28,19 +28,28 @@
     <p th:utext="${#strings.replace(agreementContent, '\n', '<br/>')}">Agreement text will load here</p>
 </div>
 
-<hr>
-
-<div>
-    <form th:action="@{/project/{id}/invitation/accept(id=${project.id})}" method="post" style="display: inline;">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<div th:if="${!hasResponded}">
+    <form th:action="@{/musician/project/{id}/invitation/accept(id=${project.id})}" method="post" style="display: inline;">
         <button type="submit">Accept Project & Agreement</button>
     </form>
 
-    <form th:action="@{/project/{id}/invitation/reject(id=${project.id})}" method="post" style="display: inline;">
+    <form th:action="@{/musician/project/{id}/invitation/reject(id=${project.id})}" method="post" style="display: inline;"
+          onsubmit="return confirm('Are you sure you want to reject this project?');">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Reject Project</button>
     </form>
 </div>
 
-<p><a th:href="@{/musician/dashboard}">Back to Dashboard</a></p> </body>
+<div th:if="${hasResponded}">
+    <p class="alert alert-info">You have <strong th:text="${responseStatus}"></strong> this project.</p>
+</div>
+
+<p><a th:href="@{/musicianPage}">Back to home</a></p> </body>
+<div th:if="${param.acceptSuccess}" class="alert alert-success">
+    You have successfully accepted the project.
+</div>
+<div th:if="${param.rejectSuccess}" class="alert alert-warning">
+    You have rejected the project.
+</div>
+<div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
 </html>

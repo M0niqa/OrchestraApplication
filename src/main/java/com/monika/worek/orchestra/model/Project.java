@@ -23,10 +23,25 @@ public class Project {
     private LocalDate startDate;
     private LocalDate endDate;
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "accepted_musicians_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "musician_id")
+    )
     private Set<Musician> projectMembers;
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Musician> musiciansWhoRefused;
+    @JoinTable(
+            name = "rejected_musicians_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "musician_id")
+    )
+    private Set<Musician> musiciansWhoRejected;
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "invited_musicians_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "musician_id")
+    )
     private Set<Musician> invited;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MusicScore> musicScores = new HashSet<>();

@@ -32,7 +32,7 @@ public class ProjectService {
 
         if (!project.getInvited().contains(musician) &&
                 !project.getProjectMembers().contains(musician)
-                && !project.getMusiciansWhoRefused().contains(musician)) {
+                && !project.getMusiciansWhoRejected().contains(musician)) {
 
             project.getInvited().add(musician);
             musician.getPendingProjects().add(project);
@@ -71,7 +71,7 @@ public class ProjectService {
         }
 
         project.getInvited().remove(musician);
-        project.getMusiciansWhoRefused().add(musician);
+        project.getMusiciansWhoRejected().add(musician);
         musician.getPendingProjects().remove(project);
 
         projectRepository.save(project);
@@ -85,7 +85,7 @@ public class ProjectService {
 
         return allMusicians.stream()
                 .filter(musician -> !project.getProjectMembers().contains(musician) &&
-                        !project.getMusiciansWhoRefused().contains(musician) &&
+                        !project.getMusiciansWhoRejected().contains(musician) &&
                         !project.getInvited().contains(musician))
                 .collect(Collectors.toList());
     }

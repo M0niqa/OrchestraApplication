@@ -78,11 +78,15 @@
             </thead>
             <tbody>
             <tr th:each="project : ${musician.pendingProjects}">
-                <td th:text="${project.name}"></td>
+                <td>
+                    <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
+                </td>
                 <td>Pending</td>
             </tr>
             <tr th:each="project : ${musician.acceptedProjects}">
-                <td th:text="${project.name}"></td>
+                <td>
+                    <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
+                </td>
                 <td>Accepted</td>
             </tr>
             <tr th:each="project : ${musician.refusedProjects}">

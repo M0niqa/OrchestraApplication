@@ -4,6 +4,9 @@ DROP TABLE IF EXISTS UserRole CASCADE;
 DROP TABLE IF EXISTS App_user_roles CASCADE;
 DROP TABLE IF EXISTS ChatMessage CASCADE;
 DROP TABLE IF EXISTS AgreementTemplate CASCADE;
+DROP TABLE IF EXISTS invited_musicians_projects CASCADE;
+DROP TABLE IF EXISTS accepted_musicians_projects CASCADE;
+DROP TABLE IF EXISTS rejected_musicians_projects CASCADE;
 
 
 CREATE TABLE AgreementTemplate (
@@ -58,5 +61,29 @@ CREATE TABLE App_user_roles (
       roles_id LONG,
       FOREIGN KEY (User_id) REFERENCES App_user(id),
       FOREIGN KEY (roles_id) REFERENCES UserRole(id)
+);
+
+CREATE TABLE invited_musicians_projects (
+    musician_id BIGINT NOT NULL,
+    project_id BIGINT NOT NULL,
+    PRIMARY KEY (musician_id, project_id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (project_id) REFERENCES Project(id)
+);
+
+CREATE TABLE accepted_musicians_projects (
+    musician_id BIGINT NOT NULL,
+    project_id BIGINT NOT NULL,
+    PRIMARY KEY (musician_id, project_id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (project_id) REFERENCES Project(id)
+);
+
+CREATE TABLE rejected_musicians_projects (
+    musician_id BIGINT NOT NULL,
+    project_id BIGINT NOT NULL,
+    PRIMARY KEY (musician_id, project_id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (project_id) REFERENCES Project(id)
 );
 

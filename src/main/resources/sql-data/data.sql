@@ -6,7 +6,7 @@ VALUES
     ('Musician','Alex', 'King', 'alex@pja.edu.pl',
      '{MD5}{rT4wBLjXEvWpB8F0MgvLUDt8v36HSZoTWcDiusl7jh4=}fda9321dca602a2bb6c42955a315a3fa', 'TUBA'),
     -- sj@my.com / 2222
-    ('User', 'Stephen', 'Jones', 'monikwor91@gmail.com', '{noop}2222', 'OBOE');
+    ('Musician', 'Stephen', 'Jones', 'monikwor91@gmail.com', '{noop}2222', 'OBOE');
 
 INSERT INTO UserRole (name, description)
 VALUES ('ADMIN', 'Adding/updating projects'),
@@ -15,9 +15,9 @@ VALUES ('ADMIN', 'Adding/updating projects'),
 
 INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 3),
+       (2, 2),
        (2, 3),
-       (3, 3),
-       (3, 2);
+       (3, 3);
 
 --
 -- INSERT INTO Musician (firstName, lastName, email, password, birthdate, address, pesel, taxOffice, instrument, bankAccountNumber)
@@ -72,3 +72,12 @@ INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES
     (4, 3, 'Got it!', '2023-10-26 10:15:00'),
     (4, 3, 'Anyone seen my music sheets?', '2023-10-26 10:20:00'),
     (3, 4, 'No, sorry. Check the library.', '2023-10-26 10:25:00');
+
+-- Musician 2 invited to Project 1
+INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
+
+-- Musician 2 accepted Project 2
+INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES (3, 2);
+
+-- Musician 2 rejected Project 3
+INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);

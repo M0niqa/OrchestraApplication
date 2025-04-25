@@ -35,7 +35,7 @@ public class Musician extends User {
     @ManyToMany(mappedBy = "projectMembers", fetch = FetchType.EAGER)
     private Set<Project> acceptedProjects;
 
-    @ManyToMany(mappedBy = "musiciansWhoRefused", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "musiciansWhoRejected", fetch = FetchType.EAGER)
     private Set<Project> refusedProjects;
 
 
