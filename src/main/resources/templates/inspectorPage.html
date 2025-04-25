@@ -35,15 +35,23 @@
     <div class="btn-container">
         <a th:href="@{/musicianPage}" class="btn btn-purple btn-lg m-2">Musician dashboard</a>
     </div>
-
     <div class="container mt-4">
+        <h2>Ongoing Projects</h2>
+        <table class="table">
+            <tbody>
+            <tr th:each="project : ${ongoingProjects}">
+                <td th:text="${project.name}"></td>
+                <td>
+                    <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-primary">View Musicians Status</a>
+                    <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}" class="btn btn-secondary">Invite Musicians</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <h2>Future Projects</h2>
         <table class="table">
-            <thead>
-            <tr><th>Project Name</th><th>Actions</th></tr>
-            </thead>
             <tbody>
-            <tr th:each="project : ${projects}">
+            <tr th:each="project : ${futureProjects}">
                 <td th:text="${project.name}"></td>
                 <td>
                     <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-primary">View Status</a>
@@ -52,7 +60,6 @@
             </tr>
             </tbody>
         </table>
-
     </div>
 </div>
 

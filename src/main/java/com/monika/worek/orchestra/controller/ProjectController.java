@@ -47,51 +47,6 @@ public class ProjectController {
         this.agreementTemplateRepository = agreementTemplateRepository;
     }
 
-    @GetMapping("/addProject")
-    public String showAddProjectForm(Model model) {
-        model.addAttribute("projectDTO", new NewProjectDTO());
-        return "addProject";
-    }
-
-    @PostMapping("/addProject")
-    public String addProject(@ModelAttribute NewProjectDTO projectDTO) {
-        Project project = NewProjectDTOMapper.mapToEntity(projectDTO);
-        projectRepository.save(project);
-        return "redirect:/";
-    }
-
-    @GetMapping("/project/{projectId}/inviteMusicians")
-    public String showAddMusiciansPage(@PathVariable Long projectId, Model model) {
-        List<Musician> availableMusicians = projectService.getAvailableMusicians(projectId);
-        Map<Instrument, List<Musician>> musiciansByInstrument = availableMusicians.stream()
-                .collect(Collectors.groupingBy(Musician::getInstrument));
-
-        model.addAttribute("musiciansByInstrument", musiciansByInstrument);
-        model.addAttribute("projectId", projectId);
-        return "sendInvitation";
-    }
-
-    @PostMapping("/project/{projectId}/inviteMusicians")
-    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds) {
-        if (musicianIds != null && !musicianIds.isEmpty()) {
-            for (Long musicianId : musicianIds) {
-                projectService.inviteMusician(projectId, musicianId);
-            }
-        }
-        return "redirect:/project/" + projectId;
-    }
-
-    @GetMapping("/project/{projectId}/musicianStatus")
-    public String showMusicianStatus(@PathVariable Long projectId, Model model) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        model.addAttribute("projectMembers", project.getProjectMembers());
-        model.addAttribute("refusedMusicians", project.getMusiciansWhoRefused());
-        model.addAttribute("pendingMusicians", project.getInvited());
-        model.addAttribute("project", project);
-
-        return "musicianStatus";
-    }
-
     @GetMapping("/project/{projectId}/invitation/view")
     public String viewInvitation(@PathVariable Long projectId, Model model, Authentication authentication) throws AccessDeniedException {
 
@@ -152,6 +107,54 @@ public class ProjectController {
 
 
 
+    @GetMapping("/inspector/project/{projectId}/sendInvitation")
+    public String showAddMusiciansPage(@PathVariable Long projectId, Model model) {
+        List<Musician> availableMusicians = projectService.getAvailableMusicians(projectId);
+        Map<Instrument, List<Musician>> musiciansByInstrument = availableMusicians.stream()
+                .collect(Collectors.groupingBy(Musician::getInstrument));
+
+        model.addAttribute("musiciansByInstrument", musiciansByInstrument);
+        model.addAttribute("projectId", projectId);
+        return "sendInvitation";
+    }
+
+    @PostMapping("/inspector/project/{projectId}/sendInvitation")
+    public String inviteMusicians(@PathVariable Long projectId,
+                                  @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds,
+                                  RedirectAttributes redirectAttributes) {
+        if (musicianIds != null && !musicianIds.isEmpty()) {
+            for (Long musicianId : musicianIds) {
+                projectService.inviteMusician(projectId, musicianId);
+            }
+            redirectAttributes.addFlashAttribute("success", "Invitations sent successfully!");
+        }
+
+        return "redirect:/inspector/project/" + projectId + "/sendInvitation";
+    }
+
+    @GetMapping("/addProject")
+    public String showAddProjectForm(Model model) {
+        model.addAttribute("projectDTO", new NewProjectDTO());
+        return "addProject";
+    }
+
+    @PostMapping("/addProject")
+    public String addProject(@ModelAttribute NewProjectDTO projectDTO) {
+        Project project = NewProjectDTOMapper.mapToEntity(projectDTO);
+        projectRepository.save(project);
+        return "redirect:/";
+    }
+
+    @GetMapping({"/admin/project/{id}/musicianStatus", "/inspector/project/{id}/musicianStatus"})
+    public String showMusicianStatus(@PathVariable Long id, Model model) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        model.addAttribute("projectMembers", project.getProjectMembers());
+        model.addAttribute("refusedMusicians", project.getMusiciansWhoRefused());
+        model.addAttribute("pendingMusicians", project.getInvited());
+        model.addAttribute("project", project);
+
+        return "musicianStatus";
+    }
 
     @PostMapping("/project/{id}/delete")
     public String deleteProject(@PathVariable Long id, RedirectAttributes redirectAttributes) {

@@ -7,7 +7,7 @@
 <body>
 <h1>Add Musicians</h1>
 
-<form th:action="@{'/project/' + ${projectId} + '/inviteMusicians'}" method="post">
+<form th:action="@{'/inspector/project/' + ${projectId} + '/sendInvitation'}" method="post">
     <input type="hidden" name="projectId" th:value="${projectId}"/>
     <div th:each="instrument : ${musiciansByInstrument.keySet()}">
         <h2><span th:text="${instrument.getDisplayName()}"></span></h2>
@@ -21,6 +21,7 @@
         </ul>
     </div>
     <button type="submit">Invite Selected Musicians</button>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 </form>
 </body>
 </html>
