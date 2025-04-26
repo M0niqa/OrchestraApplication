@@ -38,21 +38,22 @@ public class MusicianController {
         model.addAttribute("musician", musicianDTO);
         model.addAttribute("instruments", Instrument.values());
         model.addAttribute("taxOffices", TaxOffice.values());
-        return "musicianData";
+        return "musician-data";
     }
 
     @PostMapping("/userData")
-    public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto,
-                             BindingResult bindingResult,
-                             Authentication authentication,
-                             Model model) {
+    public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto, BindingResult bindingResult,
+                             Authentication authentication, Model model) {
+        model.addAttribute("instruments", Instrument.values());
+        model.addAttribute("taxOffices", TaxOffice.values());
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("instruments", Instrument.values());
-            model.addAttribute("taxOffices", TaxOffice.values());
-            return "musicianData";
+            return "musician-data";
         }
+
         musicianService.updateUserData(authentication.getName(), dto);
-        return "redirect:/musicianPage";
+        model.addAttribute("success", "Data updated successfully!");
+        return "musician-data";
     }
 
 }

@@ -20,6 +20,7 @@ public class AdminController {
     @GetMapping("/adminPage")
     public String showAdminPage(Model model) {
         List<Project> ongoingProjects = projectService.getOngoingProjects();
+        System.out.println("ongoing: " + ongoingProjects);
         List<Project> futureProjects = projectService.getFutureProjects();
 
         model.addAttribute("ongoingProjects", ongoingProjects);

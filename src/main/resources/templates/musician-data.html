@@ -30,6 +30,7 @@
                                 <a th:href="@{/musicianPage}" class="btn btn-secondary btn-lg btn-block">← Back to Home</a>
                             </div>
                             <h5 class="fw-normal mb-3 pb-3">Edit Your Data</h5>
+                            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
                             <div class="form-outline mb-4">
                                 <input th:field="*{firstName}" type="text" class="form-control"/>

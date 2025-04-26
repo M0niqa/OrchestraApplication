@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
@@ -28,16 +27,14 @@ public class UserController {
     @GetMapping("/userPassword")
     public String showUpdatePasswordForm(Model model) {
         model.addAttribute("passwordForm", new PasswordUpdateDTO());
-        return "updatePassword";
+        return "update-password";
     }
 
     @PostMapping("/userPassword")
-    public String updatePassword(@Valid @ModelAttribute("passwordForm") PasswordUpdateDTO form,
-                                 BindingResult bindingResult,
-                                 Authentication authentication,
-                                 Model model) {
+    public String updatePassword(@Valid @ModelAttribute("passwordForm") PasswordUpdateDTO form, BindingResult bindingResult,
+                                 Authentication authentication, Model model) {
         if (bindingResult.hasErrors()) {
-            return "updatePassword";
+            return "update-password";
         }
 
         String currentEmail = authentication.getName();
@@ -47,16 +44,17 @@ public class UserController {
 
         if (!passwordEncoder.matches(form.getOldPassword(), storedPassword)) {
             model.addAttribute("error", "Incorrect old password.");
-            return "updatePassword";
+            return "update-password";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
             model.addAttribute("error", "New passwords do not match.");
-            return "updatePassword";
+            return "update-password";
         }
 
         userService.updatePassword(currentEmail, form.getNewPassword());
-        return "redirect:/musicianPage";
+        model.addAttribute("success", "Password changed successfully!");
+        return "update-password";
     }
 
 

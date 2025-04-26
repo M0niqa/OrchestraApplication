@@ -92,7 +92,7 @@ public class ProjectService {
 
     public List<Project> getOngoingProjects() {
         LocalDate today = LocalDate.now();
-        return projectRepository.findByStartDateBeforeAndEndDateAfter(today, today);
+        return projectRepository.findByStartDateBeforeAndEndDateAfter(today, today.minusDays(1));
     }
 
     public List<Project> getFutureProjects() {
