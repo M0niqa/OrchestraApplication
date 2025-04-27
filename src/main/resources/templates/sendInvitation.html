@@ -9,6 +9,12 @@
 
 <form th:action="@{'/inspector/project/' + ${projectId} + '/sendInvitation'}" method="post">
     <input type="hidden" name="projectId" th:value="${projectId}"/>
+    <h3>Missing instruments count</h3>
+    <ul>
+        <li th:each="entry : ${remainingCounts}">
+            <span th:text="${entry.key.displayName} + ': ' + ${entry.value}"></span>
+        </li>
+    </ul>
     <div th:each="instrument : ${musiciansByInstrument.keySet()}">
         <h2><span th:text="${instrument.getDisplayName()}"></span></h2>
         <ul>

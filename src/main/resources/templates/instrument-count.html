@@ -12,7 +12,7 @@
 
     <h4>Musicians Needed per Instrument</h4>
     <div class="row">
-        <div th:each="instrument : ${instruments}" class="col-md-2 mb-3">
+        <div th:each="instrument : ${instruments}" class="col-md-3 mb-3">
             <label th:text="${instrument.displayName}"></label>
             <input type="number" min="0" th:field="*{instrumentCounts[__${instrument.name}__]}" class="form-control"/>
         </div>

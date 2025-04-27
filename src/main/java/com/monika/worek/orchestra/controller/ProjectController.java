@@ -27,7 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
-import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +56,7 @@ public class ProjectController {
         Musician musician = musicianRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found: " + projectId));
+        Project project = projectService.getProjectById(projectId);
 
         if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
             throw new AccessDeniedException("You are not invited to this project.");
@@ -104,9 +103,9 @@ public class ProjectController {
 
     @GetMapping("/musician/project/{id}")
     public String viewProjectDetailsForMusician(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        model.addAttribute("project", project);
+        Project project = projectService.getProjectById(id);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        model.addAttribute("project", projectDTO);
         return "musician-project-details";
     }
 
@@ -116,16 +115,17 @@ public class ProjectController {
 
     @GetMapping("/inspector/project/{projectId}/sendInvitation")
     public String showAddMusiciansPage(@PathVariable Long projectId, Model model) {
+        Project project = projectService.getProjectById(projectId);
+
+        Map<Instrument, Integer> remainingCounts = projectService.getRemainingInstrumentsCount(project);
+
         LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument =
-                projectService.getAvailableMusicians(projectId).stream()
-                        .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
-                        .collect(Collectors.groupingBy(
-                                Musician::getInstrument,
-                                LinkedHashMap::new,
-                                Collectors.toList()
-                        ));
+                projectService.getAvailableMusiciansByInstrument(projectId);
+
         model.addAttribute("musiciansByInstrument", musiciansByInstrument);
+        model.addAttribute("remainingCounts", remainingCounts);
         model.addAttribute("projectId", projectId);
+
         return "sendInvitation";
     }
 
@@ -176,19 +176,13 @@ public class ProjectController {
 
     @GetMapping({"/admin/project/{id}/musicianStatus", "/inspector/project/{id}/musicianStatus"})
     public String showMusicianStatus(@PathVariable Long id, Model model) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument =
-                project.getProjectMembers().stream()
-                        .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
-                        .collect(Collectors.groupingBy(
-                                Musician::getInstrument,
-                                LinkedHashMap::new,
-                                Collectors.toList()
-                        ));
+        Project project = projectService.getProjectById(id);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
         model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
         model.addAttribute("refusedMusicians", project.getMusiciansWhoRejected());
         model.addAttribute("pendingMusicians", project.getInvited());
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
 
         return "musicianStatus";
     }
@@ -206,7 +200,7 @@ public class ProjectController {
 
     @GetMapping("/admin/project/{id}")
     public String viewProject(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectService.getProjectById(id);
         ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
         model.addAttribute("project", projectDTO);
         return "project-details";
@@ -214,10 +208,8 @@ public class ProjectController {
 
     @PostMapping("/admin/project/{id}/update")
     public String updateProject(@PathVariable Long id,
-                                @Valid @ModelAttribute("project") ProjectDTO projectDTO,
-                                BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes,
-                                Model model) {
+                                @Valid @ModelAttribute("project") ProjectDTO projectDTO, BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("projectId", id);
             return "project-details";
@@ -229,11 +221,11 @@ public class ProjectController {
 
     @GetMapping("/admin/project/{id}/template/edit")
     public String editTemplateForm(@PathVariable Long id, Model model) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectService.getProjectById(id);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
         AgreementTemplate template = project.getAgreementTemplate();
 
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectDTO);
         model.addAttribute("templateContent", template.getContent());
         return "edit-template";
     }
@@ -242,8 +234,7 @@ public class ProjectController {
     public String updateTemplate(@PathVariable Long id,
                                  @RequestParam String templateContent,
                                  RedirectAttributes redirectAttributes) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectService.getProjectById(id);
         AgreementTemplate template = project.getAgreementTemplate();
 
         template.setContent(templateContent);
@@ -255,8 +246,7 @@ public class ProjectController {
 
     @GetMapping("/admin/project/{projectId}/instrumentCount/edit")
     public String showInstrumentConfigForm(@PathVariable Long projectId, Model model) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectService.getProjectById(projectId);
 
         InstrumentCountAndSalaryDTO instrCountAndSalaryDTO = new InstrumentCountAndSalaryDTO();
         instrCountAndSalaryDTO.setInstrumentCounts(project.getInstrumentCounts());
@@ -273,8 +263,7 @@ public class ProjectController {
     public String updateInstrumentConfig(@PathVariable Long projectId,
                                          @ModelAttribute InstrumentCountAndSalaryDTO configDTO,
                                          RedirectAttributes redirectAttributes) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectService.getProjectById(projectId);
 
         project.setInstrumentCounts(configDTO.getInstrumentCounts());
         project.setGroupSalaries(configDTO.getGroupSalaries());

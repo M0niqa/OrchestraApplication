@@ -8,7 +8,6 @@ public enum Instrument {
     VIOLA("Viola"),
     CELLO("Cello"),
     DOUBLE_BASS("Double bass"),
-    HARP("Harp"),
     FLUTE("Flute"),
     OBOE("Oboe"),
     CLARINET("Clarinet"),
@@ -18,6 +17,7 @@ public enum Instrument {
     TROMBONE("Trombone"),
     TUBA("Tuba"),
     PERCUSSION("Percussion"),
+    HARP("Harp"),
     PIANO("Piano");
 
     public String getGroup() {
