@@ -60,8 +60,8 @@ INSERT INTO AgreementTemplate (content) VALUES
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)
 VALUES
-    ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2024-07-31', 1),
-    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-26', 1),
+    ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2025-07-31', 1),
+    ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-28', 1),
     ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
 
 

@@ -32,4 +32,5 @@ public class ProjectDTO {
     private Set<Musician> invited;
     private Set<MusicScore> musicScores;
     private AgreementTemplate agreementTemplate;
+    private boolean surveyClosed;
 }

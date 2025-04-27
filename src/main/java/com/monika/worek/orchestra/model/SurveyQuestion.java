@@ -15,8 +15,10 @@ public class SurveyQuestion {
 
     private String questionText;
 
-    @ManyToOne
-    private Project project;
+    private int yesCount;
+    private int noCount;
 
+    @ManyToOne
+    private Survey survey;
 }
 

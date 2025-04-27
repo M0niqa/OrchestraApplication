@@ -7,6 +7,7 @@ import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import com.monika.worek.orchestra.repository.SurveyQuestionRepository;
 import com.monika.worek.orchestra.repository.SurveyRepository;
+import com.monika.worek.orchestra.service.SurveyService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class SurveyController {
@@ -30,81 +30,74 @@ public class SurveyController {
     private final MusicianRepository musicianRepository;
     private final SurveyRepository surveyRepository;
     private final SurveyQuestionRepository surveyQuestionRepository;
+    private final SurveyService surveyService;
 
-    public SurveyController(ProjectRepository projectRepository, MusicianRepository musicianRepository, SurveyRepository surveyRepository, SurveyQuestionRepository surveyQuestionRepository) {
+    public SurveyController(ProjectRepository projectRepository, MusicianRepository musicianRepository, SurveyRepository surveyRepository, SurveyQuestionRepository surveyQuestionRepository, SurveyService surveyService) {
         this.projectRepository = projectRepository;
         this.musicianRepository = musicianRepository;
         this.surveyRepository = surveyRepository;
         this.surveyQuestionRepository = surveyQuestionRepository;
+        this.surveyService = surveyService;
     }
 
     @GetMapping("/musician/project/{projectId}/survey")
     public String showSurvey(@PathVariable Long projectId, Model model, Authentication authentication) {
         Musician musician = musicianRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
-        List<SurveyQuestion> questions = surveyQuestionRepository.findByProject(project);
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Survey survey = project.getSurvey();
+        model.addAttribute("project", project);
 
-        if (questions.isEmpty()) {
-            model.addAttribute("noSurvey", true);  // Flag for no questions
-        } else {
-            Survey existingSurvey = surveyRepository.findByMusicianAndProject(musician, project).orElse(null);
-            boolean surveySubmitted = existingSurvey != null;
-
-            model.addAttribute("surveySubmitted", surveySubmitted);
-            if (surveySubmitted) {
-                Map<Long, SurveyAnswer> responsesMap = existingSurvey.getResponses().stream()
-                        .collect(Collectors.toMap(
-                                r -> r.getQuestion().getId(),
-                                SurveyResponse::getAnswer
-                        ));
-                model.addAttribute("responsesMap", responsesMap);
-            } else {
-                SurveySubmissionDTO submissionDTO = new SurveySubmissionDTO();
-                questions.forEach(q -> submissionDTO.getResponses().put(q.getId(), null));
-                model.addAttribute("submissionDTO", submissionDTO);
-            }
+        if (survey == null || survey.getQuestions().isEmpty()) {
+            model.addAttribute("noSurvey", true);
+            return "survey";
         }
 
-        model.addAttribute("project", project);
-        model.addAttribute("questions", questions);
+        if (survey.isClosed()) {
+            model.addAttribute("surveyClosed", true);
+            return "survey";
+        }
+
+        boolean surveySubmitted = surveyService.existsBySurveyAndMusician(survey, musician);
+        model.addAttribute("surveySubmitted", surveySubmitted);
+        if (surveySubmitted) {
+            return "survey";
+        }
+
+        SurveySubmissionDTO submissionDTO = new SurveySubmissionDTO();
+        model.addAttribute("submissionDTO", submissionDTO);
+        model.addAttribute("project", survey.getProject());
+        model.addAttribute("questions", survey.getQuestions());
+
         return "survey";
     }
 
     @PostMapping("/musician/project/{projectId}/survey")
-    public String submitSurvey(@PathVariable Long projectId,
-                               @ModelAttribute SurveySubmissionDTO submissionDTO,
-                               Authentication authentication,
-                               RedirectAttributes redirectAttributes) {
+    public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO,
+                               Authentication authentication) {
 
+        Map<Long, String> responses = submissionDTO.getResponses();
         Musician musician = musicianRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Survey survey = surveyRepository.findByProjectId(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
-        if (surveyRepository.findByMusicianAndProject(musician, project).isPresent()) {
-            redirectAttributes.addFlashAttribute("error", "Survey already submitted.");
-            return "redirect:/musician/project/" + projectId + "/survey";
+        for (Map.Entry<Long, String> entry : responses.entrySet()) {
+            Long questionId = entry.getKey();
+            SurveyQuestion question = surveyQuestionRepository.findById(questionId)
+                    .orElseThrow(() -> new IllegalArgumentException("Question not found"));
+
+            if (entry.getValue().equals("YES")) {
+                question.setYesCount(question.getYesCount() + 1);
+            } else {
+                question.setNoCount(question.getNoCount() + 1);
+            }
         }
 
-        Survey survey = new Survey();
-        survey.setMusician(musician);
-        survey.setProject(project);
-        List<SurveyResponse> responses = submissionDTO.getResponses().entrySet().stream()
-                .map(entry -> {
-                    SurveyResponse response = new SurveyResponse();
-                    response.setQuestion(surveyQuestionRepository.findById(entry.getKey()).orElseThrow());
-                    response.setAnswer(SurveyAnswer.valueOf(entry.getValue()));
-                    response.setSurvey(survey);
-                    return response;
-                }).collect(Collectors.toList());
+        surveyQuestionRepository.saveAll(survey.getQuestions());
+        surveyService.saveSubmission(new SurveySubmission(survey, musician));
 
-        survey.setResponses(responses);
-        surveyRepository.save(survey);
-
-        redirectAttributes.addFlashAttribute("submissionSuccess", "Survey submitted!");
         return "redirect:/musician/project/" + projectId + "/survey";
     }
 
@@ -113,11 +106,18 @@ public class SurveyController {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
-        List<SurveyQuestion> questions = surveyQuestionRepository.findByProject(project);
+        Survey survey = project.getSurvey() == null ? new Survey() : project.getSurvey();
+        survey.setProject(project);
+        surveyRepository.save(survey);
+
+        List<SurveyQuestion> questions = surveyQuestionRepository.findAllBySurvey(survey);
+        long missingSubmissions = surveyService.calculateMissingSubmissions(survey, project);
 
         model.addAttribute("project", project);
+        model.addAttribute("survey", survey);
         model.addAttribute("questions", questions);
         model.addAttribute("surveyQuestionDTO", new SurveyQuestionDTO());
+        model.addAttribute("missingSubmissions", missingSubmissions);
         return "admin-survey-questions";
     }
 
@@ -130,22 +130,48 @@ public class SurveyController {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Survey survey = project.getSurvey();
+        List<SurveyQuestion> questions = surveyQuestionRepository.findAllBySurvey(survey);
 
         if (bindingResult.hasErrors()) {
-            List<SurveyQuestion> questions = surveyQuestionRepository.findByProject(project);
             model.addAttribute("project", project);
+            model.addAttribute("survey", survey);
             model.addAttribute("questions", questions);
             return "admin-survey-questions";
         }
 
         SurveyQuestion question = new SurveyQuestion();
-        question.setProject(project);
         question.setQuestionText(dto.getQuestionText());
+        question.setSurvey(survey);
+        survey.getQuestions().add(question);
 
-        System.out.println("Saving question: " + dto.getQuestionText());
-        surveyQuestionRepository.save(question);
+        surveyRepository.save(survey);
 
         redirectAttributes.addFlashAttribute("success", "Survey question added.");
+        return "redirect:/admin/project/" + projectId + "/survey";
+    }
+
+    @PostMapping("/admin/project/{projectId}/survey/{questionId}/delete")
+    public String deleteSurveyQuestion(@PathVariable Long projectId,
+                                       @PathVariable Long questionId,
+                                       RedirectAttributes redirectAttributes) {
+        surveyQuestionRepository.deleteById(questionId);
+        redirectAttributes.addFlashAttribute("success", "Survey question deleted.");
+        return "redirect:/admin/project/" + projectId + "/survey";
+    }
+
+    @PostMapping("/admin/project/{projectId}/survey/toggle")
+    public String toggleSurveyStatus(@PathVariable Long projectId, RedirectAttributes redirectAttributes) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
+        Survey survey = project.getSurvey();
+        survey.setClosed(!survey.isClosed());
+        projectRepository.save(project);
+
+        String status = survey.isClosed() ? "closed" : "reopened";
+        redirectAttributes.addFlashAttribute("success", "Survey has been " + status + ".");
+
         return "redirect:/admin/project/" + projectId + "/survey";
     }
 

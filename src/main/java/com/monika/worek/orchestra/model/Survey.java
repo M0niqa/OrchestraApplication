@@ -6,21 +6,21 @@ import lombok.Setter;
 
 import java.util.*;
 
-@Entity
 @Getter
 @Setter
+@Entity
 public class Survey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Musician musician;
-
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "project_id", nullable = false, unique = true)
     private Project project;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SurveyResponse> responses = new ArrayList<>();
+    private List<SurveyQuestion> questions = new ArrayList<>();
+
+    private boolean closed = false;
 }

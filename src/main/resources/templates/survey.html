@@ -12,29 +12,30 @@
 </div>
 
 <div th:unless="${noSurvey}">
+  <div th:if="${surveyClosed}">
+    <div class="alert alert-warning">The survey for this project has been closed.</div>
+  </div>
+
+  <div th:unless="${surveyClosed}">
   <div th:if="${submissionSuccess}" class="alert alert-success">
     <span th:text="${submissionSuccess}"></span>
   </div>
 
   <div th:if="${surveySubmitted} and ${#lists.isEmpty(submissionSuccess)}">
-    <div class="alert alert-success">You have already submitted the survey for this project.</div>
-    <div th:each="question : ${questions}" class="mb-3">
-      <p><strong th:text="${question.questionText}"></strong></p>
-      <p>Your Answer: <span th:text="${responsesMap[question.id]}"></span></p>
-    </div>
+    <div class="alert alert-success">You have submitted the survey for this project.</div>
   </div>
 
   <div th:unless="${surveySubmitted}">
     <form th:action="@{/musician/project/{id}/survey(id=${project.id})}"
           th:object="${submissionDTO}" method="post">
-      <div th:each="question : ${questions}" class="mb-3">
+      <div th:each="question : ${questions}">
         <p th:text="${question.questionText}"></p>
         <div>
-          <input type="radio" th:name="${'responses[' + question.id + ']'}" value="YES" required> Yes
-          <input type="radio" th:name="${'responses[' + question.id + ']'}" value="NO" required> No
+          <input type="radio" th:field="*{responses[__${question.id}__]}" value="YES"> Yes
+          <input type="radio" th:field="*{responses[__${question.id}__]}" value="NO"> No
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">Submit Survey</button>
+      <button type="submit">Submit</button>
     </form>
   </div>
 </div>

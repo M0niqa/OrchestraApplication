@@ -47,4 +47,6 @@ public class Project {
     private Set<MusicScore> musicScores = new HashSet<>();
     @ManyToOne
     private AgreementTemplate agreementTemplate;
+    @OneToOne(mappedBy = "project")
+    private Survey survey;
 }

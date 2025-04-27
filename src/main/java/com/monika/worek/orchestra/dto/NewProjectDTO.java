@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.dto;
 
+import com.monika.worek.orchestra.model.Survey;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,5 +26,6 @@ public class NewProjectDTO {
     @NotNull(message = "End date is required")
     @FutureOrPresent(message = "Start date cannot be in the past")
     private LocalDate endDate;
+    private Survey survey = new Survey();
 
 }

@@ -6,13 +6,22 @@
 </head>
 <body class="container py-5">
 <h2>Survey Questions for Project: <span th:text="${project.name}"></span></h2>
-
-<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+<div th:if="${survey.closed}" class="alert alert-warning">
+    Survey is closed.
+</div>
 
 <h4>Existing Questions:</h4>
 <ul>
-    <li th:each="question : ${questions}" th:text="${question.questionText}"></li>
+    <li th:each="question : ${questions}">
+        <span th:text="${question.questionText}"></span>
+        <div>Count of "yes" answers: <span th:text="${question.getYesCount()}"></span></div>
+        <div>Count of "no" answers: <span th:text="${question.getNoCount()}"></span></div>
+        <form th:action="@{/admin/project/{projectId}/survey/{questionId}/delete(projectId=${project.id}, questionId=${question.id})}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+    </li>
 </ul>
+<div>Missing submissions: <span th:text="${missingSubmissions}"></span></div>
 
 <hr>
 <h4>Add New Question</h4>
@@ -27,6 +36,14 @@
 
     <button type="submit" class="btn btn-primary">Add Question</button>
 </form>
+<div class="mb-3">
+    <form th:action="@{/admin/project/{id}/survey/toggle(id=${project.id})}" method="post">
+        <button type="submit" class="btn"
+                th:classappend="${survey.closed} ? 'btn-success' : 'btn-warning'">
+            <span th:text="${survey.closed} ? 'Reopen Survey' : 'Close Survey'"></span>
+        </button>
+    </form>
+</div>
 
 <p><a th:href="@{/adminPage}">Back to Admin home page</a></p>
 </body>
