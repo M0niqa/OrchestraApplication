@@ -15,7 +15,7 @@ public class MusicScore {
 
     private String fileName;
     private String fileType;
-    private String filePath; // Store the file location
+    private String filePath;
 
     @ManyToOne
     @JoinColumn(name = "project_id")

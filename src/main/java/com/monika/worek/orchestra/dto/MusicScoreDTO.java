@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.auth;
+package com.monika.worek.orchestra.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

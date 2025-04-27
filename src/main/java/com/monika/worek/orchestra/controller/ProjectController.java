@@ -11,7 +11,6 @@ import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.repository.MusicianRepository;
-import com.monika.worek.orchestra.repository.ProjectRepository;
 import com.monika.worek.orchestra.service.AgreementGenerationService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
@@ -27,23 +26,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 public class ProjectController {
 
-    private final ProjectRepository projectRepository;
     private final ProjectService projectService;
     private final MusicianRepository musicianRepository;
     private final AgreementGenerationService agreementGenerationService;
     private final AgreementTemplateRepository agreementTemplateRepository;
 
-    public ProjectController(ProjectRepository projectRepository, ProjectService projectService, MusicianRepository musicianRepository, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository) {
-        this.projectRepository = projectRepository;
+    public ProjectController(ProjectService projectService, MusicianRepository musicianRepository, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository) {
         this.projectService = projectService;
         this.musicianRepository = musicianRepository;
         this.agreementGenerationService = agreementGenerationService;
@@ -169,7 +164,7 @@ public class ProjectController {
             return "addProject";
         }
         Project project = NewProjectDTOMapper.mapToEntity(projectDTO);
-        projectRepository.save(project);
+        projectService.saveProject(project);
         redirectAttributes.addFlashAttribute("success", "Project added successfully!");
         return "redirect:/adminPage";
     }
@@ -268,7 +263,7 @@ public class ProjectController {
         project.setInstrumentCounts(configDTO.getInstrumentCounts());
         project.setGroupSalaries(configDTO.getGroupSalaries());
 
-        projectRepository.save(project);
+        projectService.saveProject(project);
 
         redirectAttributes.addFlashAttribute("success", "Instrument configuration updated successfully!");
         return "redirect:/admin/project/" + projectId + "/instrumentCount/edit";

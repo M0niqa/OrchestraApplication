@@ -26,6 +26,10 @@ public class ProjectService {
         this.emailService = emailService;
     }
 
+    public void saveProject(Project project) {
+        projectRepository.save(project);
+    }
+
     public void inviteMusician(Long projectId, Long musicianId) {
         Project project = findProjectById(projectId);
         Musician musician = findMusicianById(musicianId);

@@ -1,36 +1,38 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.auth.MusicScoreDTO;
+import com.monika.worek.orchestra.dto.MusicScoreDTO;
 import com.monika.worek.orchestra.model.MusicScore;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicScoreRepository;
-import com.monika.worek.orchestra.repository.ProjectRepository;
+import com.monika.worek.orchestra.service.ProjectService;
 import com.monika.worek.orchestra.service.FileStorageService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("admin/project/{projectId}/scores")
 public class MusicScoreController {
 
     private final FileStorageService fileStorageService;
     private final MusicScoreRepository musicScoreRepository;
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
 
-
-    public MusicScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectRepository projectRepository) {
+    public MusicScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectService projectService) {
         this.fileStorageService = fileStorageService;
         this.musicScoreRepository = musicScoreRepository;
-        this.projectRepository = projectRepository;
+        this.projectService = projectService;
     }
 
-    @GetMapping
+    @GetMapping("/admin/project/{projectId}/scores")
     public String manageScores(@PathVariable Long projectId, Model model) {
         List<MusicScore> files = musicScoreRepository.findByProjectId(projectId);
         List<MusicScoreDTO> fileDTOs = files.stream()
@@ -38,27 +40,26 @@ public class MusicScoreController {
                         file.getId(),
                         file.getFileName(),
                         file.getFileType(),
-                        "/project/" + projectId + "/scores/download/" + file.getId()
+                        "/admin/project/" + projectId + "/scores/download/" + file.getId()
                 ))
                 .collect(Collectors.toList());
 
         model.addAttribute("projectId", projectId);
         model.addAttribute("files", fileDTOs);
-        return "scores";
+        return "admin-scores";
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/admin/project/{projectId}/scores/upload")
     public String uploadFile(@PathVariable Long projectId,
                              @RequestParam("file") MultipartFile file,
                              RedirectAttributes redirectAttributes) {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Please select a file to upload.");
-            return "redirect:/project/" + projectId + "/scores";
+            return "redirect:/admin/project/" + projectId + "/scores";
         }
 
         try {
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new RuntimeException("Project not found"));
+            Project project = projectService.getProjectById(projectId);
             String filePath = fileStorageService.saveFile(file);
 
             MusicScore projectFile = new MusicScore(file.getOriginalFilename(), file.getContentType(), filePath, project);
@@ -69,10 +70,10 @@ public class MusicScoreController {
             redirectAttributes.addFlashAttribute("error", "Failed to upload file.");
         }
 
-        return "redirect:/project/" + projectId + "/scores";
+        return "redirect:/admin/project/" + projectId + "/scores";
     }
 
-    @PostMapping("/{fileId}/delete")
+    @PostMapping("/admin/project/{projectId}/scores/{fileId}/delete")
     public String deleteFile(@PathVariable Long projectId,
                              @PathVariable Long fileId,
                              RedirectAttributes redirectAttributes) {
@@ -88,7 +89,34 @@ public class MusicScoreController {
             redirectAttributes.addFlashAttribute("error", "Failed to delete file.");
         }
 
-        return "redirect:/project/" + projectId + "/scores";
+        return "redirect:/admin/project/" + projectId + "/scores";
     }
 
+
+
+    @GetMapping("musician/project/{projectId}/scores")
+    public String listScores(@PathVariable Long projectId, Model model) {
+        Project project = projectService.getProjectById(projectId);
+
+        List<MusicScore> scores = musicScoreRepository.findByProjectId(projectId);
+        model.addAttribute("project", project);
+        model.addAttribute("scores", scores);
+
+        return "musician-scores";
+    }
+
+    @GetMapping({"/admin/project/{projectId}/scores/download/{fileId}",
+            "/musician/project/{projectId}/scores/download/{fileId}"})
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadScore(@PathVariable Long projectId, @PathVariable Long fileId) throws IOException {
+        MusicScore musicScore = musicScoreRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        byte[] fileData = fileStorageService.getFile(musicScore.getFilePath());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + musicScore.getFileName() + "\"")
+                .contentType(MediaType.parseMediaType(musicScore.getFileType()))
+                .body(fileData);
+    }
 }
