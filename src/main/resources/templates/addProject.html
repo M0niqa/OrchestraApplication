@@ -9,17 +9,21 @@
 <form th:action="@{/admin/addProject}" th:object="${projectDTO}" method="post">
     <label for="name">Name:</label>
     <input type="text" id="name" th:field="*{name}" /><br />
+    <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
 
     <label for="description">Description:</label>
     <textarea id="description" th:field="*{description}"></textarea><br />
 
     <label for="startDate">Start Date:</label>
     <input type="date" id="startDate" th:field="*{startDate}" /><br />
+    <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
 
     <label for="endDate">End Date:</label>
     <input type="date" id="endDate" th:field="*{endDate}" /><br />
+    <div class="text-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
 
     <button type="submit">Add Project</button>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 </form>
 </body>
 </html>

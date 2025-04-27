@@ -1,10 +1,7 @@
 package com.monika.worek.orchestra.auth;
 
 import com.monika.worek.orchestra.dto.NewProjectDTO;
-import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Project;
-
-import java.util.HashSet;
 
 public class NewProjectDTOMapper {
 

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/project/{projectId}/scores")
+@RequestMapping("admin/project/{projectId}/scores")
 public class MusicScoreController {
 
     private final FileStorageService fileStorageService;

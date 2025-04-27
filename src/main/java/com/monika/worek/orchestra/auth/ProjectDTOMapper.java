@@ -22,6 +22,7 @@ public class ProjectDTOMapper {
                 .invited(project.getInvited() != null ? new HashSet<>(project.getInvited()) : null)
                 .musicScores(project.getMusicScores())
                 .agreementTemplate(project.getAgreementTemplate())
+                .survey(project.getSurvey())
                 .build();
     }
 
@@ -40,6 +41,9 @@ public class ProjectDTOMapper {
                 .invited(dto.getInvited() != null ? new HashSet<>(dto.getInvited()) : null)
                 .musicScores(dto.getMusicScores())
                 .agreementTemplate(dto.getAgreementTemplate())
+                .survey(dto.getSurvey())
+                .instrumentCounts(dto.getInstrumentCounts())
+                .groupSalaries(dto.getGroupSalaries())
                 .build();
     }
 }

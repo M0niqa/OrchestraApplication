@@ -8,10 +8,19 @@
 <h1>Musician Status for Project: <span th:text="${project.name}"></span></h1>
 
 <h2>Project members</h2>
-<ul th:if="${not projectMembers.isEmpty()}">
-    <li th:each="musician : ${projectMembers}" th:text="${musician.firstName} + ' ' + ${musician.lastName}"></li>
+<ul th:if="${not projectMembersByInstrument.isEmpty()}">
+    <li th:each="instrument : ${projectMembersByInstrument.keySet()}">
+        <div>
+            <h2><span th:text="${instrument.getDisplayName()}"></span></h2>
+            <ul>
+                <li th:each="musician : ${projectMembersByInstrument.get(instrument)}"
+                    th:text="${musician.firstName} + ' ' + ${musician.lastName}">
+                </li>
+            </ul>
+        </div>
+    </li>
 </ul>
-<p th:if="${projectMembers.isEmpty()}">No musicians have accepted yet.</p>
+<p th:if="${projectMembersByInstrument.isEmpty()}">No musicians have accepted yet.</p>
 
 <h2>Pending invitations</h2>
 <ul th:if="${not pendingMusicians.isEmpty()}">

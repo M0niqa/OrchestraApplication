@@ -20,6 +20,15 @@ public enum Instrument {
     PERCUSSION("Percussion"),
     PIANO("Piano");
 
+    public String getGroup() {
+        return switch (this) {
+            case VIOLIN, VIOLA, CELLO, DOUBLE_BASS -> "Strings";
+            case FLUTE, OBOE, CLARINET, BASSOON -> "Winds";
+            case TRUMPET, FRENCH_HORN, TROMBONE, TUBA -> "Brass";
+            case HARP, PERCUSSION, PIANO -> "Solo";
+        };
+    }
+
     private final String displayName;
 
     Instrument(String displayName) {

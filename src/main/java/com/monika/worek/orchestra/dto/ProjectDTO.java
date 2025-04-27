@@ -1,8 +1,6 @@
 package com.monika.worek.orchestra.dto;
 
-import com.monika.worek.orchestra.model.AgreementTemplate;
-import com.monika.worek.orchestra.model.MusicScore;
-import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,7 +8,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Builder
@@ -32,5 +34,7 @@ public class ProjectDTO {
     private Set<Musician> invited;
     private Set<MusicScore> musicScores;
     private AgreementTemplate agreementTemplate;
-    private boolean surveyClosed;
+    private Survey survey;
+    private Map<Instrument, Integer> instrumentCounts = new EnumMap<>(Instrument.class);
+    private Map<String, BigDecimal> groupSalaries = new HashMap<>();
 }

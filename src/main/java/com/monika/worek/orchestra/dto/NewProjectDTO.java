@@ -4,15 +4,14 @@ import com.monika.worek.orchestra.model.Survey;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewProjectDTO {
@@ -20,12 +19,14 @@ public class NewProjectDTO {
     @NotBlank(message = "Name is required")
     private String name;
     private String description;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull(message = "Start date is required")
     @FutureOrPresent(message = "Start date cannot be in the past")
     private LocalDate startDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull(message = "End date is required")
-    @FutureOrPresent(message = "Start date cannot be in the past")
+    @FutureOrPresent(message = "End date cannot be in the past")
     private LocalDate endDate;
-    private Survey survey = new Survey();
+    private Survey survey;
 
 }

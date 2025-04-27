@@ -3,9 +3,9 @@ package com.monika.worek.orchestra.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Builder
@@ -47,6 +47,15 @@ public class Project {
     private Set<MusicScore> musicScores = new HashSet<>();
     @ManyToOne
     private AgreementTemplate agreementTemplate;
-    @OneToOne(mappedBy = "project")
+    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Survey survey;
+    @ElementCollection
+    @MapKeyEnumerated(EnumType.STRING)
+    @Column(name = "musicians_needed")
+    private Map<Instrument, Integer> instrumentCounts = new EnumMap<>(Instrument.class);
+    @ElementCollection
+    @CollectionTable(name = "project_group_salaries", joinColumns = @JoinColumn(name = "project_id"))
+    @MapKeyColumn(name = "instrument_group")
+    @Column(name = "salary")
+    private Map<String, BigDecimal> groupSalaries = new HashMap<>();
 }
