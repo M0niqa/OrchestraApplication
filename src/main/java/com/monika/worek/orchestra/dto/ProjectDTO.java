@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @Getter
@@ -29,6 +26,10 @@ public class ProjectDTO {
     private LocalDate startDate;
     @NotNull(message = "End date is required")
     private LocalDate endDate;
+    @NotNull(message = "End date is required")
+    private String location;
+    private String conductor;
+    private String programme;
     private Set<MusicianBasicDTO> projectMembers;
     private Set<MusicianBasicDTO> musiciansWhoRejected;
     private Set<MusicianBasicDTO> invited;

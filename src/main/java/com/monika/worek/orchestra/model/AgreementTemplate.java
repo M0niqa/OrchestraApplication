@@ -18,6 +18,8 @@ public class AgreementTemplate {
     @Lob
     @Column(columnDefinition = "TEXT")
     private String content;
+//    @Enumerated(EnumType.STRING)
+//    TemplateType templateType;
     @OneToMany(mappedBy = "agreementTemplate", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Project> projects;
 

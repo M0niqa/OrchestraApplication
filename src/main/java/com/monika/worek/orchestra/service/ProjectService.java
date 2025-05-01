@@ -171,12 +171,20 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateProject(Long id, ProjectBasicInfoDTO dto) {
+    public void updateBasicProjectInfo(Long id, ProjectBasicInfoDTO dto) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
+        project.setLocation(dto.getLocation());
+    }
+
+    @Transactional
+    public void updateProgrammeAndConductor(Long id, String conductor, String programme) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        project.setConductor(conductor);
+        project.setProgramme(programme);
     }
 
     private Project findProjectById(Long id) {

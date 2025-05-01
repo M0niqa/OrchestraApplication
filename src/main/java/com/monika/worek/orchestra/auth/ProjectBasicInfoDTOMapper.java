@@ -14,6 +14,7 @@ public class ProjectBasicInfoDTOMapper {
                 .name(project.getName())
                 .startDate(project.getStartDate())
                 .endDate(project.getEndDate())
+                .location(project.getLocation())
                 .description(project.getDescription())
                 .build();
     }
@@ -27,6 +28,7 @@ public class ProjectBasicInfoDTOMapper {
                 .name(dto.getName())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
+                .location(dto.getLocation())
                 .description(dto.getDescription())
                 .build();
     }

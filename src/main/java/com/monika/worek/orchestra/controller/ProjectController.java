@@ -1,17 +1,13 @@
 package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
-import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
-import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
-import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import com.monika.worek.orchestra.service.AgreementService;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
@@ -22,7 +18,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.AccessDeniedException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,37 +26,11 @@ import java.util.Map;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final AgreementService agreementService;
     private final MusicianService musicianService;
 
-    public ProjectController(ProjectService projectService, AgreementService agreementService, AgreementTemplateRepository agreementTemplateRepository, MusicianService musicianService) {
+    public ProjectController(ProjectService projectService, MusicianService musicianService) {
         this.projectService = projectService;
-        this.agreementService = agreementService;
         this.musicianService = musicianService;
-    }
-
-    @GetMapping("/musician/project/{projectId}/agreement")
-    public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) throws AccessDeniedException {
-        String email = authentication.getName();
-        Musician musician = musicianService.findMusicianByEmail(email);
-
-        Project project = projectService.getProjectById(projectId);
-
-        if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
-            throw new AccessDeniedException("You are not invited to this project.");
-        }
-
-        String agreementContent = agreementService.generateAgreementContent(project, musician);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
-
-        boolean accepted = project.getProjectMembers().contains(musician);
-
-        model.addAttribute("project", projectDTO);
-        model.addAttribute("agreementContent", agreementContent);
-        model.addAttribute("hasResponded", accepted);
-        model.addAttribute("responseStatus", accepted ? "Accepted" : "Pending");
-
-        return "agreement";
     }
 
     @PostMapping("/musician/project/{projectId}/invitation/accept")
@@ -69,7 +38,7 @@ public class ProjectController {
         String email = authentication.getName();
         Musician musician = musicianService.findMusicianByEmail(email);
         projectService.acceptInvitation(projectId, musician.getId());
-        return "redirect:/musician/project/" + projectId + "/agreement?acceptSuccess";
+        return "redirect:/musician/project/" + projectId + "/agreement";
     }
 
     @PostMapping("/musician/project/{projectId}/invitation/reject")
@@ -77,7 +46,7 @@ public class ProjectController {
         String email = authentication.getName();
         Musician musician = musicianService.findMusicianByEmail(email);
         projectService.rejectInvitation(projectId, musician.getId());
-        return "redirect:/musician/project/" + projectId + "/agreement?rejectSuccess";
+        return "redirect:/musician/project/" + projectId + "/agreement";
     }
 
     @GetMapping("/musician/project/{id}")
@@ -173,32 +142,9 @@ public class ProjectController {
         if (bindingResult.hasErrors()) {
             return "project-details";
         }
-        projectService.updateProject(id, projectBasicDTO);
+        projectService.updateBasicProjectInfo(id, projectBasicDTO);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
         return "redirect:/admin/project/" + id;
-    }
-
-    @GetMapping("/admin/project/{id}/template/edit")
-    public String editTemplateForm(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
-        AgreementTemplate template = project.getAgreementTemplate();
-
-        model.addAttribute("project", projectDTO);
-        model.addAttribute("templateContent", template.getContent());
-        return "edit-template";
-    }
-
-    @PostMapping("/admin/project/{id}/template/edit")
-    public String updateTemplate(@PathVariable Long id, @RequestParam String templateContent, RedirectAttributes redirectAttributes) {
-        Project project = projectService.getProjectById(id);
-        AgreementTemplate template = project.getAgreementTemplate();
-
-        template.setContent(templateContent);
-        agreementService.saveTemplate(template);
-
-        redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
-        return "redirect:/admin/project/" + id + "/template/edit";
     }
 
     @GetMapping("/admin/project/{projectId}/instrumentCount/edit")
@@ -227,6 +173,22 @@ public class ProjectController {
 
         redirectAttributes.addFlashAttribute("success", "Instrument configuration updated successfully!");
         return "redirect:/admin/project/" + projectId + "/instrumentCount/edit";
+    }
+
+    @GetMapping("/admin/project/{projectId}/programme")
+    public String viewProgramme(@PathVariable Long projectId, Model model) {
+        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("programme", projectDTO.getProgramme());
+        model.addAttribute("conductor", projectDTO.getConductor());
+        return "admin-edit-programme";
+    }
+
+    @PostMapping("/admin/project/{projectId}/programme")
+    public String updateProgramme(@PathVariable Long projectId, String conductor, String programme, RedirectAttributes redirectAttributes) {
+        projectService.updateProgrammeAndConductor(projectId, conductor, programme);
+        redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
+        return "redirect:/admin/project/" + projectId + "/programme";
     }
 
 }

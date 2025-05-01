@@ -22,6 +22,9 @@ public class Project {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String location;
+    private String conductor;
+    private String programme;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "accepted_musicians_projects",

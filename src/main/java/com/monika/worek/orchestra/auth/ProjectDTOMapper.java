@@ -17,6 +17,9 @@ public class ProjectDTOMapper {
                 .description(project.getDescription())
                 .startDate(project.getStartDate())
                 .endDate(project.getEndDate())
+                .location(project.getLocation())
+                .conductor(project.getConductor())
+                .programme(project.getProgramme())
                 .projectMembers(project.getProjectMembers() != null
                         ? project.getProjectMembers().stream()
                         .map(MusicianBasicDTOMapper::mapToDto)

@@ -20,8 +20,6 @@
 
 <p><strong>Description:</strong> <span th:text="${project.description}"></span></p>
 <p><strong>Dates:</strong> <span th:text="${#temporals.format(project.startDate, 'yyyy-MM-dd')}"></span> - <span th:text="${#temporals.format(project.endDate, 'yyyy-MM-dd')}"></span></p>
-<!--<p><strong>Location:</strong> <span th:text="${project.location}"></span></p>-->
-<!--<p><strong>Wage:</strong> <span th:text="${project.wage}"></span></p> <hr>-->
 
 <h2>Agreement</h2>
 <div class="agreement-content">
@@ -45,10 +43,4 @@
 </div>
 
 <p><a th:href="@{/musicianPage}">Back to home</a></p> </body>
-<div th:if="${param.acceptSuccess}" class="alert alert-success">
-    You have successfully accepted the project.
-</div>
-<div th:if="${param.rejectSuccess}" class="alert alert-warning">
-    You have rejected the project.
-</div>
 </html>

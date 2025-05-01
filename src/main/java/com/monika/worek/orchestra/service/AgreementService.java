@@ -7,6 +7,8 @@ import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -26,6 +28,14 @@ public class AgreementService {
         Objects.requireNonNull(project, "Project cannot be null");
         Objects.requireNonNull(musician, "Musician cannot be null");
 
+        String templateContent = getTemplateContent(project);
+        Map<String, String> valuesMap = prepareValueMap(project, musician);
+        StringSubstitutor substitutor = new StringSubstitutor(valuesMap, "${", "}");
+
+        return substitutor.replace(templateContent);
+    }
+
+    private static String getTemplateContent(Project project) {
         AgreementTemplate template = project.getAgreementTemplate();
 
         if (template == null) {
@@ -36,12 +46,7 @@ public class AgreementService {
         if (templateContent == null || templateContent.isBlank()) {
             throw new IllegalStateException("Cannot generate agreement: The assigned template '" + "' is empty.");
         }
-
-        Map<String, String> valuesMap = prepareValueMap(project, musician);
-
-        StringSubstitutor sub = new StringSubstitutor(valuesMap, "${", "}");
-
-        return sub.replace(templateContent);
+        return templateContent;
     }
 
     private Map<String, String> prepareValueMap(Project project, Musician musician) {
@@ -50,53 +55,46 @@ public class AgreementService {
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-
-        // --- Musician Data (with null checks) ---
+        valuesMap.put("current.date", LocalDate.now().format(dateFormatter));
         valuesMap.put("musician.fullName", String.format("%s %s",
                 Objects.toString(musician.getFirstName(), ""),
                 Objects.toString(musician.getLastName(), "")).trim());
-        valuesMap.put("musician.firstName", Objects.toString(musician.getFirstName(), na));
-        valuesMap.put("musician.lastName", Objects.toString(musician.getLastName(), na));
-        valuesMap.put("musician.email", Objects.toString(musician.getEmail(), na));
-        valuesMap.put("musician.pesel", maskData(musician.getPesel()));
         valuesMap.put("musician.address", musician.getAddress() != null ? musician.getAddress() : na);
-        valuesMap.put("musician.bankAccountNumber", maskData(musician.getBankAccountNumber()));
-        valuesMap.put("musician.taxOffice", musician.getTaxOffice() != null ? musician.getTaxOffice().getDisplayName() : na);
+        valuesMap.put("musician.bankAccountNumber", musician.getBankAccountNumber());
+        valuesMap.put("musician.instrument", musician.getInstrument().toString());
 
-        valuesMap.put("project.name", Objects.toString(project.getName(), na));
-        valuesMap.put("project.description", Objects.toString(project.getDescription(), na));
-        valuesMap.put("project.startDate", project.getStartDate() != null ? project.getStartDate().format(dateFormatter) : na);
         valuesMap.put("project.endDate", project.getEndDate() != null ? project.getEndDate().format(dateFormatter) : na);
-        //valuesMap.put("project.location", Objects.toString(project.getLocation(), na));
-        //valuesMap.put("project.wage", project.getWage() != null ? project.getWage().toString() : na); // Uncommented
-
-        valuesMap.put("current.date", LocalDate.now().format(dateFormatter));
+        valuesMap.put("project.location", Objects.toString(project.getLocation(), na));
+        valuesMap.put("project.conductor", project.getConductor() != null ? project.getConductor() : na);
+        valuesMap.put("project.programme", Objects.toString(project.getProgramme(), na));
+        valuesMap.put("paymentDeadline", Objects.toString(getPaymentDeadline(project), na));
+        valuesMap.put("wage", Objects.toString(getWage(project, musician), na));
+        valuesMap.put("wageNet", Objects.toString(getNetWage(project, musician), na));
 
         return valuesMap;
     }
 
-    // Enhanced masking logic
-    private String maskData(String data) {
-        if (data == null || data.isBlank()) {
-            return "******"; // Or N/A
-        }
-        // Example: Mask Polish IBAN (PL + 26 digits) - show PL and last 4 digits
-        if (data.matches("PL\\d{26}")) {
-            return "PL**************************" + data.substring(data.length() - 4);
-        }
-        // Example: Mask PESEL (11 digits) - heavily masked
-        else if (data.matches("\\d{11}")) {
-            return "*******" + data.substring(data.length()-3);
-        }
-        // Default generic masking for other potentially sensitive data
-        else if (data.length() > 4) {
-            return "****" + data.substring(data.length() - 4);
-        } else {
-            return "****"; // Mask short strings completely
-        }
-    }
-
     public void saveTemplate(AgreementTemplate agreementTemplate) {
         templateRepository.save(agreementTemplate);
+    }
+
+    private BigDecimal getWage(Project project, Musician musician) {
+        String group = musician.getInstrument() != null ? musician.getInstrument().getGroup() : null;
+        if (group != null) {
+            return project.getGroupSalaries().get(group);
+        }
+        return null;
+    }
+
+    private BigDecimal getNetWage(Project project, Musician musician) {
+        BigDecimal grossWage = getWage(project, musician);
+        if (grossWage == null) {
+            return BigDecimal.ZERO;
+        }
+        return grossWage.multiply(BigDecimal.valueOf(0.91)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private LocalDate getPaymentDeadline(Project project) {
+        return project.getEndDate().plusDays(14);
     }
 }

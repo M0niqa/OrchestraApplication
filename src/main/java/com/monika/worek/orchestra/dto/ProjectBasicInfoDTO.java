@@ -27,6 +27,8 @@ public class ProjectBasicInfoDTO {
     @NotNull(message = "End date is required")
     @FutureOrPresent(message = "End date cannot be in the past")
     private LocalDate endDate;
+    @NotNull(message = "Location is required")
+    private String location;
     private String description;
 
 }

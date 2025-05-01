@@ -19,6 +19,10 @@
     <input type="date" id="endDate" th:field="*{endDate}" /><br />
     <div class="text-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
 
+    <label for="location">Location:</label>
+    <input type="text" id="location" th:field="*{endDate}" /><br />
+    <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+
     <button type="submit">Add Project</button>
 </form>
 </body>

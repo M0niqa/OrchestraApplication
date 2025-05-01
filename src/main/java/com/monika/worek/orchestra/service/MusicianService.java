@@ -44,4 +44,11 @@ public class MusicianService {
         user.setTaxOffice(userDTO.getTaxOffice());
         user.setInstrument(userDTO.getInstrument());
     }
+
+    private String maskPesel(String pesel) {
+        if (!pesel.isBlank()) {
+            return "*******" + pesel.substring(pesel.length()-3);
+        }
+        return "";
+    }
 }
