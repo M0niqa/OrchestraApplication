@@ -4,7 +4,6 @@ import com.monika.worek.orchestra.dto.UserDTO;
 import com.monika.worek.orchestra.model.Role;
 import com.monika.worek.orchestra.service.TwoFactorAuthService;
 import com.monika.worek.orchestra.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +25,6 @@ public class TwoFactorAuthController {
     public String twoFactorPage(@RequestParam String email, Model model) {
         model.addAttribute("email", email);
         return "2fa";
-    }
-
-    @PostMapping("/send")
-    public ResponseEntity<?> sendCode(@RequestParam String email) {
-        twoFactorAuthService.sendVerificationCode(email);
-        return ResponseEntity.ok("Verification code sent to email.");
     }
 
     @PostMapping("/2fa/verify")
