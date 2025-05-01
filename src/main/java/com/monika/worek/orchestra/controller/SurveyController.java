@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class SurveyController {
@@ -45,14 +46,14 @@ public class SurveyController {
         Musician musician = musicianRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
 
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        Survey survey = project.getSurvey();
-        model.addAttribute("project", project);
+        Optional<Survey> surveyOptional = surveyService.findByProjectId(projectId);
 
-        if (survey == null || survey.getQuestions().isEmpty()) {
+        if (surveyOptional.isEmpty() || surveyOptional.get().getQuestions().isEmpty()) {
             model.addAttribute("noSurvey", true);
             return "survey";
         }
+
+        Survey survey = surveyOptional.get();
 
         if (survey.isClosed()) {
             model.addAttribute("surveyClosed", true);
@@ -67,21 +68,19 @@ public class SurveyController {
 
         SurveySubmissionDTO submissionDTO = new SurveySubmissionDTO();
         model.addAttribute("submissionDTO", submissionDTO);
-        model.addAttribute("project", survey.getProject());
+        model.addAttribute("projectId", survey.getProject().getId());
+        model.addAttribute("projectName", survey.getProject().getName());
         model.addAttribute("questions", survey.getQuestions());
 
         return "survey";
     }
 
     @PostMapping("/musician/project/{projectId}/survey")
-    public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO,
-                               Authentication authentication) {
-
+    public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO, Authentication authentication, RedirectAttributes redirectAttributes) {
         Map<Long, String> responses = submissionDTO.getResponses();
         Musician musician = musicianRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-        Survey survey = surveyRepository.findByProjectId(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+        Survey survey = surveyService.findByProjectId(projectId).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
         for (Map.Entry<Long, String> entry : responses.entrySet()) {
             Long questionId = entry.getKey();
@@ -95,8 +94,9 @@ public class SurveyController {
             }
         }
 
-        surveyQuestionRepository.saveAll(survey.getQuestions());
+        surveyService.saveQuestions(survey.getQuestions());
         surveyService.saveSubmission(new SurveySubmission(survey, musician));
+        redirectAttributes.addFlashAttribute("submissionSuccess", "survey submitted successfully!");
 
         return "redirect:/musician/project/" + projectId + "/survey";
     }
@@ -113,7 +113,8 @@ public class SurveyController {
         List<SurveyQuestion> questions = surveyQuestionRepository.findAllBySurvey(survey);
         long missingSubmissions = surveyService.calculateMissingSubmissions(survey, project);
 
-        model.addAttribute("project", project);
+        model.addAttribute("projectId", project.getId());
+        model.addAttribute("projectName", project.getName());
         model.addAttribute("survey", survey);
         model.addAttribute("questions", questions);
         model.addAttribute("surveyQuestionDTO", new SurveyQuestionDTO());
@@ -134,7 +135,7 @@ public class SurveyController {
         List<SurveyQuestion> questions = surveyQuestionRepository.findAllBySurvey(survey);
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("project", project);
+            model.addAttribute("projectName", project.getName());
             model.addAttribute("survey", survey);
             model.addAttribute("questions", questions);
             return "admin-survey-questions";
@@ -145,16 +146,14 @@ public class SurveyController {
         question.setSurvey(survey);
         survey.getQuestions().add(question);
 
-        surveyRepository.save(survey);
+        surveyService.saveSurvey(survey);
 
         redirectAttributes.addFlashAttribute("success", "Survey question added.");
         return "redirect:/admin/project/" + projectId + "/survey";
     }
 
     @PostMapping("/admin/project/{projectId}/survey/{questionId}/delete")
-    public String deleteSurveyQuestion(@PathVariable Long projectId,
-                                       @PathVariable Long questionId,
-                                       RedirectAttributes redirectAttributes) {
+    public String deleteSurveyQuestion(@PathVariable Long projectId, @PathVariable Long questionId, RedirectAttributes redirectAttributes) {
         surveyQuestionRepository.deleteById(questionId);
         redirectAttributes.addFlashAttribute("success", "Survey question deleted.");
         return "redirect:/admin/project/" + projectId + "/survey";
@@ -174,5 +173,4 @@ public class SurveyController {
 
         return "redirect:/admin/project/" + projectId + "/survey";
     }
-
 }

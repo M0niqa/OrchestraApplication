@@ -1,7 +1,9 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectDTOMapper;
+import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
@@ -95,21 +97,23 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public LinkedHashMap<Instrument, List<Musician>> getAvailableMusiciansByInstrument(Long projectId) {
+    public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getAvailableMusiciansByInstrument(Long projectId) {
         return getAvailableMusicians(projectId).stream()
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
+                .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
-                        Musician::getInstrument,
+                        MusicianBasicDTO::getInstrument,
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));
     }
 
-    public LinkedHashMap<Instrument, List<Musician>> getProjectMembersByInstrument(Project project) {
+    public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getProjectMembersByInstrument(Project project) {
         return project.getProjectMembers().stream()
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
+                .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
-                        Musician::getInstrument,
+                        MusicianBasicDTO::getInstrument,
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));

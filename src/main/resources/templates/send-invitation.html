@@ -6,9 +6,7 @@
 </head>
 <body>
 <h1>Add Musicians</h1>
-<div th:if="${param.invitationSuccess}" class="alert alert-success">
-    Invitations sent successfully!
-</div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 <form th:action="@{'/inspector/project/' + ${projectId} + '/sendInvitation'}" method="post">
     <input type="hidden" name="projectId" th:value="${projectId}"/>
     <h3>Missing instruments count</h3>

@@ -21,17 +21,12 @@ public class RegistrationController {
 
     @GetMapping("/registerMusician")
     public String showRegisterMusician(Model model) {
-        if (!model.containsAttribute("musician")) {
-            model.addAttribute("musician", MusicianRegisterDTO.builder().build());
-        }
+        model.addAttribute("musician", MusicianRegisterDTO.builder().build());
         return "registration-form";
     }
 
     @PostMapping("/registerMusician")
-    public String registerMusician(@Valid @ModelAttribute("musician") MusicianRegisterDTO dto,
-                                   BindingResult bindingResult,
-                                   Model model) {
-
+    public String registerMusician(@Valid @ModelAttribute("musician") MusicianRegisterDTO dto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "registration-form";
         }
@@ -40,7 +35,6 @@ public class RegistrationController {
             registrationService.sendLink(dto.getEmail());
             return "registration-confirm";
         } catch (IllegalArgumentException e) {
-            System.out.println("exception");
             model.addAttribute("error", e.getMessage().contains("Musician already exists") ? "UserExists" : "RegistrationFailed");
             return "registration-form";
         }

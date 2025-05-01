@@ -1,46 +1,50 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title>Survey for Project: [[${project.name}]]</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Survey for Project: [[${projectName}]]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container py-5">
-<h2>Survey for Project: <span th:text="${project.name}"></span></h2>
+<h2>Survey for Project: <span th:text="${projectName}"></span></h2>
 
 <div th:if="${noSurvey}">
-  <div class="alert alert-info">No survey available for this project.</div>
+    <div class="alert alert-info">No survey available for this project.</div>
 </div>
 
 <div th:unless="${noSurvey}">
-  <div th:if="${surveyClosed}">
-    <div class="alert alert-warning">The survey for this project has been closed.</div>
-  </div>
+    <div th:if="${surveyClosed}">
+        <div class="alert alert-warning">The survey for this project has been closed.</div>
+    </div>
 
-  <div th:unless="${surveyClosed}">
-  <div th:if="${submissionSuccess}" class="alert alert-success">
-    <span th:text="${submissionSuccess}"></span>
-  </div>
-
-  <div th:if="${surveySubmitted} and ${#lists.isEmpty(submissionSuccess)}">
-    <div class="alert alert-success">You have submitted the survey for this project.</div>
-  </div>
-
-  <div th:unless="${surveySubmitted}">
-    <form th:action="@{/musician/project/{id}/survey(id=${project.id})}"
-          th:object="${submissionDTO}" method="post">
-      <div th:each="question : ${questions}">
-        <p th:text="${question.questionText}"></p>
-        <div>
-          <input type="radio" th:field="*{responses[__${question.id}__]}" value="YES"> Yes
-          <input type="radio" th:field="*{responses[__${question.id}__]}" value="NO"> No
+    <div th:unless="${surveyClosed}">
+        <div th:if="${submissionSuccess}" class="alert alert-success">
+            <span th:text="${submissionSuccess}"></span>
         </div>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
+
+        <div th:if="${surveySubmitted} and ${#lists.isEmpty(submissionSuccess)}">
+            <div class="alert alert-success">You have already submitted the survey for this project.</div>
+        </div>
+
+        <div th:unless="${surveySubmitted}">
+            <form th:action="@{/musician/project/{id}/survey(id=${projectId})}"
+                  th:object="${submissionDTO}" method="post">
+                <div th:each="question : ${questions}">
+                    <p th:text="${question.questionText}"></p>
+                    <div>
+                        <label>
+                            <input type="radio" th:field="*{responses[__${question.id}__]}" value="YES">
+                        </label> Yes
+                        <label>
+                            <input type="radio" th:field="*{responses[__${question.id}__]}" value="NO">
+                        </label> No
+                    </div>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
 </div>
 
-
-<p><a th:href="@{/musicianPage}">Back to home</a></p>
+    <p><a th:href="@{/musicianPage}">Back to home</a></p>
 </body>
 </html>

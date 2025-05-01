@@ -17,7 +17,7 @@ INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 3),
        (2, 2),
        (2, 3),
-       (3, 3);
+       (3, 1);
 
 --
 -- INSERT INTO Musician (firstName, lastName, email, password, birthdate, address, pesel, taxOffice, instrument, bankAccountNumber)
@@ -76,9 +76,6 @@ INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES
 
 -- Musician 2 invited to Project 1
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
-
--- Musician 2 invited to Project 2
-INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 2);
 
 -- Musician 2 accepted Project 2
 INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES (3, 2);

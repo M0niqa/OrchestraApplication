@@ -29,9 +29,7 @@
         <a th:href="@{/logout}" class="btn btn-danger btn-lg m-2">Log out</a>
         <a th:href="@{/archivedProjects}" class="btn btn-secondary mb-3">View Archived Projects</a>
     </div>
-    <div th:if="${param.addProjectSuccess}" class="alert alert-success">
-        Project added successfully!
-    </div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div>
         <h2>Ongoing Projects</h2>
         <table class="table">

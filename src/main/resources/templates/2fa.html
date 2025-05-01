@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>2FA Verification</title>
 </head>
@@ -11,6 +11,7 @@
     <label for="code">Verification Code:</label>
     <input type="text" id="code" name="code" required />
     <button type="submit">Verify</button>
+    <div th:if="${error}" class="alert alert-success mt-3" th:text="${error}"></div>
 </form>
 </body>
 </html>

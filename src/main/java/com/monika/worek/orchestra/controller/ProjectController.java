@@ -3,6 +3,7 @@ package com.monika.worek.orchestra.controller;
 import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
+import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.AgreementTemplate;
@@ -93,12 +94,12 @@ public class ProjectController {
 
 
     @GetMapping("/inspector/project/{projectId}/sendInvitation")
-    public String showAddMusiciansPage(@PathVariable Long projectId, Model model) {
+    public String showInviteMusiciansPage(@PathVariable Long projectId, Model model) {
         Project project = projectService.getProjectById(projectId);
 
         Map<Instrument, Integer> remainingCounts = projectService.getRemainingInstrumentsCount(project);
 
-        LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument =
+        LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument =
                 projectService.getAvailableMusiciansByInstrument(projectId);
 
         model.addAttribute("musiciansByInstrument", musiciansByInstrument);
@@ -109,14 +110,14 @@ public class ProjectController {
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
-    public String inviteMusicians(@PathVariable Long projectId,
-                                  @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds) {
+    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds, RedirectAttributes redirectAttributes) {
         if (musicianIds != null && !musicianIds.isEmpty()) {
             for (Long musicianId : musicianIds) {
                 projectService.inviteMusician(projectId, musicianId);
             }
         }
-        return "redirect:/inspector/project/" + projectId + "/sendInvitation?invitationSuccess";
+        redirectAttributes.addFlashAttribute("success", "Invitations sent successfully!");
+        return "redirect:/inspector/project/" + projectId + "/sendInvitation";
     }
 
 
@@ -133,23 +134,24 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult) {
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, RedirectAttributes redirectAttributes, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "addProject";
         }
         Project project = ProjectBasicInfoDTOMapper.mapToEntity(projectDTO);
         projectService.saveProject(project);
-        return "redirect:/adminPage?addProjectSuccess";
+        redirectAttributes.addFlashAttribute("success", "Project added successfully!");
+        return "redirect:/adminPage";
     }
 
     @GetMapping({"/admin/project/{id}/musicianStatus", "/inspector/project/{id}/musicianStatus"})
     public String showMusicianStatus(@PathVariable Long id, Model model) {
         Project project = projectService.getProjectById(id);
         ProjectDTO projectDTO = projectService.getProjectDtoById(id);
-        LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
+        LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
         model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
-        model.addAttribute("refusedMusicians", project.getMusiciansWhoRejected());
-        model.addAttribute("pendingMusicians", project.getInvited());
+        model.addAttribute("refusedMusicians", projectDTO.getMusiciansWhoRejected());
+        model.addAttribute("pendingMusicians", projectDTO.getInvited());
         model.addAttribute("project", projectDTO);
 
         return "musicianStatus";
@@ -173,8 +175,6 @@ public class ProjectController {
         if (bindingResult.hasErrors()) {
             return "project-details";
         }
-        System.out.println("Updating project with name: " + projectBasicDTO.getName());
-        System.out.println("DTO ID: " + projectBasicDTO.getId());
         projectService.updateProject(id, projectBasicDTO);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
         return "redirect:/admin/project/" + id;
@@ -192,9 +192,7 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/project/{id}/template/edit")
-    public String updateTemplate(@PathVariable Long id,
-                                 @RequestParam String templateContent,
-                                 RedirectAttributes redirectAttributes) {
+    public String updateTemplate(@PathVariable Long id, @RequestParam String templateContent, RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(id);
         AgreementTemplate template = project.getAgreementTemplate();
 
@@ -221,13 +219,11 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/project/{projectId}/instrumentCount/edit")
-    public String updateInstrumentConfig(@PathVariable Long projectId,
-                                         @ModelAttribute InstrumentCountAndSalaryDTO configDTO,
-                                         RedirectAttributes redirectAttributes) {
+    public String updateInstrumentConfig(@PathVariable Long projectId, @ModelAttribute InstrumentCountAndSalaryDTO instrumentConfigDTO, RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId);
 
-        project.setInstrumentCounts(configDTO.getInstrumentCounts());
-        project.setGroupSalaries(configDTO.getGroupSalaries());
+        project.setInstrumentCounts(instrumentConfigDTO.getInstrumentCounts());
+        project.setGroupSalaries(instrumentConfigDTO.getGroupSalaries());
 
         projectService.saveProject(project);
 

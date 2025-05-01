@@ -56,6 +56,4 @@ public class UserController {
         model.addAttribute("success", "Password changed successfully!");
         return "update-password";
     }
-
-
 }

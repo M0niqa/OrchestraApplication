@@ -35,9 +35,7 @@ public class TwoFactorAuthController {
     }
 
     @PostMapping("/2fa/verify")
-    public String verify(@RequestParam String email,
-                         @RequestParam String code,
-                         Model model) {
+    public String verify(@RequestParam String email, @RequestParam String code, Model model) {
         if (twoFactorAuthService.verifyCode(email, code)) {
             UserDTO user = userService.findUserByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -55,7 +53,6 @@ public class TwoFactorAuthController {
 
             model.addAttribute("isInspector", isInspector);
             model.addAttribute("isMusician", isMusician);
-            model.addAttribute("user", user);
 
             if (isInspector) {
                 return "redirect:/inspectorPage";
