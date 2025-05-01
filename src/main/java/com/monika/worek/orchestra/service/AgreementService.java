@@ -3,9 +3,8 @@ package com.monika.worek.orchestra.service;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import org.apache.commons.text.StringSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,7 +14,13 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class AgreementGenerationService {
+public class AgreementService {
+
+    private final AgreementTemplateRepository templateRepository;
+
+    public AgreementService(AgreementTemplateRepository templateRepository) {
+        this.templateRepository = templateRepository;
+    }
 
     public String generateAgreementContent(Project project, Musician musician) {
         Objects.requireNonNull(project, "Project cannot be null");
@@ -89,5 +94,9 @@ public class AgreementGenerationService {
         } else {
             return "****"; // Mask short strings completely
         }
+    }
+
+    public void saveTemplate(AgreementTemplate agreementTemplate) {
+        templateRepository.save(agreementTemplate);
     }
 }

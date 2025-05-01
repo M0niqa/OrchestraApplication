@@ -171,15 +171,6 @@ public class ProjectService {
     }
 
     @Transactional
-    public void updateProject(Long id, ProjectDTO dto) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        project.setName(dto.getName());
-        project.setDescription(dto.getDescription());
-        project.setStartDate(dto.getStartDate());
-        project.setEndDate(dto.getEndDate());
-    }
-
-    @Transactional
     public void updateProject(Long id, ProjectBasicInfoDTO dto) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
         project.setName(dto.getName());

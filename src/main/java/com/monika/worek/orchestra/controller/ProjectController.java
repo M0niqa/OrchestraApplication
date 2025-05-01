@@ -11,7 +11,7 @@ import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import com.monika.worek.orchestra.service.AgreementGenerationService;
+import com.monika.worek.orchestra.service.AgreementService;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
@@ -31,14 +31,12 @@ import java.util.Map;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final AgreementGenerationService agreementGenerationService;
-    private final AgreementTemplateRepository agreementTemplateRepository;
+    private final AgreementService agreementService;
     private final MusicianService musicianService;
 
-    public ProjectController(ProjectService projectService, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository, MusicianService musicianService) {
+    public ProjectController(ProjectService projectService, AgreementService agreementService, AgreementTemplateRepository agreementTemplateRepository, MusicianService musicianService) {
         this.projectService = projectService;
-        this.agreementGenerationService = agreementGenerationService;
-        this.agreementTemplateRepository = agreementTemplateRepository;
+        this.agreementService = agreementService;
         this.musicianService = musicianService;
     }
 
@@ -53,7 +51,7 @@ public class ProjectController {
             throw new AccessDeniedException("You are not invited to this project.");
         }
 
-        String agreementContent = agreementGenerationService.generateAgreementContent(project, musician);
+        String agreementContent = agreementService.generateAgreementContent(project, musician);
         ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
 
         boolean accepted = project.getProjectMembers().contains(musician);
@@ -197,7 +195,7 @@ public class ProjectController {
         AgreementTemplate template = project.getAgreementTemplate();
 
         template.setContent(templateContent);
-        agreementTemplateRepository.save(template);
+        agreementService.saveTemplate(template);
 
         redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
         return "redirect:/admin/project/" + id + "/template/edit";

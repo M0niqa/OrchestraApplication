@@ -23,6 +23,10 @@ public class SurveyService {
         this.surveyQuestionRepository = surveyQuestionRepository;
     }
 
+    public List<SurveyQuestion> findAllQuestionsBySurvey(Survey survey) {
+        return surveyQuestionRepository.findAllBySurvey(survey);
+    }
+
     public boolean existsBySurveyAndMusician(Survey survey, Musician musician) {
         return surveySubmissionRepository.existsBySurveyAndMusician(survey, musician);
     }
@@ -34,6 +38,10 @@ public class SurveyService {
 
     public Optional<Survey> findByProjectId(Long id) {
         return surveyRepository.findByProjectId(id);
+    }
+
+    public SurveyQuestion findQuestionById(Long id) {
+        return surveyQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey question not found"));
     }
 
     @Transactional
@@ -49,5 +57,9 @@ public class SurveyService {
     @Transactional
     public void saveSurvey(Survey survey) {
         surveyRepository.save(survey);
+    }
+
+    public void deleteQuestionById(Long id) {
+        surveyQuestionRepository.deleteById(id);
     }
 }

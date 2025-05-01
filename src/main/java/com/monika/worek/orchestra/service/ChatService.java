@@ -20,8 +20,6 @@ public class ChatService {
     }
 
     public List<ChatMessage> getChatHistory(Long senderId, Long receiverId) {
-        List<ChatMessage> history = chatRepository.findChatMessagesBySenderAndReceiver(senderId, receiverId);
-        System.out.println(history);
-        return history;
+        return chatRepository.findChatMessagesBySenderAndReceiver(senderId, receiverId);
     }
 }

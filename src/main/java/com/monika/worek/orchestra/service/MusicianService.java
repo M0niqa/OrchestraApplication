@@ -2,7 +2,6 @@ package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
 import com.monika.worek.orchestra.auth.MusicianDTOMapper;
-import com.monika.worek.orchestra.auth.UserBasicDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDTO;
 import com.monika.worek.orchestra.model.Musician;
@@ -10,9 +9,6 @@ import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MusicianService {
@@ -35,12 +31,6 @@ public class MusicianService {
     public MusicianBasicDTO getMusicianBasicDtoByEmail(String email) {
         return MusicianBasicDTOMapper.mapToDto(findMusicianByEmail(email));
     }
-//
-//    @Transactional
-//    public void deleteUser(String email) {
-//        if (isCurrentUserAdmin())
-//            userRepository.deleteByEmail(email);
-//    }
 
     @Transactional
     public void updateUserData(String currentEmail, MusicianDTO userDTO) {
@@ -53,9 +43,5 @@ public class MusicianService {
         user.setBankAccountNumber(userDTO.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
         user.setInstrument(userDTO.getInstrument());
-    }
-
-    public List<Musician> getAllMusicians() {
-        return (List<Musician>) musicianRepository.findAll();
     }
 }
