@@ -9,14 +9,14 @@ import java.util.Set;
 @Getter
 public class UserDTO {
 
-    private Long id;
+    private final Long id;
     @NotBlank(message = "First name is required")
     private String firstName;
     @NotBlank(message = "Last name is required")
     private String lastName;
-    private String email;
-    private String password;
-    private Set<UserRole> roles;
+    private final String email;
+    private final String password;
+    private final Set<UserRole> roles;
 
     public UserDTO(Long id, String firstName, String lastName, String email, String password, Set<UserRole> roles) {
         this.id = id;

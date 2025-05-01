@@ -1,30 +1,26 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.auth.NewProjectDTOMapper;
+import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
-import com.monika.worek.orchestra.dto.NewProjectDTO;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.service.AgreementGenerationService;
+import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,22 +30,21 @@ import java.util.Map;
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final MusicianRepository musicianRepository;
     private final AgreementGenerationService agreementGenerationService;
     private final AgreementTemplateRepository agreementTemplateRepository;
+    private final MusicianService musicianService;
 
-    public ProjectController(ProjectService projectService, MusicianRepository musicianRepository, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository) {
+    public ProjectController(ProjectService projectService, AgreementGenerationService agreementGenerationService, AgreementTemplateRepository agreementTemplateRepository, MusicianService musicianService) {
         this.projectService = projectService;
-        this.musicianRepository = musicianRepository;
         this.agreementGenerationService = agreementGenerationService;
         this.agreementTemplateRepository = agreementTemplateRepository;
+        this.musicianService = musicianService;
     }
 
     @GetMapping("/musician/project/{projectId}/agreement")
     public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) throws AccessDeniedException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Musician musician = musicianRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
+        String email = authentication.getName();
+        Musician musician = musicianService.findMusicianByEmail(email);
 
         Project project = projectService.getProjectById(projectId);
 
@@ -58,7 +53,7 @@ public class ProjectController {
         }
 
         String agreementContent = agreementGenerationService.generateAgreementContent(project, musician);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
 
         boolean accepted = project.getProjectMembers().contains(musician);
 
@@ -72,34 +67,23 @@ public class ProjectController {
 
     @PostMapping("/musician/project/{projectId}/invitation/accept")
     public String acceptInvitation(@PathVariable Long projectId, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Musician musician = musicianRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-        try {
-            projectService.acceptInvitation(projectId, musician.getId());
-            return "redirect:/musician/project/" + projectId + "/agreement?acceptSuccess";
-        } catch (Exception e) {
-            return "redirect:/musician/project/" + projectId + "/agreement?error=" + e.getMessage();
-        }
+        String email = authentication.getName();
+        Musician musician = musicianService.findMusicianByEmail(email);
+        projectService.acceptInvitation(projectId, musician.getId());
+        return "redirect:/musician/project/" + projectId + "/agreement?acceptSuccess";
     }
 
     @PostMapping("/musician/project/{projectId}/invitation/reject")
     public String rejectInvitation(@PathVariable Long projectId, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Musician musician = musicianRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-        try {
-            projectService.rejectInvitation(projectId, musician.getId());
-            return "redirect:/musician/project/" + projectId + "/agreement?rejectSuccess";
-        } catch (Exception e) {
-            return "redirect:/musician/project/" + projectId + "/agreement?error=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
-        }
+        String email = authentication.getName();
+        Musician musician = musicianService.findMusicianByEmail(email);
+        projectService.rejectInvitation(projectId, musician.getId());
+        return "redirect:/musician/project/" + projectId + "/agreement?rejectSuccess";
     }
 
     @GetMapping("/musician/project/{id}")
     public String viewProjectDetailsForMusician(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        ProjectDTO projectDTO = projectService.getProjectDtoById(id);
         model.addAttribute("project", projectDTO);
         return "musician-project-details";
     }
@@ -121,21 +105,18 @@ public class ProjectController {
         model.addAttribute("remainingCounts", remainingCounts);
         model.addAttribute("projectId", projectId);
 
-        return "sendInvitation";
+        return "send-invitation";
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
     public String inviteMusicians(@PathVariable Long projectId,
-                                  @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds,
-                                  RedirectAttributes redirectAttributes) {
+                                  @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds) {
         if (musicianIds != null && !musicianIds.isEmpty()) {
             for (Long musicianId : musicianIds) {
                 projectService.inviteMusician(projectId, musicianId);
             }
-            redirectAttributes.addFlashAttribute("success", "Invitations sent successfully!");
         }
-
-        return "redirect:/inspector/project/" + projectId + "/sendInvitation";
+        return "redirect:/inspector/project/" + projectId + "/sendInvitation?invitationSuccess";
     }
 
 
@@ -147,32 +128,24 @@ public class ProjectController {
 
     @GetMapping("/admin/addProject")
     public String showAddProjectForm(Model model) {
-        model.addAttribute("instruments", Instrument.values());
-        model.addAttribute("instrumentGroups", List.of("Strings", "Winds", "Brass", "Solo"));
-        model.addAttribute("projectDTO", new NewProjectDTO());
+        model.addAttribute("projectDTO", new ProjectBasicInfoDTO());
         return "addProject";
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") NewProjectDTO projectDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        model.addAttribute("instruments", Instrument.values());
-        model.addAttribute("instrumentGroups", List.of("Strings", "Winds", "Brass", "Solo"));
-        System.out.println("Project Name: " + projectDTO.getName());
-        System.out.println("Start Date: " + projectDTO.getStartDate());
-        System.out.println("End Date: " + projectDTO.getEndDate());
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "addProject";
         }
-        Project project = NewProjectDTOMapper.mapToEntity(projectDTO);
+        Project project = ProjectBasicInfoDTOMapper.mapToEntity(projectDTO);
         projectService.saveProject(project);
-        redirectAttributes.addFlashAttribute("success", "Project added successfully!");
-        return "redirect:/adminPage";
+        return "redirect:/adminPage?addProjectSuccess";
     }
 
     @GetMapping({"/admin/project/{id}/musicianStatus", "/inspector/project/{id}/musicianStatus"})
     public String showMusicianStatus(@PathVariable Long id, Model model) {
         Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        ProjectDTO projectDTO = projectService.getProjectDtoById(id);
         LinkedHashMap<Instrument, List<Musician>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
         model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
         model.addAttribute("refusedMusicians", project.getMusiciansWhoRejected());
@@ -183,41 +156,34 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/project/{id}/delete")
-    public String deleteProject(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            projectService.deleteProjectById(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Project deleted successfully.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete project.");
-        }
+    public String deleteProject(@PathVariable Long id) {
+        projectService.deleteProjectById(id);
         return "redirect:/adminPage";
     }
 
     @GetMapping("/admin/project/{id}")
     public String viewProject(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
-        model.addAttribute("project", projectDTO);
+        ProjectBasicInfoDTO projectBasicDTO = projectService.getProjectBasicDtoById(id);
+        model.addAttribute("project", projectBasicDTO);
         return "project-details";
     }
 
     @PostMapping("/admin/project/{id}/update")
-    public String updateProject(@PathVariable Long id,
-                                @Valid @ModelAttribute("project") ProjectDTO projectDTO, BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes, Model model) {
+    public String updateProject(@PathVariable Long id, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("projectId", id);
             return "project-details";
         }
-        projectService.updateProject(id, projectDTO);
-        redirectAttributes.addFlashAttribute("successMessage", "Project updated successfully.");
+        System.out.println("Updating project with name: " + projectBasicDTO.getName());
+        System.out.println("DTO ID: " + projectBasicDTO.getId());
+        projectService.updateProject(id, projectBasicDTO);
+        redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
         return "redirect:/admin/project/" + id;
     }
 
     @GetMapping("/admin/project/{id}/template/edit")
     public String editTemplateForm(@PathVariable Long id, Model model) {
         Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDTO(project);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
         AgreementTemplate template = project.getAgreementTemplate();
 
         model.addAttribute("project", projectDTO);

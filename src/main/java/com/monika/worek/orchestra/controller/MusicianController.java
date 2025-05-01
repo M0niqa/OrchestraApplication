@@ -1,6 +1,7 @@
 package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.MusicianDTO;
+import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.TaxOffice;
 import com.monika.worek.orchestra.service.MusicianService;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MusicianController {
@@ -23,19 +25,18 @@ public class MusicianController {
     }
 
     @GetMapping("/musicianPage")
-    public String showUserPage(Model model, Authentication authentication) {
+    public String showMusicianPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
-        MusicianDTO musicianDTO = musicianService.findMusicianByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserBasicDTO userBasicDTO = musicianService. getMusicianBasicDtoByEmail(currentEmail);
 
-        model.addAttribute("musician", musicianDTO);
+        model.addAttribute("musician", userBasicDTO);
         return "musicianPage";
     }
 
     @GetMapping("/userData")
     public String showUpdateDataForm(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
-        MusicianDTO musicianDTO = musicianService.findMusicianByEmail(currentEmail).orElseThrow();
-        model.addAttribute("musician", musicianDTO);
+        model.addAttribute("musician", musicianService.getMusicianDtoByEmail(currentEmail));
         model.addAttribute("instruments", Instrument.values());
         model.addAttribute("taxOffices", TaxOffice.values());
         return "musician-data";
@@ -43,17 +44,16 @@ public class MusicianController {
 
     @PostMapping("/userData")
     public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto, BindingResult bindingResult,
-                             Authentication authentication, Model model) {
-        model.addAttribute("instruments", Instrument.values());
-        model.addAttribute("taxOffices", TaxOffice.values());
-
+                             Authentication authentication, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("instruments", Instrument.values());
+            model.addAttribute("taxOffices", TaxOffice.values());
             return "musician-data";
         }
 
         musicianService.updateUserData(authentication.getName(), dto);
-        model.addAttribute("success", "Data updated successfully!");
-        return "musician-data";
+        redirectAttributes.addFlashAttribute("success", "Data updated successfully!");
+        return "redirect:/userData";
     }
 
 }

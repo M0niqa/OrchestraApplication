@@ -5,7 +5,7 @@ import com.monika.worek.orchestra.model.User;
 
 public class UserDTOMapper {
 
-    public static UserDTO map(User user) {
+    public static UserDTO mapToDto(User user) {
         return new UserDTO(
                 user.getId(),
                 user.getFirstName(),

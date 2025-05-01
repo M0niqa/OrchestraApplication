@@ -60,7 +60,8 @@ INSERT INTO AgreementTemplate (content) VALUES
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)
 VALUES
-    ('Summer Symphony', 'A summer concert series featuring classical music.', '2024-07-01', '2025-07-31', 1),
+    ('FMF', 'A film music.', '2025-05-01', '2025-07-31', 1),
+    ('Summer Symphony', 'A summer concert series featuring classical music with summer theme.', '2025-09-01', '2025-08-31', 1),
     ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-28', 1),
     ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
 
@@ -75,6 +76,9 @@ INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES
 
 -- Musician 2 invited to Project 1
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
+
+-- Musician 2 invited to Project 2
+INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 2);
 
 -- Musician 2 accepted Project 2
 INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES (3, 2);

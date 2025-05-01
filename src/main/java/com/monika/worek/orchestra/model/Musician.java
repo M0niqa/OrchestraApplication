@@ -36,7 +36,7 @@ public class Musician extends User {
     private Set<Project> acceptedProjects;
 
     @ManyToMany(mappedBy = "musiciansWhoRejected", fetch = FetchType.EAGER)
-    private Set<Project> refusedProjects;
+    private Set<Project> rejectedProjects;
 
 
     @Override

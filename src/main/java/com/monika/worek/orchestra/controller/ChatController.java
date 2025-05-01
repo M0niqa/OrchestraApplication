@@ -1,8 +1,7 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.dto.UserDTO;
+import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.ChatMessage;
-import com.monika.worek.orchestra.model.User;
 import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,21 +29,17 @@ public class ChatController {
 
     @GetMapping
     public String selectUser(Model model) {
-        List<User> users = userService.getAllUsers();
+        List<UserBasicDTO> users = userService.getAllUsers();
         model.addAttribute("users", users);
         return "chatSelect";
     }
 
     @GetMapping("/{receiverId}")
-    public String chatRoom(
-            @PathVariable Long receiverId,
-            Model model,
-            Authentication authentication
-    ) {
-        UserDTO userDTO = userService.findUserByEmail(authentication.getName()).get();
+    public String chatRoom(@PathVariable Long receiverId, Model model, Authentication authentication) {
+        UserBasicDTO userDTO = userService.getUserBasicDtoByEmail(authentication.getName());
         Long senderId = userDTO.getId();
 
-        UserDTO receiver = userService.findUserById(receiverId).get();
+        UserBasicDTO receiver = userService.findUserById(receiverId);
 
         List<ChatMessage> messages = chatService.getChatHistory(senderId, receiverId);
         model.addAttribute("messages", messages);

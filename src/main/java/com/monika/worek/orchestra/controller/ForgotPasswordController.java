@@ -5,7 +5,6 @@ import com.monika.worek.orchestra.service.PasswordResetService;
 import com.monika.worek.orchestra.service.TokenService;
 import com.monika.worek.orchestra.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,9 +32,9 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+    public String forgotPassword(@RequestParam String email) {
         passwordResetService.sendResetLink(email);
-        return ResponseEntity.ok("If your email exists in our system, a reset link has been sent.");
+        return "redirect:/forgot-password?sendSuccess";
     }
 
     @GetMapping("/reset-password")
@@ -43,6 +42,7 @@ public class ForgotPasswordController {
         if (tokenService.getEmailForToken(token) == null) {
             return "token-invalid";
         }
+
         PasswordResetDTO form = new PasswordResetDTO();
         form.setToken(token);
         model.addAttribute("passwordForm", form);
@@ -50,10 +50,7 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@Valid @ModelAttribute("passwordForm") PasswordResetDTO form,
-                                BindingResult bindingResult,
-                                Model model) {
-
+    public String resetPassword(@Valid @ModelAttribute("passwordForm") PasswordResetDTO form, BindingResult bindingResult, Model model) {
         model.addAttribute("token", form.getToken());
 
         if (bindingResult.hasErrors()) {
@@ -74,6 +71,5 @@ public class ForgotPasswordController {
         tokenService.invalidateToken(form.getToken());
         return "redirect:/login?resetSuccess";
     }
-
 }
 

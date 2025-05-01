@@ -7,9 +7,10 @@
 <body class="container py-5">
 <h2>Project Details</h2>
 
-<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
-<form th:action="@{project/{id}/update(id=${projectId})}" th:object="${project}" method="post">
+<form th:action="@{/admin/project/{id}/update(id=${project.id})}" th:object="${project}" method="post">
+  <input type="hidden" th:field="*{id}" />
   <div class="mb-3">
     <label>Name:</label>
     <input type="text" th:field="*{name}" class="form-control"/>

@@ -14,11 +14,11 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewProjectDTO {
+public class ProjectBasicInfoDTO {
 
+    private Long id;
     @NotBlank(message = "Name is required")
     private String name;
-    private String description;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull(message = "Start date is required")
     @FutureOrPresent(message = "Start date cannot be in the past")
@@ -27,6 +27,6 @@ public class NewProjectDTO {
     @NotNull(message = "End date is required")
     @FutureOrPresent(message = "End date cannot be in the past")
     private LocalDate endDate;
-    private Survey survey;
+    private String description;
 
 }

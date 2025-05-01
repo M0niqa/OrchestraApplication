@@ -1,31 +1,33 @@
 package com.monika.worek.orchestra.auth;
 
-import com.monika.worek.orchestra.dto.NewProjectDTO;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Project;
 
-public class NewProjectDTOMapper {
+public class ProjectBasicInfoDTOMapper {
 
-    public static NewProjectDTO mapToDTO(Project project) {
+    public static ProjectBasicInfoDTO mapToDto(Project project) {
         if (project == null) {
             return null;
         }
-        return NewProjectDTO.builder()
+        return ProjectBasicInfoDTO.builder()
+                .id(project.getId())
                 .name(project.getName())
-                .description(project.getDescription())
                 .startDate(project.getStartDate())
                 .endDate(project.getEndDate())
+                .description(project.getDescription())
                 .build();
     }
 
-    public static Project mapToEntity(NewProjectDTO dto) {
+    public static Project mapToEntity(ProjectBasicInfoDTO dto) {
         if (dto == null) {
             return null;
         }
         return Project.builder()
+                .id(dto.getId())
                 .name(dto.getName())
-                .description(dto.getDescription())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
+                .description(dto.getDescription())
                 .build();
     }
 }

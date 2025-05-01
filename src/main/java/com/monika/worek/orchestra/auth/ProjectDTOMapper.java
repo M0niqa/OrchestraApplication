@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 public class ProjectDTOMapper {
 
-    public static ProjectDTO mapToDTO(Project project) {
+    public static ProjectDTO mapToDto(Project project) {
         if (project == null) {
             return null;
         }

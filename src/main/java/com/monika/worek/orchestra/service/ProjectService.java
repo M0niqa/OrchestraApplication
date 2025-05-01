@@ -1,5 +1,8 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.auth.ProjectDTOMapper;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
@@ -128,19 +131,22 @@ public class ProjectService {
         return remainingCounts;
     }
 
-    public List<Project> getOngoingProjects() {
+    public List<ProjectBasicInfoDTO> getOngoingProjects() {
         LocalDate today = LocalDate.now();
-        return projectRepository.findByStartDateBeforeAndEndDateAfter(today, today.minusDays(1));
+        List<Project> projects = projectRepository.findByStartDateBeforeAndEndDateAfter(today.plusDays(1), today.minusDays(1));
+        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
     }
 
-    public List<Project> getFutureProjects() {
+    public List<ProjectBasicInfoDTO> getFutureProjects() {
         LocalDate today = LocalDate.now();
-        return projectRepository.findByStartDateAfter(today);
+        List<Project> projects = projectRepository.findByStartDateAfter(today);
+        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
     }
 
-    public List<Project> getArchivedProjects() {
+    public List<ProjectBasicInfoDTO> getArchivedProjects() {
         LocalDate today = LocalDate.now();
-        return projectRepository.findByEndDateBefore(today);
+        List<Project> projects = projectRepository.findByEndDateBefore(today);
+        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Transactional
@@ -152,6 +158,14 @@ public class ProjectService {
         return projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
     }
 
+    public ProjectDTO getProjectDtoById(Long id) {
+        return ProjectDTOMapper.mapToDto(getProjectById(id));
+    }
+
+    public ProjectBasicInfoDTO getProjectBasicDtoById(Long id) {
+        return ProjectBasicInfoDTOMapper.mapToDto(getProjectById(id));
+    }
+
     @Transactional
     public void updateProject(Long id, ProjectDTO dto) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
@@ -159,8 +173,15 @@ public class ProjectService {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
-        project.setMusicScores(dto.getMusicScores());
-        project.setAgreementTemplate(dto.getAgreementTemplate());
+    }
+
+    @Transactional
+    public void updateProject(Long id, ProjectBasicInfoDTO dto) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
+        project.setStartDate(dto.getStartDate());
+        project.setEndDate(dto.getEndDate());
     }
 
     private Project findProjectById(Long id) {

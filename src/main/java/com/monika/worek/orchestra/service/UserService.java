@@ -1,9 +1,10 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.auth.UserBasicDTOMapper;
 import com.monika.worek.orchestra.auth.UserDTOMapper;
+import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserDTO;
 import com.monika.worek.orchestra.model.User;
-import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -25,17 +26,23 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+    public List<UserBasicDTO> getAllUsers() {
+        List<User> users= (List<User>) userRepository.findAll();
+        return users.stream().map(UserBasicDTOMapper::mapToBasicDto).collect(Collectors.toList());
+
     }
-    public Optional<UserDTO> findUserById(Long id) {
-        return userRepository.findById(id)
-                .map(UserDTOMapper::map);
+
+    public UserBasicDTO findUserById(Long id) {
+        return UserBasicDTOMapper.mapToBasicDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found")));
     }
 
     public Optional<UserDTO> findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(UserDTOMapper::map);
+        return userRepository.findByEmail(email).map(UserDTOMapper::mapToDto);
+
+    }
+
+    public UserBasicDTO getUserBasicDtoByEmail(String email) {
+        return UserBasicDTOMapper.mapToBasicDto(findUserByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found")));
     }
 
     public boolean doesUserExist(String email) {

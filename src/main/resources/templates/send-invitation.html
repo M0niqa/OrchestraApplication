@@ -6,7 +6,9 @@
 </head>
 <body>
 <h1>Add Musicians</h1>
-
+<div th:if="${param.invitationSuccess}" class="alert alert-success">
+    Invitations sent successfully!
+</div>
 <form th:action="@{'/inspector/project/' + ${projectId} + '/sendInvitation'}" method="post">
     <input type="hidden" name="projectId" th:value="${projectId}"/>
     <h3>Missing instruments count</h3>
@@ -16,7 +18,7 @@
         </li>
     </ul>
     <div th:each="instrument : ${musiciansByInstrument.keySet()}">
-        <h2><span th:text="${instrument.getDisplayName()}"></span></h2>
+        <h2><span th:text="${instrument.name}"></span></h2>
         <ul>
             <li th:each="musician : ${musiciansByInstrument.get(instrument)}">
                 <label>
@@ -27,7 +29,6 @@
         </ul>
     </div>
     <button type="submit">Invite Selected Musicians</button>
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 </form>
 </body>
 </html>

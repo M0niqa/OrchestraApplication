@@ -1,20 +1,17 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
 import com.monika.worek.orchestra.auth.MusicianDTOMapper;
+import com.monika.worek.orchestra.auth.UserBasicDTOMapper;
+import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDTO;
-import com.monika.worek.orchestra.dto.MusicianRegisterDTO;
 import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Role;
-import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
-import com.monika.worek.orchestra.repository.UserRoleRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -27,8 +24,16 @@ public class MusicianService {
         this.musicianRepository = musicianRepository;
     }
 
-    public Optional<MusicianDTO> findMusicianByEmail(String mail) {
-        return musicianRepository.findByEmail(mail).map(MusicianDTOMapper::map);
+    public Musician findMusicianByEmail(String mail) {
+        return musicianRepository.findByEmail(mail).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
+    }
+
+    public MusicianDTO getMusicianDtoByEmail(String mail) {
+        return MusicianDTOMapper.mapToDto(findMusicianByEmail(mail));
+    }
+
+    public MusicianBasicDTO getMusicianBasicDtoByEmail(String email) {
+        return MusicianBasicDTOMapper.mapToDto(findMusicianByEmail(email));
     }
 //
 //    @Transactional
@@ -39,7 +44,7 @@ public class MusicianService {
 
     @Transactional
     public void updateUserData(String currentEmail, MusicianDTO userDTO) {
-        Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setBirthdate(userDTO.getBirthdate());
@@ -48,8 +53,6 @@ public class MusicianService {
         user.setBankAccountNumber(userDTO.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
         user.setInstrument(userDTO.getInstrument());
-
-        userRepository.save(user);
     }
 
     public List<Musician> getAllMusicians() {

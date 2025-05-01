@@ -4,7 +4,7 @@ import com.monika.worek.orchestra.dto.MusicianDTO;
 import com.monika.worek.orchestra.model.Musician;
 
 public class MusicianDTOMapper {
-    public static MusicianDTO map(Musician user) {
+    public static MusicianDTO mapToDto(Musician user) {
         return new MusicianDTO(
                 user.getId(),
                 user.getFirstName(),
@@ -20,7 +20,7 @@ public class MusicianDTOMapper {
                 user.getInstrument(),
                 user.getPendingProjects(),
                 user.getAcceptedProjects(),
-                user.getRefusedProjects()
+                user.getRejectedProjects()
         );
     }
 }

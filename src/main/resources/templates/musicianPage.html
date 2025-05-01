@@ -89,7 +89,7 @@
                 </td>
                 <td>Accepted</td>
             </tr>
-            <tr th:each="project : ${musician.refusedProjects}">
+            <tr th:each="project : ${musician.rejectedProjects}">
                 <td th:text="${project.name}"></td>
                 <td>Rejected</td>
             </tr>

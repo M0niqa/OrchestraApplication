@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.Getter;
 import org.hibernate.validator.constraints.pl.PESEL;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class MusicianDTO extends UserDTO {
 
     @NotNull(message = "Birthdate is required")
     @Past(message = "Birthdate must be in the past")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;
     @NotBlank(message = "Address is required")
     private String address;
@@ -29,11 +31,11 @@ public class MusicianDTO extends UserDTO {
     private String bankAccountNumber;
     @NotNull(message = "Instrument must be selected")
     private Instrument instrument;
-    private Set<Project> pendingProjects;
-    private Set<Project> acceptedProjects;
-    private Set<Project> refusedProjects;
+    private final Set<Project> pendingProjects;
+    private final Set<Project> acceptedProjects;
+    private final Set<Project> rejectedProjects;
 
-    public MusicianDTO(Long id, String firstName, String lastName, String email, String password, Set<UserRole> roles, LocalDate birthdate, String address, String pesel, TaxOffice taxOffice, String bankAccountNumber, Instrument instrument, Set<Project> pendingProjects, Set<Project> acceptedProjects, Set<Project> refusedProjects) {
+    public MusicianDTO(Long id, String firstName, String lastName, String email, String password, Set<UserRole> roles, LocalDate birthdate, String address, String pesel, TaxOffice taxOffice, String bankAccountNumber, Instrument instrument, Set<Project> pendingProjects, Set<Project> acceptedProjects, Set<Project> rejectedProjects) {
         super(id, firstName, lastName, email, password, roles);
         this.birthdate = birthdate;
         this.address = address;
@@ -43,6 +45,6 @@ public class MusicianDTO extends UserDTO {
         this.instrument = instrument;
         this.pendingProjects = pendingProjects;
         this.acceptedProjects = acceptedProjects;
-        this.refusedProjects = refusedProjects;
+        this.rejectedProjects = rejectedProjects;
     }
 }

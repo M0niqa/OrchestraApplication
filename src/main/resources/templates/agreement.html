@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Project Invitation: <span th:text="${project.name}"></span></title>
     <style>
@@ -8,9 +8,9 @@
             padding: 1em;
             margin-top: 1em;
             background-color: #f9f9f9;
-            white-space: pre-wrap; /* Preserve formatting */
-            max-height: 400px; /* Example height */
-            overflow-y: auto;  /* Allow scrolling */
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -51,5 +51,4 @@
 <div th:if="${param.rejectSuccess}" class="alert alert-warning">
     You have rejected the project.
 </div>
-<div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
 </html>

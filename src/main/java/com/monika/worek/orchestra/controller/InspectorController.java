@@ -1,6 +1,6 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +19,8 @@ public class InspectorController {
 
     @GetMapping("/inspectorPage")
     public String showInspectorPage(Model model) {
-        List<Project> ongoingProjects = projectService.getOngoingProjects();
-        List<Project> futureProjects = projectService.getFutureProjects();
+        List<ProjectBasicInfoDTO> ongoingProjects = projectService.getOngoingProjects();
+        List<ProjectBasicInfoDTO> futureProjects = projectService.getFutureProjects();
 
         model.addAttribute("ongoingProjects", ongoingProjects);
         model.addAttribute("futureProjects", futureProjects);

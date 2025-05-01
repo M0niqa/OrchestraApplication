@@ -1,12 +1,9 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.List;
 
 @Controller
 public class AdminController {
@@ -19,12 +16,8 @@ public class AdminController {
 
     @GetMapping("/adminPage")
     public String showAdminPage(Model model) {
-        List<Project> ongoingProjects = projectService.getOngoingProjects();
-        System.out.println("ongoing: " + ongoingProjects);
-        List<Project> futureProjects = projectService.getFutureProjects();
-
-        model.addAttribute("ongoingProjects", ongoingProjects);
-        model.addAttribute("futureProjects", futureProjects);
+        model.addAttribute("ongoingProjects", projectService.getOngoingProjects());
+        model.addAttribute("futureProjects", projectService.getFutureProjects());
         return "admin";
     }
 
