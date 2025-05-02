@@ -16,7 +16,7 @@ VALUES ('ADMIN', 'Adding/updating projects'),
 INSERT INTO App_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, instrument, bankAccountNumber)
 VALUES
     ('Musician', 'Jane', 'Doe', 's26004@pjwstk.edu.pl', '{noop}ss', '1985-12-01', '456 Oak Ave', '98765432109', 'CELLO', '12345678901234567890123456'),
-    ('Musician', 'David', 'Lee', 'david.lee@example.com', 'pass456', '1992-08-22', '789 Pine Ln', '56789012345', 'FLUTE', '98765432109876543210987654'),
+    ('Musician', 'David', 'Lee', 'david.lee@example.com', '{noop}pass456', '1992-08-22', '789 Pine Ln', '56789012345', 'FLUTE', '98765432109876543210987654'),
     ('Musician', 'Emily', 'Chen', 'emily.chen@example.com', 'pass789', '1988-03-10', '1011 Maple Dr', '34567890123', 'TRUMPET', '56789012345678901234567890'),
     ('Musician', 'Michael', 'Brown', 'michael.brown@example.com', 'pass101', '1995-11-28', '1213 Cedar Rd', '78901234567', 'PIANO', '10987654321098765432109876'),
     ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', 'pass202', '1983-07-05', '1415 Birch Ct', '10123456789', 'PERCUSSION', '65432109876543210987654321'),
