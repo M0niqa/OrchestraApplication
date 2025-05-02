@@ -9,6 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    // source: https://javafullstackdev.medium.com/building-real-time-notification-systems-with-websocket-and-spring-boot-ac197935dd5d
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -18,6 +19,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS();
+        registry.addEndpoint("/websocket").withSockJS();
     }
 }
