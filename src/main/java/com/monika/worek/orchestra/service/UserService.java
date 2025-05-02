@@ -26,7 +26,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserBasicDTO> getAllUsers() {
+    public List<UserBasicDTO> getAllBasicDTOUsers() {
         List<User> users= (List<User>) userRepository.findAll();
         return users.stream().map(UserBasicDTOMapper::mapToBasicDto).collect(Collectors.toList());
 

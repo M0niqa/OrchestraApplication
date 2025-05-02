@@ -114,13 +114,13 @@ VALUES
     ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
 
 
-INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp) VALUES
-    (3, 4, 'Hello, how are you?', '2023-10-26 10:00:00'),
-    (4, 3, 'I am doing well, thanks!', '2023-10-26 10:05:00'),
-    (3, 4, 'Rehearsal is at 7pm.', '2023-10-26 10:10:00'),
-    (4, 3, 'Got it!', '2023-10-26 10:15:00'),
-    (4, 3, 'Anyone seen my music sheets?', '2023-10-26 10:20:00'),
-    (3, 4, 'No, sorry. Check the library.', '2023-10-26 10:25:00');
+INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
+    (3, 4, 'Hello, how are you?', '2023-10-26 10:00:00', true),
+    (4, 3, 'I am doing well, thanks!', '2023-10-26 10:05:00', true),
+    (3, 4, 'Rehearsal is at 7pm.', '2023-10-26 10:10:00', true),
+    (4, 3, 'Got it!', '2023-10-26 10:15:00', true),
+    (4, 3, 'Anyone seen my music sheets?', '2023-10-26 10:20:00', true),
+    (3, 4, 'No, sorry. Check the library.', '2023-10-26 10:25:00', true);
 
 -- Musician 2 invited to Project 1
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);

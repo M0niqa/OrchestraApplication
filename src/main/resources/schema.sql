@@ -50,7 +50,8 @@ CREATE TABLE ChatMessage (
         senderId BIGINT,
         receiverId BIGINT,
         messageContent VARCHAR(255),
-        timestamp DATETIME
+        timestamp DATETIME,
+        read BOOLEAN
 );
 
 CREATE TABLE UserRole (
