@@ -14,15 +14,15 @@
         .chat-box { width: 70%; display: flex; flex-direction: column; }
         #messages { flex: 1; overflow-y: auto; margin-bottom: 15px; }
         .message { margin: 5px 0; }
-        .sender-message { text-align: right; }
-        .receiver-message { text-align: left; }
+        .sender-message { text-align: left; }
+        .receiver-message { text-align: right; }
     </style>
 </head>
 <body>
 <div class="container-fluid chat-container">
     <div class="user-list">
-        <h5>Select Musician</h5>
-        <select class="form-select mb-3" id="receiver" onchange="changeReceiver(this.value)">
+        <h5>Select User</h5>
+        <label for="receiver"></label><select class="form-select mb-3" id="receiver" onchange="changeReceiver(this.value)">
             <option value="">-- Choose --</option>
             <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.firstName + ' ' + user.lastName}" th:selected="${user.id == receiverId}"></option>
         </select>
@@ -72,7 +72,7 @@
         stompClient.connect({}, () => {
             stompClient.subscribe('/topic/messages/' + senderId, (message) => {
                 const msg = JSON.parse(message.body);
-                if (msg.senderId == receiverId || msg.receiverId == receiverId) {
+                if (String(msg.senderId) === String(receiverId) || String(msg.receiverId) === String(receiverId)) {
                     showMessage(msg);
                 } else {
                     const badge = document.querySelector(`[data-user-id="${msg.senderId}"] .unread-badge`);
@@ -94,8 +94,8 @@
     function showMessage(message) {
         const messagesDiv = document.getElementById("messages");
         const messageElement = document.createElement("div");
-        messageElement.className = "message " + (message.senderId === senderId ? "sender-message" : "receiver-message");
-        messageElement.innerHTML = `<span class="badge ${message.senderId === senderId ? 'bg-primary' : 'bg-secondary'}">${message.messageContent}</span>`;
+        messageElement.className = "message " + (String(message.senderId) === String(senderId) ? "sender-message" : "receiver-message");
+        messageElement.innerHTML = `<span class="badge ${String(message.senderId) === String(senderId) ? 'bg-primary' : 'bg-secondary'}">${message.messageContent}</span>`;
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
@@ -106,7 +106,20 @@
         }
     }
 
-    window.onload = connect;
+    window.onload = function () {
+        connect();
+
+        if (receiverId) {
+            const badge = document.querySelector(`[data-user-id="${receiverId}"] .unread-badge`);
+            if (badge) badge.classList.add('d-none');
+        }
+
+        const messagesDiv = document.getElementById("messages");
+        if (messagesDiv) {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    };
+
 </script>
 </body>
 </html>

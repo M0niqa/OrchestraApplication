@@ -115,12 +115,14 @@ VALUES
 
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
-    (3, 4, 'Hello, how are you?', '2023-10-26 10:00:00', true),
-    (4, 3, 'I am doing well, thanks!', '2023-10-26 10:05:00', true),
+    (3, 4, 'Hello, how are you Jane?', '2023-10-26 10:00:00', true),
+    (4, 3, 'I am doing well, thanks Stephen!', '2023-10-26 10:05:00', true),
     (3, 4, 'Rehearsal is at 7pm.', '2023-10-26 10:10:00', true),
     (4, 3, 'Got it!', '2023-10-26 10:15:00', true),
     (4, 3, 'Anyone seen my music sheets?', '2023-10-26 10:20:00', true),
-    (3, 4, 'No, sorry. Check the library.', '2023-10-26 10:25:00', true);
+    (3, 4, 'No, sorry. Check the library.', '2023-10-26 10:25:00', true),
+    (3, 5, 'Hey David!', '2023-10-26 10:25:00', true),
+    (5, 3, 'Hello Stephen!', '2023-10-26 10:25:00', true);
 
 -- Musician 2 invited to Project 1
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
