@@ -25,7 +25,7 @@
             let socket = new SockJS('/websocket');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function () {
-                stompClient.subscribe('/topic/messages', function (message) {
+                stompClient.subscribe('/topic/messages/' + senderId, function (message) {
                     showMessage(JSON.parse(message.body));
                 });
             });
@@ -62,8 +62,13 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        window.onload = connect;
+        window.onload = function () {
+            connect();  // connect WebSocket
+            const badge = window.opener?.document.getElementById("chatBadge");
+            if (badge) badge.classList.add("d-none");
+        };
     </script>
+
 
     <style>
         body {

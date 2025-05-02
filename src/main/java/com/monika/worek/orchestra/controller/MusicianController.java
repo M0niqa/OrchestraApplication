@@ -27,7 +27,8 @@ public class MusicianController {
     @GetMapping("/musicianPage")
     public String showMusicianPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
-        UserBasicDTO userBasicDTO = musicianService. getMusicianBasicDtoByEmail(currentEmail);
+        UserBasicDTO userBasicDTO = musicianService.getMusicianBasicDtoByEmail(currentEmail);
+        model.addAttribute("userId", userBasicDTO.getId());
 
         model.addAttribute("musician", userBasicDTO);
         return "musicianPage";

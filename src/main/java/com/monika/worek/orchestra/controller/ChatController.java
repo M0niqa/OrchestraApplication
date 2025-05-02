@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,10 +22,12 @@ public class ChatController {
 
     private final ChatService chatService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public ChatController(ChatService chatService, UserService userService) {
+    public ChatController(ChatService chatService, UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
         this.userService = userService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping
@@ -51,9 +54,9 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    @SendTo("/topic/messages")
-    public ChatMessage sendMessage(ChatMessage message) {
+    public void sendMessage(ChatMessage message) {
         chatService.sendMessage(message.getSenderId(), message.getReceiverId(), message.getMessageContent());
-        return message;
+        messagingTemplate.convertAndSend("/topic/messages/" + message.getReceiverId(), message);
+        messagingTemplate.convertAndSend("/topic/messages/" + message.getSenderId(), message);
     }
 }
