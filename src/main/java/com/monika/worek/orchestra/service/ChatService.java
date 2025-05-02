@@ -45,4 +45,8 @@ public class ChatService {
     public Set<Long> getUnreadSenderIds(Long receiverId) {
         return new HashSet<>(chatRepository.findUnreadSenderIds(receiverId));
     }
+
+    public boolean areUnreadMessages(Long receiverId) {
+        return chatRepository.existsUnreadByReceiverId(receiverId);
+    }
 }

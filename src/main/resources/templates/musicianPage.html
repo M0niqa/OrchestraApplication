@@ -85,9 +85,11 @@
     <div class="btn-container">
         <a th:href="@{/chat}" class="btn btn-purple btn-lg m-2 position-relative" id="chatButton">
             Chat
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="chatBadge">
-        📩
-    </span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                  id="chatBadge">📩</span>
+            <th:block th:if="${unreads}">
+                <span class="badge bg-danger rounded-pill">📩</span>
+            </th:block>
         </a>
         <a th:href="@{/userData}" class="btn btn-black btn-lg m-2">Update Data</a>
         <a th:href="@{/userPassword}" class="btn btn-brown btn-lg m-2">Update Password</a>

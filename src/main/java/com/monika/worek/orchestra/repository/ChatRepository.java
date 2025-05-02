@@ -31,4 +31,7 @@ public interface ChatRepository extends CrudRepository<ChatMessage, Long> {
 
     @Query("SELECT DISTINCT c.senderId FROM ChatMessage c WHERE c.receiverId = :receiverId AND c.read = false")
     List<Long> findUnreadSenderIds(@Param("receiverId") Long receiverId);
+
+    @Query("SELECT COUNT(c) > 0 FROM ChatMessage c WHERE c.receiverId = :receiverId AND c.read = false")
+    boolean existsUnreadByReceiverId(@Param("receiverId") Long receiverId);
 }
