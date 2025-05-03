@@ -158,7 +158,27 @@ Disputes shall be resolved by courts in the jurisdiction of the Ordering Party.
 The contract is made in two identical copies, one for each party.
 
 Performer: ____________________________
-Ordering Party: _______________________', 'CONCERT');
+
+Ordering Party: ________________________
+
+
+
+Invoice
+Date: ${invoiceData} Regarding agreement dated: ${agreementDate}
+Performer: ${musician.fullName}
+Address: ${musician.address}
+Ordering party: [ORDERING PARTY]
+Gross invoice amount: ${wage} zł
+Costs of obtaining revenue 50%: ${costOfIncome} zł
+Tax: 12%:  ${tax} zł
+Amount to pay: ${wageNet} zł
+Please transfer the above amount to my account: ${musician.bankAccountNumber}
+
+Paid by transfer on: __________________
+
+Performer: ____________________________
+
+Ordering Party: ________________________', 'CONCERT');
 
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)

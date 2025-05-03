@@ -70,8 +70,11 @@ public class AgreementService {
         valuesMap.put("project.programme", Objects.toString(project.getProgramme(), na));
         valuesMap.put("paymentDeadline", Objects.toString(getPaymentDeadline(project), na));
         valuesMap.put("resignationPenaltyDate", Objects.toString(getResignationPenaltyDate(project), na));
-        valuesMap.put("wage", Objects.toString(getWage(project, musician), na));
+        valuesMap.put("wage", Objects.toString(getGrossWage(project, musician), na));
         valuesMap.put("wageNet", Objects.toString(getNetWage(project, musician), na));
+        valuesMap.put("invoiceData", Objects.toString(getInvoiceDate(project), na));
+        valuesMap.put("costOfIncome", Objects.toString(getCostOfIncome(project, musician), na));
+        valuesMap.put("tax", Objects.toString(getTax(project, musician), na));
 
         return valuesMap;
     }
@@ -84,7 +87,7 @@ public class AgreementService {
         return project.getStartDate().minusDays(7);
     }
 
-    private BigDecimal getWage(Project project, Musician musician) {
+    private BigDecimal getGrossWage(Project project, Musician musician) {
         String group = musician.getInstrument() != null ? musician.getInstrument().getGroup() : null;
         if (group != null) {
             return project.getGroupSalaries().get(group);
@@ -93,15 +96,35 @@ public class AgreementService {
     }
 
     private BigDecimal getNetWage(Project project, Musician musician) {
-        BigDecimal grossWage = getWage(project, musician);
+        BigDecimal grossWage = getGrossWage(project, musician);
         if (grossWage == null) {
-            return BigDecimal.ZERO;
+            return null;
         }
         return grossWage.multiply(BigDecimal.valueOf(0.91)).setScale(2, RoundingMode.HALF_UP);
     }
 
+    private BigDecimal getCostOfIncome(Project project, Musician musician) {
+        BigDecimal grossWage = getGrossWage(project, musician);
+        if (grossWage == null) {
+            return null;
+        }
+        return grossWage.multiply(BigDecimal.valueOf(0.5)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getTax(Project project, Musician musician) {
+        BigDecimal grossWage = getGrossWage(project, musician);
+        if (grossWage == null) {
+            return null;
+        }
+        return grossWage.multiply(BigDecimal.valueOf(0.09)).setScale(2, RoundingMode.HALF_UP);
+    }
+
     private LocalDate getPaymentDeadline(Project project) {
         return project.getEndDate().plusDays(14);
+    }
+
+    private LocalDate getInvoiceDate(Project project) {
+        return project.getEndDate().plusDays(7);
     }
 
     @Transactional
