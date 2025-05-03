@@ -84,7 +84,7 @@ VALUES (1, 3),
        (33, 3),
        (34, 3);
 
-INSERT INTO AgreementTemplate (content) VALUES
+INSERT INTO AgreementTemplate (content, templateType) VALUES
     ('Work Contract with the transfer of rights to artistic performance, concluded in Kraków on ${agreementDate}, between:
 [Ordering Party''s name], hereinafter referred to as the "ORDERING PARTY",
 and ${musician.fullName}, hereinafter referred to as the "Performer", residing at ${musician.address},
@@ -158,7 +158,7 @@ Disputes shall be resolved by courts in the jurisdiction of the Ordering Party.
 The contract is made in two identical copies, one for each party.
 
 Performer: ____________________________
-Ordering Party: _______________________');
+Ordering Party: _______________________', 'CONCERT');
 
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)

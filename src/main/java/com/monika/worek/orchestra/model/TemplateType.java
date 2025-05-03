@@ -1,5 +1,8 @@
 package com.monika.worek.orchestra.model;
 
+import lombok.Getter;
+
+@Getter
 public enum TemplateType {
     CONCERT("Concert"),
     TOUR("Tour"),

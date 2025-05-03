@@ -11,7 +11,8 @@ DROP TABLE IF EXISTS rejected_musicians_projects CASCADE;
 
 CREATE TABLE AgreementTemplate (
         id BIGINT AUTO_INCREMENT PRIMARY KEY,
-        content TEXT
+        content TEXT,
+        templateType VARCHAR(255)
 );
 
 CREATE TABLE App_user (

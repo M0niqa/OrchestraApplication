@@ -5,9 +5,7 @@ import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
-import com.monika.worek.orchestra.model.Instrument;
-import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.model.*;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
@@ -102,15 +100,18 @@ public class ProjectController {
     @GetMapping("/admin/addProject")
     public String showAddProjectForm(Model model) {
         model.addAttribute("projectDTO", new ProjectBasicInfoDTO());
+        model.addAttribute("types", TemplateType.values());
         return "addProject";
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, RedirectAttributes redirectAttributes, BindingResult bindingResult) {
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, RedirectAttributes redirectAttributes, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("types", TemplateType.values());
             return "addProject";
         }
         Project project = ProjectBasicInfoDTOMapper.mapToEntity(projectDTO);
+        project.setAgreementTemplate(projectService.getTemplate(projectDTO.getTemplateType()));
         projectService.saveProject(project);
         redirectAttributes.addFlashAttribute("success", "Project added successfully!");
         return "redirect:/adminPage";

@@ -1,6 +1,6 @@
 package com.monika.worek.orchestra.dto;
 
-import com.monika.worek.orchestra.model.Survey;
+import com.monika.worek.orchestra.model.TemplateType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,5 +32,7 @@ public class ProjectBasicInfoDTO {
     private String location;
     private String conductor;
     private String programme;
+    @NotNull(message = "Type is required")
+    private TemplateType templateType;
 
 }

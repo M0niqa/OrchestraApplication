@@ -53,7 +53,6 @@
                                     <option th:each="instrument : ${instruments}" th:value="${instrument.name}" th:text="${instrument.displayName}"></option>
                                 </select>
                                 <div class="text-danger" th:if="${#fields.hasErrors('instrument')}" th:errors="*{instrument}"></div>
-
                                 <label class="form-label">Instrument</label>
                             </div>
                             <button type="submit" class="btn btn-primary">Register</button>

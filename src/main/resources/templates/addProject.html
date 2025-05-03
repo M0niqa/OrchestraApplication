@@ -20,8 +20,16 @@
     <div class="text-danger" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
 
     <label for="location">Location:</label>
-    <input type="text" id="location" th:field="*{endDate}" /><br />
+    <input type="text" id="location" th:field="*{location}" /><br />
     <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+
+    <div class="form-outline mb-4">
+        <label class="form-label">Project type</label>
+        <select th:field="*{templateType}" class="form-control">
+            <option th:each="type : ${types}" th:value="${type.name}" th:text="${type.displayName}"></option>
+        </select>
+        <div class="text-danger" th:if="${#fields.hasErrors('templateType')}" th:errors="*{templateType}"></div>
+    </div>
 
     <button type="submit">Add Project</button>
 </form>

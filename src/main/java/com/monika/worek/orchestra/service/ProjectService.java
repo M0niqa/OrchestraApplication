@@ -6,9 +6,8 @@ import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
-import com.monika.worek.orchestra.model.Instrument;
-import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.model.*;
+import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
@@ -26,11 +25,13 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MusicianRepository musicianRepository;
     private final EmailService emailService;
+    private final AgreementTemplateRepository agreementTemplateRepository;
 
-    public ProjectService(ProjectRepository projectRepository, MusicianRepository musicianRepository, EmailService emailService) {
+    public ProjectService(ProjectRepository projectRepository, MusicianRepository musicianRepository, EmailService emailService, AgreementTemplateRepository agreementTemplateRepository) {
         this.projectRepository = projectRepository;
         this.musicianRepository = musicianRepository;
         this.emailService = emailService;
+        this.agreementTemplateRepository = agreementTemplateRepository;
     }
 
     public void saveProject(Project project) {
@@ -206,6 +207,10 @@ public class ProjectService {
         project.setLocation(dto.getLocation());
         project.setConductor(dto.getConductor());
         project.setProgramme(dto.getProgramme());
+    }
+
+    public AgreementTemplate getTemplate(TemplateType templateType) {
+        return agreementTemplateRepository.findByTemplateType(templateType).getFirst();
     }
 
     private Project findProjectById(Long id) {

@@ -26,7 +26,7 @@ public class ProjectDTO {
     private LocalDate startDate;
     @NotNull(message = "End date is required")
     private LocalDate endDate;
-    @NotNull(message = "End date is required")
+    @NotNull(message = "Location is required")
     private String location;
     private String conductor;
     private String programme;
