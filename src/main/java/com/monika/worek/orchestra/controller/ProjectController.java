@@ -11,6 +11,7 @@ import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,31 +64,34 @@ public class ProjectController {
 
     @GetMapping("/inspector/project/{projectId}/sendInvitation")
     public String showInviteMusiciansPage(@PathVariable Long projectId, Model model) {
-        Project project = projectService.getProjectById(projectId);
-
-        Map<Instrument, Integer> remainingCounts = projectService.getRemainingInstrumentsCount(project);
-
-        LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument =
-                projectService.getAvailableMusiciansByInstrument(projectId);
-
-        model.addAttribute("musiciansByInstrument", musiciansByInstrument);
-        model.addAttribute("remainingCounts", remainingCounts);
-        model.addAttribute("projectId", projectId);
+        projectService.updatePendingInvitations(projectId);
+        prepareSendInvitationModel(projectId, model);
 
         return "send-invitation";
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
-    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds, RedirectAttributes redirectAttributes) {
+    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds, @RequestParam(value = "invitationDeadline", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime invitationDeadline, RedirectAttributes redirectAttributes, Model model) {
+        if (invitationDeadline == null) {
+            model.addAttribute("deadlineError", "Please set an invitation deadline.");
+            prepareSendInvitationModel(projectId, model);
+            return "send-invitation";
+        }
         if (musicianIds != null && !musicianIds.isEmpty()) {
             for (Long musicianId : musicianIds) {
-                projectService.inviteMusician(projectId, musicianId);
+                projectService.inviteMusician(projectId, musicianId, invitationDeadline);
             }
         }
         redirectAttributes.addFlashAttribute("success", "Invitations sent successfully!");
         return "redirect:/inspector/project/" + projectId + "/sendInvitation";
     }
 
+    private void prepareSendInvitationModel(Long projectId, Model model) {
+        Project project = projectService.getProjectById(projectId);
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("remainingCounts", projectService.getRemainingInstrumentsCount(project));
+        model.addAttribute("musiciansByInstrument", projectService.getAvailableMusiciansByInstrument(projectId));
+    }
 
 
 
@@ -111,10 +116,11 @@ public class ProjectController {
         return "redirect:/adminPage";
     }
 
-    @GetMapping({"/admin/project/{id}/musicianStatus", "/inspector/project/{id}/musicianStatus"})
-    public String showMusicianStatus(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = projectService.getProjectDtoById(id);
+    @GetMapping({"/admin/project/{projectId}/musicianStatus", "/inspector/project/{projectId}/musicianStatus"})
+    public String showMusicianStatus(@PathVariable Long projectId, Model model) {
+        projectService.updatePendingInvitations(projectId);
+        Project project = projectService.getProjectById(projectId);
+        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
         LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
         model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
         model.addAttribute("refusedMusicians", projectDTO.getMusiciansWhoRejected());

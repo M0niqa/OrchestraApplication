@@ -2,9 +2,11 @@ package com.monika.worek.orchestra.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -61,4 +63,6 @@ public class Project {
     @MapKeyColumn(name = "instrument_group")
     @Column(name = "salary")
     private Map<String, BigDecimal> groupSalaries = new HashMap<>();
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime invitationDeadline;
 }

@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDTO;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.Instrument;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Set;
-
 @Controller
 public class MusicianController {
 
@@ -32,12 +31,12 @@ public class MusicianController {
     @GetMapping("/musicianPage")
     public String showMusicianPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
-        UserBasicDTO userBasicDTO = musicianService.getMusicianBasicDtoByEmail(currentEmail);
-        model.addAttribute("userId", userBasicDTO.getId());
+        MusicianBasicDTO musicianBasicDTO = musicianService.getMusicianBasicDtoByEmail(currentEmail);
+        model.addAttribute("userId", musicianBasicDTO.getId());
 
-        Boolean unreads = chatService.areUnreadMessages(userBasicDTO.getId());
+        Boolean unreads = chatService.areUnreadMessages(musicianBasicDTO.getId());
         model.addAttribute("unreads", unreads);
-        model.addAttribute("musician", userBasicDTO);
+        model.addAttribute("musician", musicianBasicDTO);
         return "musicianPage";
     }
 

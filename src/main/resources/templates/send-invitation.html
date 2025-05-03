@@ -26,6 +26,11 @@
             </li>
         </ul>
     </div>
+    <div>
+        <label for="invitationDeadline">Invitation Deadline:</label>
+        <input type="datetime-local" id="invitationDeadline" name="invitationDeadline">
+        <p th:if="${deadlineError}" th:text="${deadlineError}" style="color:red;"></p>
+    </div>
     <button type="submit">Invite Selected Musicians</button>
 </form>
 </body>

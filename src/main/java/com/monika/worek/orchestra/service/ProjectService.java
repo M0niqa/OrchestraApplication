@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +37,7 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public void inviteMusician(Long projectId, Long musicianId) {
+    public void inviteMusician(Long projectId, Long musicianId, LocalDateTime invitationDeadline) {
         Project project = findProjectById(projectId);
         Musician musician = findMusicianById(musicianId);
 
@@ -45,11 +47,18 @@ public class ProjectService {
 
             project.getInvited().add(musician);
             musician.getPendingProjects().add(project);
+            project.setInvitationDeadline(invitationDeadline);
             projectRepository.save(project);
         }
 
         String subject = "New Project Invitation";
-        String text = "You have been invited to join the project: " + project.getName();
+        String link = "http://localhost:8080/login";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String formattedDeadline = invitationDeadline.format(formatter);
+        String text = "You have been invited to join the project: " + project.getName() + ".\n" +
+                "Log in to the system (" + link + ") to check details, " +
+                "and accept or reject the project by " + formattedDeadline + ".";
+
         emailService.sendEmail(musician.getEmail(), subject, text);
     }
 
@@ -64,7 +73,6 @@ public class ProjectService {
 
         project.getInvited().remove(musician);
         project.getProjectMembers().add(musician);
-        musician.getPendingProjects().remove(project);
 
         projectRepository.save(project);
     }
@@ -80,9 +88,22 @@ public class ProjectService {
 
         project.getInvited().remove(musician);
         project.getMusiciansWhoRejected().add(musician);
-        musician.getPendingProjects().remove(project);
 
         projectRepository.save(project);
+    }
+
+    @Transactional
+    public void updatePendingInvitations(Long projectId) {
+        Project project = findProjectById(projectId);
+        LocalDateTime invitationDeadline = project.getInvitationDeadline();
+        if (invitationDeadline == null) {
+            return;
+        }
+        if (LocalDateTime.now().isAfter(invitationDeadline)) {
+            project.getMusiciansWhoRejected().addAll(project.getInvited());
+            project.getInvited().clear();
+            projectRepository.save(project);
+        }
     }
 
     private List<Musician> getAvailableMusicians(Long projectId) {

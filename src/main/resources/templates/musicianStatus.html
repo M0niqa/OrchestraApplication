@@ -20,7 +20,7 @@
         </div>
     </li>
 </ul>
-<p th:if="${projectMembersByInstrument.isEmpty()}">No musicians have accepted yet.</p>
+<p th:if="${projectMembersByInstrument.isEmpty()}">No musicians have accepted the project yet.</p>
 
 <h2>Pending invitations</h2>
 <ul th:if="${not pendingMusicians.isEmpty()}">
@@ -32,6 +32,6 @@
 <ul th:if="${not refusedMusicians.isEmpty()}">
     <li th:each="musician : ${refusedMusicians}" th:text="${musician.firstName} + ' ' + ${musician.lastName}"></li>
 </ul>
-<p th:if="${refusedMusicians.isEmpty()}">No musicians have refused yet.</p>
+<p th:if="${refusedMusicians.isEmpty()}">No musicians have rejected the project yet.</p>
 </body>
 </html>
