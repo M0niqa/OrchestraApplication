@@ -1,7 +1,9 @@
 package com.monika.worek.orchestra.dto;
 
+import com.monika.worek.orchestra.model.Instrument;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +20,6 @@ public class MusicianRegisterDTO {
     private String firstName;
     @NotBlank(message = "Last name is required")
     private String lastName;
+    @NotNull(message = "Instrument must be selected")
+    private Instrument instrument;
 }

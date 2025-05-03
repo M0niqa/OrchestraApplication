@@ -56,12 +56,13 @@
                                 <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                             </div>
 
-                            <!-- Forgot password link -->
                             <a th:href="@{/forgot-password}" class="forgot-link text-muted">Forgot password?</a>
 
-                            <!-- Optional info after login -->
                             <div th:if="${param.logout}" class="alert alert-info mt-3">
                                 You have been logged out.
+                            </div>
+                            <div th:if="${param.setSuccess}" class="alert alert-success">
+                                Your password has been successfully set. Please log in.
                             </div>
 
                             <div th:if="${param.verified}" class="alert alert-success mt-3">
@@ -70,6 +71,7 @@
                             <div th:if="${param.resetSuccess}" class="alert alert-success">
                                 Your password has been successfully reset. Please log in with your new password.
                             </div>
+
                         </form>
                     </div>
                 </div>

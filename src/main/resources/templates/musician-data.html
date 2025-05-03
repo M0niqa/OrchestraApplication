@@ -83,15 +83,6 @@
 
                             </div>
 
-                            <div class="form-outline mb-4">
-                                <select th:field="*{instrument}" class="form-control">
-                                    <option th:each="instrument : ${instruments}" th:value="${instrument.name}" th:text="${instrument.displayName}"></option>
-                                </select>
-                                <div class="text-danger" th:if="${#fields.hasErrors('instrument')}" th:errors="*{instrument}"></div>
-
-                                <label class="form-label">Instrument</label>
-                            </div>
-
                             <div class="pt-1 mb-4">
                                 <button class="btn btn-dark btn-lg btn-block" type="submit">Update Data</button>
                             </div>

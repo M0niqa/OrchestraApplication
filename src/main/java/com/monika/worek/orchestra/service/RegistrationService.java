@@ -27,7 +27,7 @@ public class RegistrationService {
 
     public void sendLink(String email) {
         Token token = tokenService.createToken(email);
-        String setupLink = "http://localhost:8080/reset-password?token=" + token.getToken();
+        String setupLink = "http://localhost:8080/set-password?token=" + token.getToken();
         emailService.sendEmail(email, "Complete Your Registration", "Click here to set your password and complete registration: " + setupLink);
     }
 

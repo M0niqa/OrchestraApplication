@@ -29,8 +29,7 @@ public class MusicianDTO extends UserDTO {
     private TaxOffice taxOffice;
     @NotBlank(message = "Bank account number is required")
     private String bankAccountNumber;
-    @NotNull(message = "Instrument must be selected")
-    private Instrument instrument;
+    private final Instrument instrument;
     private final Set<Project> pendingProjects;
     private final Set<Project> acceptedProjects;
     private final Set<Project> rejectedProjects;

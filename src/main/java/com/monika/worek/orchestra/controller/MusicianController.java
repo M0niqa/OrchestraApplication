@@ -44,7 +44,6 @@ public class MusicianController {
     public String showUpdateDataForm(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
         model.addAttribute("musician", musicianService.getMusicianDtoByEmail(currentEmail));
-        model.addAttribute("instruments", Instrument.values());
         model.addAttribute("taxOffices", TaxOffice.values());
         return "musician-data";
     }
@@ -53,7 +52,6 @@ public class MusicianController {
     public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto, BindingResult bindingResult,
                              Authentication authentication, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("instruments", Instrument.values());
             model.addAttribute("taxOffices", TaxOffice.values());
             return "musician-data";
         }

@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum Instrument {
-    VIOLIN("Violin"),
+    VIOLIN_I("Violin I"),
+    VIOLIN_II("Violin II"),
     VIOLA("Viola"),
     CELLO("Cello"),
     DOUBLE_BASS("Double bass"),
@@ -22,7 +23,7 @@ public enum Instrument {
 
     public String getGroup() {
         return switch (this) {
-            case VIOLIN, VIOLA, CELLO, DOUBLE_BASS -> "Strings";
+            case VIOLIN_I, VIOLIN_II, VIOLA, CELLO, DOUBLE_BASS -> "Strings";
             case FLUTE, OBOE, CLARINET, BASSOON -> "Winds";
             case TRUMPET, FRENCH_HORN, TROMBONE, TUBA -> "Brass";
             case HARP, PERCUSSION, PIANO -> "Solo";
