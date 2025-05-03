@@ -20,14 +20,69 @@ VALUES
     ('Musician', 'Emily', 'Chen', 'emily.chen@example.com', 'pass789', '1988-03-10', '1011 Maple Dr', '34567890123', 'TRUMPET', '56789012345678901234567890'),
     ('Musician', 'Michael', 'Brown', 'michael.brown@example.com', 'pass101', '1995-11-28', '1213 Cedar Rd', '78901234567', 'PIANO', '10987654321098765432109876'),
     ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', 'pass202', '1983-07-05', '1415 Birch Ct', '10123456789', 'PERCUSSION', '65432109876543210987654321'),
-    ('Musician', 'Robert', 'Garcia', 'robert.garcia@example.com', 'pass303', '1998-01-18', '1617 Willow Pl', '23456789012', 'VIOLA', '21098765432109876543210987');
+    ('Musician', 'Robert', 'Garcia', 'robert.garcia@example.com', 'pass303', '1998-01-18', '1617 Willow Pl', '23456789012', 'VIOLA', '21098765432109876543210987'),
+    ('Musician', 'Anna', 'Kowalska', 'anna.kowalska@example.com', '$2a$10$exampleHash1', '1990-07-15', 'Kraków, ul. Wiślana 10', '90071512345', 'VIOLIN_I', 'PL123456789012345678901234'),
+    ('Musician', 'Piotr', 'Nowak', 'piotr.nowak@example.com', '$2a$10$exampleHash2', '1988-03-20', 'Warszawa, al. Niepodległości 25', '88032054321', 'VIOLIN_I', 'PL987654321098765432109876'),
+    ('Musician', 'Maria', 'Wójcik', 'maria.wojcik@example.com', '$2a$10$exampleHash3', '1995-11-01', 'Łódź, ul. Piotrkowska 100', '95110167890', 'VIOLIN_I', 'PL555555555555555555555555'),
+    ('Musician', 'Jan', 'Lewandowski', 'jan.lewandowski@example.com', '$2a$10$exampleHash4', '1982-05-10', 'Poznań, ul. Stary Rynek 5', '82051023456', 'VIOLIN_I', 'PL112233445566778899001122'),
+    ('Musician', 'Katarzyna', 'Kamińska', 'katarzyna.kaminska@example.com', '$2a$10$exampleHash5', '1993-09-22', 'Wrocław, pl. Solny 1', '93092278901', 'VIOLIN_I', 'PL444444444444444444444444'),
+    ('Musician', 'Tomasz', 'Zieliński', 'tomasz.zielinski@example.com', '$2a$10$exampleHash6', '1987-12-05', 'Gdańsk, ul. Długi Targ 40', '87120534567', 'VIOLIN_I', 'PL666666666666666666666666'),
+    ('Musician', 'Magdalena', 'Szymańska', 'magdalena.szymanska@example.com', '$2a$10$exampleHash7', '1991-06-30', 'Szczecin, al. Niepodległości 1', '91063089012', 'VIOLIN_I', 'PL777777777777777777777777'),
+    ('Musician', 'Grzegorz', 'Woźniak', 'grzegorz.wozniak@example.com', '$2a$10$exampleHash8', '1985-01-18', 'Lublin, ul. Krakowskie Przedmieście 15', '85011845678', 'VIOLIN_I', 'PL888888888888888888888888'),
+    ('Musician', 'Ewa', 'Jankowska', 'ewa.jankowska@example.com', '$2a$10$exampleHash9', '1997-04-12', 'Bydgoszcz, ul. Długa 20', '97041290123', 'VIOLIN_I', 'PL999999999999999999999999'),
+    ('Musician', 'Krzysztof', 'Mazur', 'krzysztof.mazur@example.com', '$2a$10$exampleHash10', '1983-11-28', 'Katowice, ul. 3 Maja 30', '83112856789', 'VIOLIN_I', 'PL000000000000000000000000'),
+    ('Musician', 'Sylwia', 'Lis', 'sylwia.lis@example.com', '$2a$10$exampleHash11', '1992-08-05', 'Kraków, ul. Karmelicka 22', '92080523456', 'VIOLIN_II', 'PL222222222222222222222222'),
+    ('Musician', 'Adam', 'Dąbrowski', 'adam.dabrowski@example.com', '$2a$10$exampleHash12', '1989-02-14', 'Warszawa, ul. Marszałkowska 100', '89021467890', 'VIOLIN_II', 'PL333333333333333333333333'),
+    ('Musician', 'Monika', 'Grabowska', 'monika.grabowska@example.com', '$2a$10$exampleHash13', '1996-12-10', 'Łódź, al. Kościuszki 50', '96121078901', 'VIOLIN_II', 'PL111111111111111111111111'),
+    ('Musician', 'Marcin', 'Pawlak', 'marcin.pawlak@example.com', '$2a$10$exampleHash14', '1981-06-25', 'Poznań, ul. Półwiejska 12', '81062534567', 'VIOLIN_II', 'PL445566778899001122334455'),
+    ('Musician', 'Joanna', 'Michalska', 'joanna.michalska@example.com', '$2a$10$exampleHash15', '1994-10-08', 'Wrocław, ul. Świdnicka 40', '94100889012', 'VIOLIN_II', 'PL667788990011223344556677'),
+    ('Musician', 'Łukasz', 'Wróbel', 'lukasz.wrobel@example.com', '$2a$10$exampleHash16', '1986-09-01', 'Gdańsk, ul. Mariacka 2', '86090145678', 'VIOLIN_II', 'PL889900112233445566778899'),
+    ('Musician', 'Natalia', 'Krajewska', 'natalia.krajewska@example.com', '$2a$10$exampleHash17', '1998-01-20', 'Szczecin, pl. Lotników 1', '98012090123', 'VIOLIN_II', 'PL001122334455667788990011'),
+    ('Musician', 'Daniel', 'Górski', 'daniel.gorski@example.com', '$2a$10$exampleHash18', '1984-07-03', 'Lublin, ul. Zamojska 30', '84070356789', 'VIOLIN_II', 'PL223344556677889900112233'),
+    ('Musician', 'Patrycja', 'Adamczyk', 'patrycja.adamczyk@example.com', '$2a$10$exampleHash19', '1999-03-15', 'Bydgoszcz, ul. Mostowa 5', '99031512340', 'VIOLIN_II', 'PL445566778899001122334455'),
+    ('Musician', 'Robert', 'Sikora', 'robert.sikora@example.com', '$2a$10$exampleHash20', '1980-10-12', 'Katowice, al. Korfantego 1', '80101267891', 'VIOLIN_II', 'PL667788990011223344556677'),
+    ('Musician', 'Karol', 'Wiśniewski', 'karol.wisniewski@example.com', '$2a$10$exampleHash21', '1992-05-01', 'Kraków, ul. Floriańska 45', '92050178902', 'CELLO', 'PL120000000000000000000001'),
+    ('Musician', 'Agata', 'Pawłowska', 'agata.pawlowska@example.com', '$2a$10$exampleHash22', '1997-11-10', 'Warszawa, ul. Krucza 50', '97111023451', 'FLUTE', 'PL340000000000000000000002'),
+    ('Musician', 'Michał', 'Olszewski', 'michal.olszewski@example.com', '$2a$10$exampleHash23', '1983-08-22', 'Łódź, ul. Zielona 70', '83082289010', 'PIANO', 'PL560000000000000000000003'),
+    ('Musician', 'Zuzanna', 'Dudek', 'zuzanna.dudek@example.com', '$2a$10$exampleHash24', '1999-02-28', 'Poznań, ul. Wrocławska 20', '99022834569', 'CLARINET', 'PL780000000000000000000004'),
+    ('Musician', 'Jakub', 'Kowalczyk', 'jakub.kowalczyk@example.com', '$2a$10$exampleHash25', '1986-04-15', 'Wrocław, ul. Oławska 10', '86041590128', 'TRUMPET', 'PL900000000000000000000005');
 
 INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 3),
        (2, 2),
        (3, 3),
        (3, 1),
-       (4, 3);
+       (4, 3),
+       (5, 3),
+       (6, 3),
+       (7, 3),
+       (8, 3),
+       (9, 3),
+       (10, 3),
+       (11, 3),
+       (12, 3),
+       (13, 3),
+       (14, 3),
+       (15, 3),
+       (16, 3),
+       (17, 3),
+       (18, 3),
+       (19, 3),
+       (20, 3),
+       (21, 3),
+       (22, 3),
+       (23, 3),
+       (24, 3),
+       (25, 3),
+       (26, 3),
+       (27, 3),
+       (28, 3),
+       (29, 3),
+       (30, 3),
+       (31, 3),
+       (32, 3),
+       (33, 3),
+       (34, 3);
 
 INSERT INTO AgreementTemplate (content) VALUES
     ('Work Contract with the transfer of rights to artistic performance, concluded in Kraków on ${agreementDate}, between:
@@ -108,7 +163,7 @@ Ordering Party: _______________________');
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)
 VALUES
-    ('FMF', 'A film music.', '2025-05-01', '2025-07-31', 1),
+    ('FMF', 'A film music.', '2025-05-21', '2025-05-31', 1),
     ('Summer Symphony', 'A summer concert series featuring classical music with summer theme.', '2025-09-01', '2025-08-31', 1),
     ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-28', 1),
     ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
@@ -128,7 +183,40 @@ INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) 
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
 
 -- Musician 2 accepted Project 2
-INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES (3, 2);
+INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
+    (3, 2),
+    (4, 1),
+    (5, 1),
+    (6, 1),
+    (7, 1),
+    (8, 1),
+    (9, 1),
+    (10, 1),
+    (11, 1),
+    (12, 1),
+    (13, 1),
+    (14, 1),
+    (15, 1),
+    (16, 1),
+    (17, 1),
+    (18, 1),
+    (19, 1),
+    (20, 1),
+    (21, 1),
+    (22, 1),
+    (23, 1),
+    (24, 1),
+    (25, 1),
+    (26, 1),
+    (27, 1),
+    (28, 1),
+    (29, 1),
+    (30, 1),
+    (31, 1),
+    (32, 1),
+    (33, 1),
+    (34, 1),
+    (19, 2);
 
 -- Musician 2 rejected Project 3
 INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);

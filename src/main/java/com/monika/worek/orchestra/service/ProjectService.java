@@ -106,7 +106,7 @@ public class ProjectService {
         }
     }
 
-    private List<Musician> getAvailableMusicians(Long projectId) {
+    private List<Musician> getAvailableMusiciansSorted(Long projectId) {
         Project project = findProjectById(projectId);
 
         List<Musician> allMusicians = (List<Musician>) musicianRepository.findAll();
@@ -115,11 +115,12 @@ public class ProjectService {
                 .filter(musician -> !project.getProjectMembers().contains(musician) &&
                         !project.getMusiciansWhoRejected().contains(musician) &&
                         !project.getInvited().contains(musician))
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt((Musician m) -> m.getAcceptedProjects().size()).reversed())
+                .toList();
     }
 
     public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getAvailableMusiciansByInstrument(Long projectId) {
-        return getAvailableMusicians(projectId).stream()
+        return getAvailableMusiciansSorted(projectId).stream()
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
                 .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
@@ -130,7 +131,11 @@ public class ProjectService {
     }
 
     public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getProjectMembersByInstrument(Project project) {
-        return project.getProjectMembers().stream()
+        List<Musician> sortedMembers = project.getProjectMembers().stream()
+                .sorted(Comparator.comparingInt((Musician m) -> m.getAcceptedProjects().size()).reversed())
+                .toList();
+
+        return sortedMembers.stream()
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
                 .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
@@ -140,7 +145,7 @@ public class ProjectService {
                 ));
     }
 
-    public Map<Instrument, Long> getProjectMembersCountByInstrument(Project project) {
+    private Map<Instrument, Long> getProjectMembersCountByInstrument(Project project) {
         return project.getProjectMembers().stream()
                 .collect(Collectors.groupingBy(Musician::getInstrument, Collectors.counting()));
     }
