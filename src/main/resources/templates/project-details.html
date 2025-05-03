@@ -13,7 +13,9 @@
     <input type="hidden" th:field="*{id}"/>
     <div class="mb-3">
         <label>Name:</label>
-        <input type="text" th:field="*{name}" class="form-control"/>
+        <label>
+            <input type="text" th:field="*{name}" class="form-control"/>
+        </label>
     </div>
     <div class="mb-3">
         <label>Description:</label>
@@ -21,15 +23,31 @@
     </div>
     <div class="mb-3">
         <label>Start Date:</label>
-        <input type="date" th:field="*{startDate}" class="form-control"/>
+        <label>
+            <input type="date" th:field="*{startDate}" class="form-control"/>
+        </label>
     </div>
     <div class="mb-3">
         <label>End Date:</label>
-        <input type="date" th:field="*{endDate}" class="form-control"/>
+        <label>
+            <input type="date" th:field="*{endDate}" class="form-control"/>
+        </label>
     </div>
     <div class="mb-3">
         <label>Location:</label>
-        <input type="text" th:field="*{location}" class="form-control"/>
+        <label>
+            <input type="text" th:field="*{location}" class="form-control"/>
+        </label>
+    </div>
+    <div class="mb-3">
+        <label>Conductor:</label>
+        <label>
+            <input type="text" th:field="*{conductor}" class="form-control"/>
+        </label>
+    </div>
+    <div class="mb-3">
+        <label>Programme:</label>
+        <textarea name="programme" th:text="*{programme}" class="form-control"></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Update Project</button>
 </form>
@@ -37,8 +55,6 @@
 <hr/>
 
 <h4>Manage Project</h4>
-<a th:href="@{/admin/project/{id}/programme(id=${project.id})}" class="btn btn-secondary m-1">Edit
-    Programme/Conductor</a>
 <a th:href="@{/admin/project/{id}/scores(id=${project.id})}" class="btn btn-secondary m-1">Edit Scores</a>
 <a th:href="@{/admin/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-secondary m-1">View Musicians</a>
 <a th:href="@{/admin/project/{id}/template/edit(id=${project.id})}" class="btn btn-secondary m-1">Edit Agreement

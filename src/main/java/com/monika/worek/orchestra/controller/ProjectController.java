@@ -174,21 +174,4 @@ public class ProjectController {
         redirectAttributes.addFlashAttribute("success", "Instrument configuration updated successfully!");
         return "redirect:/admin/project/" + projectId + "/instrumentCount/edit";
     }
-
-    @GetMapping("/admin/project/{projectId}/programme")
-    public String viewProgramme(@PathVariable Long projectId, Model model) {
-        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
-        model.addAttribute("projectId", projectId);
-        model.addAttribute("programme", projectDTO.getProgramme());
-        model.addAttribute("conductor", projectDTO.getConductor());
-        return "admin-edit-programme";
-    }
-
-    @PostMapping("/admin/project/{projectId}/programme")
-    public String updateProgramme(@PathVariable Long projectId, String conductor, String programme, RedirectAttributes redirectAttributes) {
-        projectService.updateProgrammeAndConductor(projectId, conductor, programme);
-        redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
-        return "redirect:/admin/project/" + projectId + "/programme";
-    }
-
 }

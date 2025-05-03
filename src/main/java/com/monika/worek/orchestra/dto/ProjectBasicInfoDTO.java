@@ -19,6 +19,7 @@ public class ProjectBasicInfoDTO {
     private Long id;
     @NotBlank(message = "Name is required")
     private String name;
+    private String description;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull(message = "Start date is required")
     @FutureOrPresent(message = "Start date cannot be in the past")
@@ -29,6 +30,7 @@ public class ProjectBasicInfoDTO {
     private LocalDate endDate;
     @NotNull(message = "Location is required")
     private String location;
-    private String description;
+    private String conductor;
+    private String programme;
 
 }

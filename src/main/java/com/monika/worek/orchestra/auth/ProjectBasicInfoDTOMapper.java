@@ -12,10 +12,12 @@ public class ProjectBasicInfoDTOMapper {
         return ProjectBasicInfoDTO.builder()
                 .id(project.getId())
                 .name(project.getName())
+                .description(project.getDescription())
                 .startDate(project.getStartDate())
                 .endDate(project.getEndDate())
                 .location(project.getLocation())
-                .description(project.getDescription())
+                .conductor(project.getConductor())
+                .programme(project.getProgramme())
                 .build();
     }
 
@@ -26,10 +28,12 @@ public class ProjectBasicInfoDTOMapper {
         return Project.builder()
                 .id(dto.getId())
                 .name(dto.getName())
+                .description(dto.getDescription())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .location(dto.getLocation())
-                .description(dto.getDescription())
+                .conductor(dto.getConductor())
+                .programme(dto.getProgramme())
                 .build();
     }
 }

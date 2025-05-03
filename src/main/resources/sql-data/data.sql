@@ -30,7 +30,7 @@ VALUES (1, 3),
        (4, 3);
 
 INSERT INTO AgreementTemplate (content) VALUES
-    ('Work Contract with the transfer of rights to artistic performance, concluded in Kraków on ${current.date}, between:
+    ('Work Contract with the transfer of rights to artistic performance, concluded in Kraków on ${agreementDate}, between:
 [Ordering Party''s name], hereinafter referred to as the "ORDERING PARTY",
 and ${musician.fullName}, hereinafter referred to as the "Performer", residing at ${musician.address},
 with the following content:
@@ -90,7 +90,7 @@ The Ordering Party will cover meal costs, arranged as needed.
 For non-performance or improper performance, the Performer may be fined 30% of the gross amount specified in §4.
 If the performance harms the image or reputation of the Orchestra, especially violations of §2.3, the penalty is 50%.
 These penalties do not exclude the right to claim full damages.
-Canceling less than 7 days before the concert date results in a 50% penalty.
+Canceling less than 7 days before the concert date, which is after ${resignationPenaltyDate} results in a 50% penalty.
 In cases of force majeure, each party bears its own costs.
 For COVID-19-related cancellations, procedures must be followed, and the Performer waives the right to claim payment.
 

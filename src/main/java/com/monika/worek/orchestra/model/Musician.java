@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.pl.NIP;
 import org.hibernate.validator.constraints.pl.PESEL;
 
 import java.time.LocalDate;
@@ -23,6 +24,9 @@ public class Musician extends User {
     private String address;
     @PESEL
     private String pesel;
+//    @NIP
+//    private String nip;
+//    private String companyName;
     @Enumerated(EnumType.STRING)
     private TaxOffice taxOffice;
     private String bankAccountNumber;

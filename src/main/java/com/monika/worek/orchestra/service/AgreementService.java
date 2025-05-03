@@ -4,6 +4,7 @@ import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
+import jakarta.transaction.Transactional;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,6 @@ public class AgreementService {
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        valuesMap.put("current.date", LocalDate.now().format(dateFormatter));
         valuesMap.put("musician.fullName", String.format("%s %s",
                 Objects.toString(musician.getFirstName(), ""),
                 Objects.toString(musician.getLastName(), "")).trim());
@@ -63,19 +63,25 @@ public class AgreementService {
         valuesMap.put("musician.bankAccountNumber", musician.getBankAccountNumber());
         valuesMap.put("musician.instrument", musician.getInstrument().toString());
 
+        valuesMap.put("agreementDate", Objects.toString(getAgreementDate(project), na));
         valuesMap.put("project.endDate", project.getEndDate() != null ? project.getEndDate().format(dateFormatter) : na);
         valuesMap.put("project.location", Objects.toString(project.getLocation(), na));
         valuesMap.put("project.conductor", project.getConductor() != null ? project.getConductor() : na);
         valuesMap.put("project.programme", Objects.toString(project.getProgramme(), na));
         valuesMap.put("paymentDeadline", Objects.toString(getPaymentDeadline(project), na));
+        valuesMap.put("resignationPenaltyDate", Objects.toString(getResignationPenaltyDate(project), na));
         valuesMap.put("wage", Objects.toString(getWage(project, musician), na));
         valuesMap.put("wageNet", Objects.toString(getNetWage(project, musician), na));
 
         return valuesMap;
     }
 
-    public void saveTemplate(AgreementTemplate agreementTemplate) {
-        templateRepository.save(agreementTemplate);
+    private LocalDate getAgreementDate(Project project) {
+        return project.getStartDate().minusDays(10);
+    }
+
+    private LocalDate getResignationPenaltyDate(Project project) {
+        return project.getStartDate().minusDays(7);
     }
 
     private BigDecimal getWage(Project project, Musician musician) {
@@ -96,5 +102,10 @@ public class AgreementService {
 
     private LocalDate getPaymentDeadline(Project project) {
         return project.getEndDate().plusDays(14);
+    }
+
+    @Transactional
+    public void saveTemplate(AgreementTemplate agreementTemplate) {
+        templateRepository.save(agreementTemplate);
     }
 }

@@ -178,13 +178,8 @@ public class ProjectService {
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
         project.setLocation(dto.getLocation());
-    }
-
-    @Transactional
-    public void updateProgrammeAndConductor(Long id, String conductor, String programme) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-        project.setConductor(conductor);
-        project.setProgramme(programme);
+        project.setConductor(dto.getConductor());
+        project.setProgramme(dto.getProgramme());
     }
 
     private Project findProjectById(Long id) {
