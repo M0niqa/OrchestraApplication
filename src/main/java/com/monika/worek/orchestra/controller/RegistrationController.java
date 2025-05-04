@@ -29,30 +29,30 @@ public class RegistrationController {
         this.userService = userService;
     }
 
-    @GetMapping("/registerMusician")
+    @GetMapping("/inspector/registerMusician")
     public String showRegisterMusician(Model model) {
         model.addAttribute("musician", MusicianRegisterDTO.builder().build());
         model.addAttribute("instruments", Instrument.values());
-        return "registration-form";
+        return "/inspector/registration-form";
     }
 
-    @PostMapping("/registerMusician")
+    @PostMapping("/inspector/registerMusician")
     public String registerMusician(@Valid @ModelAttribute("musician") MusicianRegisterDTO dto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("instruments", Instrument.values());
-            return "registration-form";
+            return "/inspector/registration-form";
         }
 
         try {
             registrationService.createMusician(dto);
             registrationService.sendLink(dto.getEmail());
             redirectAttributes.addFlashAttribute("success", "Musician registered successfully!");
-            return "redirect:/registerMusician";
+            return "redirect:/inspector/registerMusician";
         } catch (IllegalArgumentException e) {
             String errorMessage = e.getMessage().contains("Musician already exists") ? "User with this email already exists." : "Registration failed due to an internal error.";
             model.addAttribute("error", errorMessage);
             model.addAttribute("instruments", Instrument.values());
-            return "registration-form";
+            return "/inspector/registration-form";
         }
     }
 

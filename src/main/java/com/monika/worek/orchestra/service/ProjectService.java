@@ -207,6 +207,7 @@ public class ProjectService {
         project.setLocation(dto.getLocation());
         project.setConductor(dto.getConductor());
         project.setProgramme(dto.getProgramme());
+        project.setAgreementTemplate(getTemplate(dto.getTemplateType()));
     }
 
     public AgreementTemplate getTemplate(TemplateType templateType) {

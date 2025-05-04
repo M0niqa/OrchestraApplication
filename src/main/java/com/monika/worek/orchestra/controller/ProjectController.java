@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -63,16 +64,17 @@ public class ProjectController {
     public String showInviteMusiciansPage(@PathVariable Long projectId, Model model) {
         projectService.updatePendingInvitations(projectId);
         prepareSendInvitationModel(projectId, model);
+        model.addAttribute("musicianIds", new ArrayList<Long>());
 
-        return "/inspector/send-invitation";
+        return "inspector/send-invitation";
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
-    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds, @RequestParam(value = "invitationDeadline", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime invitationDeadline, RedirectAttributes redirectAttributes, Model model) {
+    public String inviteMusicians(@PathVariable Long projectId, @ModelAttribute("musicianIds") List<Long> musicianIds, @RequestParam(value = "invitationDeadline", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime invitationDeadline, RedirectAttributes redirectAttributes, Model model) {
         if (invitationDeadline == null) {
             model.addAttribute("deadlineError", "Please set an invitation deadline.");
             prepareSendInvitationModel(projectId, model);
-            return "/inspector/send-invitation";
+            return "inspector/send-invitation";
         }
         if (musicianIds != null && !musicianIds.isEmpty()) {
             for (Long musicianId : musicianIds) {
@@ -136,21 +138,23 @@ public class ProjectController {
         return "redirect:/adminPage";
     }
 
-    @GetMapping("/admin/project/{id}")
-    public String viewProject(@PathVariable Long id, Model model) {
-        ProjectBasicInfoDTO projectBasicDTO = projectService.getProjectBasicDtoById(id);
+    @GetMapping("/admin/project/{projectId}")
+    public String viewProject(@PathVariable Long projectId, Model model) {
+        ProjectBasicInfoDTO projectBasicDTO = projectService.getProjectBasicDtoById(projectId);
         model.addAttribute("project", projectBasicDTO);
-        return "/admin/admin-project-details";
+        model.addAttribute("types", TemplateType.values());
+        return "admin/admin-project-details";
     }
 
-    @PostMapping("/admin/project/{id}/update")
-    public String updateProject(@PathVariable Long id, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @PostMapping("/admin/project/{projectId}/update")
+    public String updateProject(@PathVariable Long projectId, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            return "/admin/admin-project-details";
+            model.addAttribute("types", TemplateType.values());
+            return "admin/admin-project-details";
         }
-        projectService.updateBasicProjectInfo(id, projectBasicDTO);
+        projectService.updateBasicProjectInfo(projectId, projectBasicDTO);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
-        return "redirect:/admin/project/" + id;
+        return "redirect:/admin/project/" + projectId;
     }
 
     @GetMapping("/admin/project/{projectId}/instrumentCount/edit")
