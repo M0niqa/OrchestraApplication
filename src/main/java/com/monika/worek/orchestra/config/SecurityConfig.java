@@ -27,8 +27,8 @@ public class SecurityConfig {
 
         http.formLogin(login -> login
                 .loginPage("/login").permitAll()
-              //  .successHandler(customAuthenticationSuccessHandler()));
-                .defaultSuccessUrl("/musicianPage"));
+                .successHandler(customAuthenticationSuccessHandler()));
+              //  .defaultSuccessUrl("/musicianPage"));
 
         http.logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout/**", HttpMethod.GET.name()))
@@ -42,12 +42,12 @@ public class SecurityConfig {
         return web -> web.ignoring().requestMatchers("/images/instr.jpg");
     }
 
-//    @Bean
-//    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-//        return (request, response, authentication) -> {
-//            String userEmail = authentication.getName();
-//            twoFactorAuthService.sendVerificationCode(userEmail);
-//            response.sendRedirect("/2fa-page?email=" + userEmail);
-//        };
-//    }
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return (request, response, authentication) -> {
+            String userEmail = authentication.getName();
+            twoFactorAuthService.sendVerificationCode(userEmail);
+            response.sendRedirect("/2fa-page?email=" + userEmail);
+        };
+    }
 }

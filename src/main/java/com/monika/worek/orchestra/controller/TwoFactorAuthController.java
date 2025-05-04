@@ -34,11 +34,11 @@ public class TwoFactorAuthController {
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             boolean isAdmin = user.getRoles().stream()
-                    .anyMatch(role -> role.getName().equals(Role.ADMIN));
+                    .anyMatch(role -> role.getName().equals("ADMIN"));
             boolean isInspector = user.getRoles().stream()
-                    .anyMatch(role -> role.getName().equals(Role.INSPECTOR));
+                    .anyMatch(role -> role.getName().equals("INSPECTOR"));
             boolean isMusician = user.getRoles().stream()
-                    .anyMatch(role -> role.getName().equals(Role.MUSICIAN));
+                    .anyMatch(role -> role.getName().equals("MUSICIAN"));
 
             if (isAdmin) {
                 return "redirect:/adminPage";

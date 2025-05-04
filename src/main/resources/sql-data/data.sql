@@ -50,9 +50,9 @@ VALUES
 INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 3),
        (2, 2),
-       (3, 3),
        (3, 1),
        (4, 3),
+       (4, 2),
        (5, 3),
        (6, 3),
        (7, 3),

@@ -1,6 +1,7 @@
 package com.monika.worek.orchestra.config;
 
 import com.monika.worek.orchestra.auth.CustomUserDetails;
+import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         user.getEmail(),
                         user.getPassword(),
                         user.getRoles().stream()
-                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                                 .toList()
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
