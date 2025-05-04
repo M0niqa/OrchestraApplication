@@ -47,20 +47,20 @@ public class SurveyController {
 
         if (surveyOptional.isEmpty() || surveyOptional.get().getQuestions().isEmpty()) {
             model.addAttribute("noSurvey", true);
-            return "survey";
+            return "musician/musician-survey";
         }
 
         Survey survey = surveyOptional.get();
 
         if (survey.isClosed()) {
             model.addAttribute("surveyClosed", true);
-            return "survey";
+            return "musician/musician-survey";
         }
 
         boolean surveySubmitted = surveyService.existsBySurveyAndMusician(survey, musician);
         model.addAttribute("surveySubmitted", surveySubmitted);
         if (surveySubmitted) {
-            return "survey";
+            return "musician/musician-survey";
         }
 
         SurveySubmissionDTO submissionDTO = new SurveySubmissionDTO();
@@ -69,7 +69,7 @@ public class SurveyController {
         model.addAttribute("projectName", survey.getProject().getName());
         model.addAttribute("questions", survey.getQuestions());
 
-        return "survey";
+        return "musician/musician-survey";
     }
 
     @PostMapping("/musician/project/{projectId}/survey")
@@ -113,7 +113,7 @@ public class SurveyController {
         model.addAttribute("questions", questions);
         model.addAttribute("surveyQuestionDTO", new SurveyQuestionDTO());
         model.addAttribute("missingSubmissions", missingSubmissions);
-        return "admin-survey-questions";
+        return "/admin/admin-survey";
     }
 
     @PostMapping("/admin/project/{projectId}/survey")
@@ -131,7 +131,7 @@ public class SurveyController {
             model.addAttribute("projectName", project.getName());
             model.addAttribute("survey", survey);
             model.addAttribute("questions", questions);
-            return "admin-survey-questions";
+            return "/admin/admin-survey";
         }
 
         SurveyQuestion question = new SurveyQuestion();

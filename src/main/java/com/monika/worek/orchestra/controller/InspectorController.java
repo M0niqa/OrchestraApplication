@@ -24,6 +24,6 @@ public class InspectorController {
 
         model.addAttribute("ongoingProjects", ongoingProjects);
         model.addAttribute("futureProjects", futureProjects);
-        return "inspectorPage";
+        return "/inspector/inspector-main-page";
     }
 }

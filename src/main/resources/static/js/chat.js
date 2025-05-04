@@ -1,0 +1,63 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const chatDataDiv = document.getElementById('chatData');
+
+    if (!chatDataDiv) return;
+
+    const receiverId = chatDataDiv.dataset.receiverId;
+    const senderId = chatDataDiv.dataset.senderId;
+
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('/websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/messages/' + senderId, (message) => {
+                const msg = JSON.parse(message.body);
+                if (String(msg.senderId) === String(receiverId) || String(msg.receiverId) === String(receiverId)) {
+                    showMessage(msg);
+                } else {
+                    const badge = document.querySelector(`[data-user-id="${msg.senderId}"] .unread-badge`);
+                    if (badge) badge.classList.remove('d-none');
+                }
+            });
+        });
+    }
+
+    function sendMessage() {
+        const messageContent = document.getElementById("message").value;
+        if (!receiverId || !messageContent) return;
+
+        const message = {senderId, receiverId, messageContent};
+        stompClient.send("/app/chat", {}, JSON.stringify(message));
+        document.getElementById("message").value = "";
+    }
+
+    function showMessage(message) {
+        const messagesDiv = document.getElementById("messages");
+        const messageElement = document.createElement("div");
+        messageElement.className = "message " + (String(message.senderId) === String(senderId) ? "sender-message" : "receiver-message");
+        messageElement.innerHTML = `<span class="badge ${String(message.senderId) === String(senderId) ? 'bg-primary' : 'bg-secondary'}">${message.messageContent}</span>`;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function changeReceiver(newReceiverId) {
+        if (newReceiverId) {
+            window.location.href = '/chat/' + newReceiverId;
+        }
+    }
+
+    window.onload = function () {
+        connect();
+
+        if (receiverId) {
+            const badge = document.querySelector(`[data-user-id="${receiverId}"] .unread-badge`);
+            if (badge) badge.classList.add('d-none');
+        }
+
+        const messagesDiv = document.getElementById("messages");
+        if (messagesDiv) {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    }});

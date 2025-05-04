@@ -18,7 +18,7 @@ public class AdminController {
     public String showAdminPage(Model model) {
         model.addAttribute("ongoingProjects", projectService.getOngoingProjects());
         model.addAttribute("futureProjects", projectService.getFutureProjects());
-        return "admin";
+        return "/admin/admin-main-page";
     }
 
     @GetMapping("/archivedProjects")

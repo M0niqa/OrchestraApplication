@@ -40,7 +40,7 @@ public class AgreementController {
 
         model.addAttribute("project", projectDTO);
         model.addAttribute("templateContent", template.getContent());
-        return "admin-edit-template";
+        return "/admin/admin-edit-template";
     }
 
     @PostMapping("/admin/project/{id}/template/edit")
@@ -56,16 +56,11 @@ public class AgreementController {
     }
 
     @GetMapping("/musician/project/{projectId}/agreement")
-    public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) throws AccessDeniedException {
+    public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) {
         String email = authentication.getName();
         Musician musician = musicianService.findMusicianByEmail(email);
 
         Project project = projectService.getProjectById(projectId);
-
-        if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
-            throw new AccessDeniedException("You are not invited to this project.");
-        }
-
         String agreementContent = agreementService.generateAgreementContent(project, musician);
         ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
 
@@ -73,9 +68,8 @@ public class AgreementController {
 
         model.addAttribute("project", projectDTO);
         model.addAttribute("agreementContent", agreementContent);
-        model.addAttribute("hasResponded", accepted);
-        model.addAttribute("responseStatus", accepted ? "Accepted" : "Pending");
+        model.addAttribute("accepted", accepted);
 
-        return "agreement";
+        return "/musician/agreement";
     }
 }

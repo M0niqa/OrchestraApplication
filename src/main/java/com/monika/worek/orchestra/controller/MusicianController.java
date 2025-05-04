@@ -2,8 +2,6 @@ package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDTO;
-import com.monika.worek.orchestra.dto.UserBasicDTO;
-import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.TaxOffice;
 import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.MusicianService;
@@ -37,27 +35,27 @@ public class MusicianController {
         Boolean unreads = chatService.areUnreadMessages(musicianBasicDTO.getId());
         model.addAttribute("unreads", unreads);
         model.addAttribute("musician", musicianBasicDTO);
-        return "musicianPage";
+        return "musician/musician-home-page";
     }
 
-    @GetMapping("/userData")
+    @GetMapping("/musicianData")
     public String showUpdateDataForm(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
         model.addAttribute("musician", musicianService.getMusicianDtoByEmail(currentEmail));
         model.addAttribute("taxOffices", TaxOffice.values());
-        return "musician-data";
+        return "musician/musician-data";
     }
 
-    @PostMapping("/userData")
+    @PostMapping("/musicianData")
     public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto, BindingResult bindingResult,
                              Authentication authentication, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("taxOffices", TaxOffice.values());
-            return "musician-data";
+            return "musician/musician-data";
         }
 
         musicianService.updateUserData(authentication.getName(), dto);
         redirectAttributes.addFlashAttribute("success", "Data updated successfully!");
-        return "redirect:/userData";
+        return "redirect:/musicianData";
     }
 }

@@ -46,7 +46,7 @@ public class MusicScoreController {
 
         model.addAttribute("projectId", projectId);
         model.addAttribute("files", fileDTOs);
-        return "admin-scores";
+        return "/admin/admin-scores";
     }
 
     @PostMapping("/admin/project/{projectId}/scores/upload")
@@ -94,7 +94,7 @@ public class MusicScoreController {
 
 
 
-    @GetMapping("musician/project/{projectId}/scores")
+    @GetMapping("/musician/project/{projectId}/scores")
     public String listScores(@PathVariable Long projectId, Model model) {
         Project project = projectService.getProjectById(projectId);
 
@@ -102,7 +102,7 @@ public class MusicScoreController {
         model.addAttribute("project", project);
         model.addAttribute("scores", scores);
 
-        return "musician-scores";
+        return "/musician/musician-scores";
     }
 
     @GetMapping({"/admin/project/{projectId}/scores/download/{fileId}",

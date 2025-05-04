@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ProjectController {
@@ -46,14 +45,14 @@ public class ProjectController {
         String email = authentication.getName();
         Musician musician = musicianService.findMusicianByEmail(email);
         projectService.rejectInvitation(projectId, musician.getId());
-        return "redirect:/musician/project/" + projectId + "/agreement";
+        return "redirect:/musicianPage";
     }
 
-    @GetMapping("/musician/project/{id}")
-    public String viewProjectDetailsForMusician(@PathVariable Long id, Model model) {
-        ProjectDTO projectDTO = projectService.getProjectDtoById(id);
+    @GetMapping("/musician/project/{projectId}")
+    public String viewProjectDetailsForMusician(@PathVariable Long projectId, Model model) {
+        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
         model.addAttribute("project", projectDTO);
-        return "musician-project-details";
+        return "/musician/musician-project-details";
     }
 
 
@@ -65,7 +64,7 @@ public class ProjectController {
         projectService.updatePendingInvitations(projectId);
         prepareSendInvitationModel(projectId, model);
 
-        return "send-invitation";
+        return "/inspector/send-invitation";
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
@@ -73,7 +72,7 @@ public class ProjectController {
         if (invitationDeadline == null) {
             model.addAttribute("deadlineError", "Please set an invitation deadline.");
             prepareSendInvitationModel(projectId, model);
-            return "send-invitation";
+            return "/inspector/send-invitation";
         }
         if (musicianIds != null && !musicianIds.isEmpty()) {
             for (Long musicianId : musicianIds) {
@@ -101,14 +100,14 @@ public class ProjectController {
     public String showAddProjectForm(Model model) {
         model.addAttribute("projectDTO", new ProjectBasicInfoDTO());
         model.addAttribute("types", TemplateType.values());
-        return "addProject";
+        return "/admin/add-project";
     }
 
     @PostMapping("/admin/addProject")
     public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, RedirectAttributes redirectAttributes, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("types", TemplateType.values());
-            return "addProject";
+            return "/admin/add-project";
         }
         Project project = ProjectBasicInfoDTOMapper.mapToEntity(projectDTO);
         project.setAgreementTemplate(projectService.getTemplate(projectDTO.getTemplateType()));
@@ -124,11 +123,11 @@ public class ProjectController {
         ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
         LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
         model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
-        model.addAttribute("refusedMusicians", projectDTO.getMusiciansWhoRejected());
+        model.addAttribute("musiciansWhoRejected", projectDTO.getMusiciansWhoRejected());
         model.addAttribute("pendingMusicians", projectDTO.getInvited());
         model.addAttribute("project", projectDTO);
 
-        return "musicianStatus";
+        return "musician-status";
     }
 
     @PostMapping("/admin/project/{id}/delete")
@@ -141,13 +140,13 @@ public class ProjectController {
     public String viewProject(@PathVariable Long id, Model model) {
         ProjectBasicInfoDTO projectBasicDTO = projectService.getProjectBasicDtoById(id);
         model.addAttribute("project", projectBasicDTO);
-        return "project-details";
+        return "/admin/admin-project-details";
     }
 
     @PostMapping("/admin/project/{id}/update")
     public String updateProject(@PathVariable Long id, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "project-details";
+            return "/admin/admin-project-details";
         }
         projectService.updateBasicProjectInfo(id, projectBasicDTO);
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
@@ -166,7 +165,7 @@ public class ProjectController {
         model.addAttribute("instruments", Instrument.values());
         model.addAttribute("instrumentGroups", List.of("Strings", "Winds", "Brass", "Solo"));
         model.addAttribute("configDTO", instrCountAndSalaryDTO);
-        return "instrument-count";
+        return "/admin/instrument-count";
     }
 
     @PostMapping("/admin/project/{projectId}/instrumentCount/edit")
