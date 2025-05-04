@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     const chatDataDiv = document.getElementById('chatData');
-
     if (!chatDataDiv) return;
 
     const receiverId = chatDataDiv.dataset.receiverId;
@@ -24,14 +23,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function sendMessage() {
+    window.sendMessage = function () {
         const messageContent = document.getElementById("message").value;
         if (!receiverId || !messageContent) return;
 
-        const message = {senderId, receiverId, messageContent};
+        const message = { senderId, receiverId, messageContent };
         stompClient.send("/app/chat", {}, JSON.stringify(message));
         document.getElementById("message").value = "";
-    }
+    };
+
+    window.changeReceiver = function (newReceiverId) {
+        if (newReceiverId) {
+            window.location.href = '/chat/' + newReceiverId;
+        }
+    };
 
     function showMessage(message) {
         const messagesDiv = document.getElementById("messages");
@@ -42,22 +47,15 @@ document.addEventListener("DOMContentLoaded", function () {
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    function changeReceiver(newReceiverId) {
-        if (newReceiverId) {
-            window.location.href = '/chat/' + newReceiverId;
-        }
+    connect();
+
+    if (receiverId) {
+        const badge = document.querySelector(`[data-user-id="${receiverId}"] .unread-badge`);
+        if (badge) badge.classList.add('d-none');
     }
 
-    window.onload = function () {
-        connect();
-
-        if (receiverId) {
-            const badge = document.querySelector(`[data-user-id="${receiverId}"] .unread-badge`);
-            if (badge) badge.classList.add('d-none');
-        }
-
-        const messagesDiv = document.getElementById("messages");
-        if (messagesDiv) {
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-    }});
+    const messagesDiv = document.getElementById("messages");
+    if (messagesDiv) {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+});
