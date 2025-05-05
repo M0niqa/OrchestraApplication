@@ -113,3 +113,21 @@ select {
     background-color: #861d27;
     border-color: #7a1c24;
 }
+
+.datetime-input-group {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+}
+
+.datetime-input-group .form-label {
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+}
+
+#invitationDeadline {
+    width: 200px;
+}
+.form-group.sm-4 {
+    max-width: 200px;
+}
