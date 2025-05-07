@@ -19,8 +19,6 @@
             class="bi bi-file-music-fill me-1"></i> Scores</a>
     <a th:href="@{/admin/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-secondary m-1"><i
             class="bi bi-people-fill me-1"></i> Musicians</a>
-    <a th:href="@{/admin/project/{id}/template/edit(id=${project.id})}" class="btn btn-secondary m-1"><i
-            class="bi bi-file-earmark-text-fill me-1"></i> Agreement Template</a>
     <a th:href="@{/admin/project/{id}/instrumentCount/edit(id=${project.id})}" class="btn btn-secondary m-1"><i
             class="bi bi-list-ol me-1"></i> Instruments & Salary</a>
     <a th:href="@{/admin/project/{id}/survey(id=${project.id})}" class="btn btn-secondary m-1"><i
@@ -68,15 +66,6 @@
                 <div class="col-sm-9">
                     <textarea th:field="*{programme}" class="form-control" id="programme"
                               style="min-height: 100px;"></textarea>
-                </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="templateType" class="col-sm-3 col-form-label"><strong>Project type:</strong></label>
-                <div class="col-sm-9">
-                    <select th:field="*{templateType}" class="form-control" id="templateType">
-                        <option th:each="type : ${types}" th:value="${type.name}" th:text="${type.displayName}"></option>
-                    </select>
-                    <div class="text-danger" th:if="${#fields.hasErrors('templateType')}" th:errors="*{templateType}"></div>
                 </div>
             </div>
             <div class="mb-3">

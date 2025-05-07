@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
@@ -32,7 +33,7 @@ public class UserController {
 
     @PostMapping("/userPassword")
     public String updatePassword(@Valid @ModelAttribute("passwordForm") PasswordUpdateDTO form, BindingResult bindingResult,
-                                 Authentication authentication, Model model) {
+                                 Authentication authentication, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "update-password";
         }
@@ -43,17 +44,17 @@ public class UserController {
         String storedPassword = user.getPassword();
 
         if (!passwordEncoder.matches(form.getOldPassword(), storedPassword)) {
-            model.addAttribute("error", "Incorrect old password.");
+            bindingResult.rejectValue("oldPassword", "error.oldPassword", "Old password is incorrect");
             return "update-password";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
-            model.addAttribute("error", "New passwords do not match.");
+            bindingResult.rejectValue("confirmNewPassword", "error.confirmNewPassword", "Passwords do not match");
             return "update-password";
         }
 
         userService.updatePassword(currentEmail, form.getNewPassword());
-        model.addAttribute("success", "Password changed successfully!");
-        return "update-password";
+        redirectAttributes.addFlashAttribute("success", "Password updated successfully!");
+        return "redirect:/update-password";
     }
 }

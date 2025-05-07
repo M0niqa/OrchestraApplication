@@ -84,7 +84,7 @@ VALUES (1, 3),
        (33, 3),
        (34, 3);
 
-INSERT INTO AgreementTemplate (content, templateType) VALUES
+INSERT INTO AgreementTemplate (content) VALUES
     ('Work Contract with the Transfer of Rights to Artistic Performance,
 concluded in Kraków on ${agreementDate}, between:
 [Ordering Party''s name], hereinafter referred to as the "ORDERING PARTY",
@@ -194,7 +194,7 @@ Amount to pay: ${wageNet} zł
 Please transfer the above amount to my account: ${musician.bankAccountNumber}
 Paid by transfer on: __________________
 Performer: ____________________________
-Ordering Party: ________________________', 'CONCERT');
+Ordering Party: ________________________');
 
 
 INSERT INTO Project (name, description, startDate, endDate, agreementTemplate_id)

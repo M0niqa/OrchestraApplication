@@ -5,6 +5,7 @@ import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.service.AgreementService;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
@@ -17,42 +18,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.nio.file.AccessDeniedException;
-
 @Controller
 public class AgreementController {
 
     private final ProjectService projectService;
     private final AgreementService agreementService;
     private final MusicianService musicianService;
+    private final AgreementTemplateRepository agreementTemplateRepository;
 
-    public AgreementController(ProjectService projectService, AgreementService agreementService, MusicianService musicianService) {
+    public AgreementController(ProjectService projectService, AgreementService agreementService, MusicianService musicianService, AgreementTemplateRepository agreementTemplateRepository) {
         this.projectService = projectService;
         this.agreementService = agreementService;
         this.musicianService = musicianService;
+        this.agreementTemplateRepository = agreementTemplateRepository;
     }
 
-    @GetMapping("/admin/project/{id}/template/edit")
-    public String editTemplateForm(@PathVariable Long id, Model model) {
-        Project project = projectService.getProjectById(id);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
-        AgreementTemplate template = project.getAgreementTemplate();
-
-        model.addAttribute("project", projectDTO);
+    @GetMapping("/admin/template/edit")
+    public String editTemplateForm(Model model) {
+        AgreementTemplate template = agreementTemplateRepository.findById(1L).orElseThrow((() -> new IllegalArgumentException("Template not found")));
         model.addAttribute("templateContent", template.getContent());
         return "/admin/admin-edit-template";
     }
 
-    @PostMapping("/admin/project/{id}/template/edit")
-    public String updateTemplate(@PathVariable Long id, @RequestParam String templateContent, RedirectAttributes redirectAttributes) {
-        Project project = projectService.getProjectById(id);
-        AgreementTemplate template = project.getAgreementTemplate();
+    @PostMapping("/admin/template/edit")
+    public String updateTemplate(@RequestParam String templateContent, RedirectAttributes redirectAttributes) {
+        AgreementTemplate template = agreementTemplateRepository.findById(1L).orElseThrow((() -> new IllegalArgumentException("Template not found")));
 
         template.setContent(templateContent);
         agreementService.saveTemplate(template);
 
         redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
-        return "redirect:/admin/project/" + id + "/template/edit";
+        return "redirect:/admin/template/edit";
     }
 
     @GetMapping("/musician/project/{projectId}/agreement")

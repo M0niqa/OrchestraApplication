@@ -102,21 +102,18 @@ public class ProjectController {
     @GetMapping("/admin/addProject")
     public String showAddProjectForm(Model model) {
         model.addAttribute("projectDTO", new ProjectBasicInfoDTO());
-        model.addAttribute("types", TemplateType.values());
         return "/admin/add-project";
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, RedirectAttributes redirectAttributes, BindingResult bindingResult, Model model) {
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("types", TemplateType.values());
             return "/admin/add-project";
         }
         Project project = ProjectBasicInfoDTOMapper.mapToEntity(projectDTO);
-        project.setAgreementTemplate(projectService.getTemplate(projectDTO.getTemplateType()));
         projectService.saveProject(project);
         redirectAttributes.addFlashAttribute("success", "Project added successfully!");
-        return "redirect:/adminPage";
+        return "redirect:/admin/addProject";
     }
 
     @GetMapping({"/admin/project/{projectId}/musicianStatus", "/inspector/project/{projectId}/musicianStatus"})
@@ -143,14 +140,12 @@ public class ProjectController {
     public String viewProject(@PathVariable Long projectId, Model model) {
         ProjectBasicInfoDTO projectBasicDTO = projectService.getProjectBasicDtoById(projectId);
         model.addAttribute("project", projectBasicDTO);
-        model.addAttribute("types", TemplateType.values());
         return "admin/admin-project-details";
     }
 
     @PostMapping("/admin/project/{projectId}/update")
     public String updateProject(@PathVariable Long projectId, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("types", TemplateType.values());
             return "admin/admin-project-details";
         }
         projectService.updateBasicProjectInfo(projectId, projectBasicDTO);
