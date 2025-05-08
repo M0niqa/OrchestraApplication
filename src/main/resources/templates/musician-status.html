@@ -29,10 +29,18 @@
                     <h3 class="card-title text-dark"> Project Members</h3>
                     <ul class="list-unstyled">
                         <li th:each="instrument : ${projectMembersByInstrument.keySet()}" class="mb-3">
-                            <h4 th:text="${instrument.getDisplayName()}" class="text-muted"><span th:text="${instrument.getDisplayName()}"></span></h4>
+                            <h4 th:text="${instrument.displayName}" class="text-muted"><span th:text="${instrument.displayName}"></span></h4>
                             <ul class="list-unstyled ms-3">
-                                <li th:each="musician : ${projectMembersByInstrument.get(instrument)}"
-                                    th:text="${musician.firstName} + ' ' + ${musician.lastName}">
+                                <li th:each="musician : ${projectMembersByInstrument.get(instrument)}" class="list-group-item mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                    <span th:text="${musician.firstName} + ' ' + ${musician.lastName}"></span>
+                                    <form th:action="@{/inspector/project/{projectId}/remove/{musicianId}(projectId=${project.id}, musicianId=${musician.id})}" method="post"
+                                          onsubmit="return confirm('Are you sure you want to remove this musician from project?');" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm ms-2">
+                                            <i class="bi bi-trash-fill me-1"></i> remove
+                                        </button>
+                                    </form>
+                                    </div>
                                 </li>
                             </ul>
                         </li>
@@ -67,7 +75,7 @@
         </div>
 
         <div class="col" th:if="${not musiciansWhoRejected.isEmpty()}">
-            <div class="card shadow-sm h-100 border-darkr">
+            <div class="card shadow-sm h-100 border-dark">
                 <div class="card-body">
                     <h3 class="card-title text-dark"><i class="bi bi-x-octagon-fill me-2"></i> Musicians who Rejected</h3>
                     <ul class="list-unstyled">

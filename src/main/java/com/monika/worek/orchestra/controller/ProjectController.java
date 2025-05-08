@@ -93,6 +93,26 @@ public class ProjectController {
         model.addAttribute("musiciansByInstrument", projectService.getAvailableMusiciansByInstrument(projectId));
     }
 
+    @GetMapping({"/admin/project/{projectId}/musicianStatus", "/inspector/project/{projectId}/musicianStatus"})
+    public String showMusicianStatus(@PathVariable Long projectId, Model model) {
+        projectService.updatePendingInvitations(projectId);
+        Project project = projectService.getProjectById(projectId);
+        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
+        LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
+        model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
+        model.addAttribute("musiciansWhoRejected", projectDTO.getMusiciansWhoRejected());
+        model.addAttribute("pendingMusicians", projectDTO.getInvited());
+        model.addAttribute("project", projectDTO);
+
+        return "musician-status";
+    }
+
+    @PostMapping("/inspector/project/{projectId}/remove/{musicianId}")
+    public String removeMusicianFromProject(@PathVariable Long projectId, @PathVariable Long musicianId) {
+        projectService.removeProjectMember(projectId, musicianId);
+        return "redirect:/inspector/project/{projectId}/musicianStatus";
+    }
+
 
 
 
@@ -114,20 +134,6 @@ public class ProjectController {
         projectService.saveProject(project);
         redirectAttributes.addFlashAttribute("success", "Project added successfully!");
         return "redirect:/admin/addProject";
-    }
-
-    @GetMapping({"/admin/project/{projectId}/musicianStatus", "/inspector/project/{projectId}/musicianStatus"})
-    public String showMusicianStatus(@PathVariable Long projectId, Model model) {
-        projectService.updatePendingInvitations(projectId);
-        Project project = projectService.getProjectById(projectId);
-        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
-        LinkedHashMap<Instrument, List<MusicianBasicDTO>> musiciansByInstrument = projectService.getProjectMembersByInstrument(project);
-        model.addAttribute("projectMembersByInstrument", musiciansByInstrument);
-        model.addAttribute("musiciansWhoRejected", projectDTO.getMusiciansWhoRejected());
-        model.addAttribute("pendingMusicians", projectDTO.getInvited());
-        model.addAttribute("project", projectDTO);
-
-        return "musician-status";
     }
 
     @PostMapping("/admin/project/{id}/delete")

@@ -38,8 +38,8 @@ public class ProjectService {
     }
 
     public void inviteMusician(Long projectId, Long musicianId, LocalDateTime invitationDeadline) {
-        Project project = findProjectById(projectId);
-        Musician musician = findMusicianById(musicianId);
+        Project project = getProjectById(projectId);
+        Musician musician = getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician) &&
                 !project.getProjectMembers().contains(musician)
@@ -64,8 +64,8 @@ public class ProjectService {
 
     @Transactional
     public void acceptInvitation(Long projectId, Long musicianId) {
-        Project project = findProjectById(projectId);
-        Musician musician = findMusicianById(musicianId);
+        Project project = getProjectById(projectId);
+        Musician musician = getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician)) {
             throw new IllegalStateException("Musician not currently invited to this project.");
@@ -79,8 +79,8 @@ public class ProjectService {
 
     @Transactional
     public void rejectInvitation(Long projectId, Long musicianId) {
-        Project project = findProjectById(projectId);
-        Musician musician = findMusicianById(musicianId);
+        Project project = getProjectById(projectId);
+        Musician musician = getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician)) {
             throw new IllegalStateException("Musician not currently invited to this project.");
@@ -94,7 +94,7 @@ public class ProjectService {
 
     @Transactional
     public void updatePendingInvitations(Long projectId) {
-        Project project = findProjectById(projectId);
+        Project project = getProjectById(projectId);
         LocalDateTime invitationDeadline = project.getInvitationDeadline();
         if (invitationDeadline == null) {
             return;
@@ -107,7 +107,7 @@ public class ProjectService {
     }
 
     private List<Musician> getAvailableMusiciansSorted(Long projectId) {
-        Project project = findProjectById(projectId);
+        Project project = getProjectById(projectId);
 
         List<Musician> allMusicians = (List<Musician>) musicianRepository.findAll();
 
@@ -161,6 +161,14 @@ public class ProjectService {
         return remainingCounts;
     }
 
+    @Transactional
+    public void removeProjectMember(Long projectId, Long musicianId) {
+        Project project = getProjectById(projectId);
+        project.getProjectMembers().removeIf(musician -> musician.getId().equals(musicianId));
+        project.getMusiciansWhoRejected().add(getMusicianById(musicianId));
+        projectRepository.save(project);
+    }
+
     public List<ProjectBasicInfoDTO> getOngoingProjects() {
         LocalDate today = LocalDate.now();
         List<Project> projects = projectRepository.findByStartDateBeforeAndEndDateAfter(today.plusDays(1), today.minusDays(1));
@@ -208,11 +216,7 @@ public class ProjectService {
         project.setProgramme(dto.getProgramme());
     }
 
-    private Project findProjectById(Long id) {
-        return projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
-    }
-
-    private Musician findMusicianById(Long id) {
+    private Musician getMusicianById(Long id) {
         return musicianRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
     }
 }
