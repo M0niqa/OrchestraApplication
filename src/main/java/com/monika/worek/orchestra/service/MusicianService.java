@@ -5,10 +5,15 @@ import com.monika.worek.orchestra.auth.MusicianDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDTO;
 import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class MusicianService {
@@ -20,21 +25,55 @@ public class MusicianService {
         this.musicianRepository = musicianRepository;
     }
 
-    public Musician findMusicianByEmail(String mail) {
-        return musicianRepository.findByEmail(mail).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
+    public Musician getMusicianByEmail(String mail) {
+        return musicianRepository.findByEmail(mail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
     }
 
     public MusicianDTO getMusicianDtoByEmail(String mail) {
-        return MusicianDTOMapper.mapToDto(findMusicianByEmail(mail));
+        return MusicianDTOMapper.mapToDto(getMusicianByEmail(mail));
     }
 
     public MusicianBasicDTO getMusicianBasicDtoByEmail(String email) {
-        return MusicianBasicDTOMapper.mapToDto(findMusicianByEmail(email));
+        return MusicianBasicDTOMapper.mapToDto(getMusicianByEmail(email));
+    }
+
+    public Musician getMusicianById(Long id) {
+        return musicianRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
+    }
+
+    public List<Musician> getAllMusiciansSortedBySurname() {
+        List<Musician> musicians = (List<Musician>) musicianRepository.findAll();
+        return musicians.stream().sorted(Comparator.comparing(Musician::getLastName)
+                        .thenComparing(Musician::getFirstName)).toList();
+    }
+
+    @Transactional
+    public void deleteMusicianById(Long id) {
+        Musician musician = musicianRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Musician not found"));
+
+        for (Project project : musician.getAcceptedProjects()) {
+            project.getProjectMembers().remove(musician);
+        }
+
+        for (Project project : musician.getRejectedProjects()) {
+            project.getMusiciansWhoRejected().remove(musician);
+        }
+
+        for (Project project : musician.getPendingProjects()) {
+            project.getInvited().remove(musician);
+        }
+
+        musician.getAcceptedProjects().clear();
+        musician.getRejectedProjects().clear();
+        musician.getPendingProjects().clear();
+
+        musicianRepository.delete(musician);
     }
 
     @Transactional
     public void updateUserData(String currentEmail, MusicianDTO userDTO) {
-        Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
+        Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setBirthdate(userDTO.getBirthdate());

@@ -10,37 +10,41 @@
 <div class="container text-center">
     <div class="container text-center py-5">
         <h1>Welcome, Inspector!</h1>
-    <div class="btn-container">
-        <a th:href="@{/musicianPage}" class="btn btn-secondary m-1">Musician home page</a>
-        <a th:href="@{/inspector/registerMusician}" class="btn btn-secondary m-1">Register new musician</a>
-    </div>
-    <div class="container mt-4">
-        <h2>Ongoing Projects</h2>
-        <table class="table">
-            <tbody>
-            <tr th:each="project : ${ongoingProjects}">
-                <td th:text="${project.name}"></td>
-                <td>
-                    <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-primary">View Musicians Status</a>
-                    <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}" class="btn btn-secondary">Invite Musicians</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <h2>Future Projects</h2>
-        <table class="table">
-            <tbody>
-            <tr th:each="project : ${futureProjects}">
-                <td th:text="${project.name}"></td>
-                <td>
-                    <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}" class="btn btn-primary">View Status</a>
-                    <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}" class="btn btn-secondary">Invite Musicians</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="btn-container">
+            <a th:href="@{/musicianPage}" class="btn btn-secondary m-1">Musician home page</a>
+            <a th:href="@{/inspector/registerMusician}" class="btn btn-secondary m-1">Register new musician</a>
+        </div>
+        <div class="container mt-4">
+            <h2>Ongoing Projects</h2>
+            <table class="table">
+                <tbody>
+                <tr th:each="project : ${ongoingProjects}">
+                    <td th:text="${project.name}"></td>
+                    <td>
+                        <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}"
+                           class="btn btn-primary">View Musicians Status</a>
+                        <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}"
+                           class="btn btn-secondary">Invite Musicians</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <h2>Future Projects</h2>
+            <table class="table">
+                <tbody>
+                <tr th:each="project : ${futureProjects}">
+                    <td th:text="${project.name}"></td>
+                    <td>
+                        <a th:href="@{/inspector/project/{id}/musicianStatus(id=${project.id})}"
+                           class="btn btn-primary">View Status</a>
+                        <a th:href="@{/inspector/project/{id}/sendInvitation(id=${project.id})}"
+                           class="btn btn-secondary">Invite Musicians</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
 </body>
 </html>

@@ -36,7 +36,7 @@ public class ProjectController {
     @PostMapping("/musician/project/{projectId}/invitation/accept")
     public String acceptInvitation(@PathVariable Long projectId, Authentication authentication) {
         String email = authentication.getName();
-        Musician musician = musicianService.findMusicianByEmail(email);
+        Musician musician = musicianService.getMusicianByEmail(email);
         projectService.acceptInvitation(projectId, musician.getId());
         return "redirect:/musician/project/" + projectId + "/agreement";
     }
@@ -44,7 +44,7 @@ public class ProjectController {
     @PostMapping("/musician/project/{projectId}/invitation/reject")
     public String rejectInvitation(@PathVariable Long projectId, Authentication authentication) {
         String email = authentication.getName();
-        Musician musician = musicianService.findMusicianByEmail(email);
+        Musician musician = musicianService.getMusicianByEmail(email);
         projectService.rejectInvitation(projectId, musician.getId());
         return "redirect:/musicianPage";
     }
@@ -159,7 +159,7 @@ public class ProjectController {
         return "redirect:/admin/project/" + projectId;
     }
 
-    @GetMapping("/admin/project/{projectId}/instrumentCount/edit")
+    @GetMapping("/admin/project/{projectId}/instrumentCount")
     public String showInstrumentConfigForm(@PathVariable Long projectId, Model model) {
         Project project = projectService.getProjectById(projectId);
 
@@ -171,10 +171,10 @@ public class ProjectController {
         model.addAttribute("instruments", Instrument.values());
         model.addAttribute("instrumentGroups", List.of("Strings", "Winds", "Brass", "Solo"));
         model.addAttribute("configDTO", instrCountAndSalaryDTO);
-        return "/admin/instrument-count";
+        return "admin/instrument-count";
     }
 
-    @PostMapping("/admin/project/{projectId}/instrumentCount/edit")
+    @PostMapping("/admin/project/{projectId}/instrumentCount")
     public String updateInstrumentConfig(@PathVariable Long projectId, @ModelAttribute InstrumentCountAndSalaryDTO instrumentConfigDTO, RedirectAttributes redirectAttributes) {
         Project project = projectService.getProjectById(projectId);
 
@@ -184,6 +184,6 @@ public class ProjectController {
         projectService.saveProject(project);
 
         redirectAttributes.addFlashAttribute("success", "Instrument configuration updated successfully!");
-        return "redirect:/admin/project/" + projectId + "/instrumentCount/edit";
+        return "redirect:/admin/project/" + projectId + "/instrumentCount";
     }
 }

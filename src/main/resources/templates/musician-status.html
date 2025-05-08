@@ -29,14 +29,14 @@
                     <h3 class="card-title text-dark"> Project Members</h3>
                     <ul class="list-unstyled">
                         <li th:each="instrument : ${projectMembersByInstrument.keySet()}" class="mb-3">
-                            <h4 th:text="${instrument.displayName}" class="text-muted"><span th:text="${instrument.displayName}"></span></h4>
+                            <h4 th:text="${instrument.displayName}"></h4>
                             <ul class="list-unstyled ms-3">
                                 <li th:each="musician : ${projectMembersByInstrument.get(instrument)}" class="list-group-item mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                     <span th:text="${musician.firstName} + ' ' + ${musician.lastName}"></span>
                                     <form th:action="@{/inspector/project/{projectId}/remove/{musicianId}(projectId=${project.id}, musicianId=${musician.id})}" method="post"
-                                          onsubmit="return confirm('Are you sure you want to remove this musician from project?');" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn-sm ms-2">
+                                          th:attr="onsubmit=|return confirm('Are you sure you want to delete ${musician.firstName} ${musician.lastName} from the project?');|">
+                                    <button type="submit" class="btn btn-danger btn-sm ms-2">
                                             <i class="bi bi-trash-fill me-1"></i> remove
                                         </button>
                                     </form>

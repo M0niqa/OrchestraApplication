@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserDTO;
 import com.monika.worek.orchestra.model.User;
 import com.monika.worek.orchestra.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -33,7 +34,7 @@ public class UserService {
     }
 
     public UserBasicDTO findUserById(Long id) {
-        return UserBasicDTOMapper.mapToBasicDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found")));
+        return UserBasicDTOMapper.mapToBasicDto(userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
 
     public Optional<UserDTO> findUserByEmail(String email) {
@@ -42,7 +43,7 @@ public class UserService {
     }
 
     public UserBasicDTO getUserBasicDtoByEmail(String email) {
-        return UserBasicDTOMapper.mapToBasicDto(findUserByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found")));
+        return UserBasicDTOMapper.mapToBasicDto(findUserByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
 
     public boolean doesUserExist(String email) {
@@ -58,7 +59,7 @@ public class UserService {
 
     @Transactional
     public void updatePassword(String currentEmail, String newPassword) {
-        User user = userRepository.findByEmail(currentEmail).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("User not found"));
         if (newPassword != null && !newPassword.isEmpty()) {
             user.setPassword(passwordEncoder.encode(newPassword));
         }

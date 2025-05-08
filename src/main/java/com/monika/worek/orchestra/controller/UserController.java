@@ -3,6 +3,7 @@ package com.monika.worek.orchestra.controller;
 import com.monika.worek.orchestra.dto.PasswordUpdateDTO;
 import com.monika.worek.orchestra.dto.UserDTO;
 import com.monika.worek.orchestra.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -40,7 +41,7 @@ public class UserController {
 
         String currentEmail = authentication.getName();
         UserDTO user = userService.findUserByEmail(currentEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String storedPassword = user.getPassword();
 
         if (!passwordEncoder.matches(form.getOldPassword(), storedPassword)) {

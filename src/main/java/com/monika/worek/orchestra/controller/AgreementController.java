@@ -54,7 +54,7 @@ public class AgreementController {
     @GetMapping("/musician/project/{projectId}/agreement")
     public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) {
         String email = authentication.getName();
-        Musician musician = musicianService.findMusicianByEmail(email);
+        Musician musician = musicianService.getMusicianByEmail(email);
 
         Project project = projectService.getProjectById(projectId);
         String agreementContent = agreementService.generateAgreementContent(project, musician);

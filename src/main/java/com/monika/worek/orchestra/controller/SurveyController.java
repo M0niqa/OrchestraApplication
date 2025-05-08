@@ -75,7 +75,7 @@ public class SurveyController {
     @PostMapping("/musician/project/{projectId}/survey")
     public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO, Authentication authentication, RedirectAttributes redirectAttributes) {
         Map<Long, String> responses = submissionDTO.getResponses();
-        Musician musician = musicianService.findMusicianByEmail(authentication.getName());
+        Musician musician = musicianService.getMusicianByEmail(authentication.getName());
         Survey survey = surveyService.findByProjectId(projectId).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
         for (Map.Entry<Long, String> entry : responses.entrySet()) {

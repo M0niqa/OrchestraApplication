@@ -9,8 +9,8 @@ import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
-import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final MusicianRepository musicianRepository;
+    private final MusicianService musicianService;
     private final EmailService emailService;
 
-    public ProjectService(ProjectRepository projectRepository, MusicianRepository musicianRepository, EmailService emailService) {
+    public ProjectService(ProjectRepository projectRepository, MusicianService musicianService, EmailService emailService) {
         this.projectRepository = projectRepository;
-        this.musicianRepository = musicianRepository;
+        this.musicianService = musicianService;
         this.emailService = emailService;
     }
 
@@ -39,7 +39,7 @@ public class ProjectService {
 
     public void inviteMusician(Long projectId, Long musicianId, LocalDateTime invitationDeadline) {
         Project project = getProjectById(projectId);
-        Musician musician = getMusicianById(musicianId);
+        Musician musician = musicianService.getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician) &&
                 !project.getProjectMembers().contains(musician)
@@ -65,7 +65,7 @@ public class ProjectService {
     @Transactional
     public void acceptInvitation(Long projectId, Long musicianId) {
         Project project = getProjectById(projectId);
-        Musician musician = getMusicianById(musicianId);
+        Musician musician = musicianService.getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician)) {
             throw new IllegalStateException("Musician not currently invited to this project.");
@@ -80,7 +80,7 @@ public class ProjectService {
     @Transactional
     public void rejectInvitation(Long projectId, Long musicianId) {
         Project project = getProjectById(projectId);
-        Musician musician = getMusicianById(musicianId);
+        Musician musician = musicianService.getMusicianById(musicianId);
 
         if (!project.getInvited().contains(musician)) {
             throw new IllegalStateException("Musician not currently invited to this project.");
@@ -109,7 +109,7 @@ public class ProjectService {
     private List<Musician> getAvailableMusiciansSorted(Long projectId) {
         Project project = getProjectById(projectId);
 
-        List<Musician> allMusicians = (List<Musician>) musicianRepository.findAll();
+        List<Musician> allMusicians = musicianService.getAllMusiciansSortedBySurname();
 
         return allMusicians.stream()
                 .filter(musician -> !project.getProjectMembers().contains(musician) &&
@@ -165,7 +165,7 @@ public class ProjectService {
     public void removeProjectMember(Long projectId, Long musicianId) {
         Project project = getProjectById(projectId);
         project.getProjectMembers().removeIf(musician -> musician.getId().equals(musicianId));
-        project.getMusiciansWhoRejected().add(getMusicianById(musicianId));
+        project.getMusiciansWhoRejected().add(musicianService.getMusicianById(musicianId));
         projectRepository.save(project);
     }
 
@@ -193,7 +193,7 @@ public class ProjectService {
     }
 
     public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        return projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found"));
     }
 
     public ProjectDTO getProjectDtoById(Long id) {
@@ -206,7 +206,7 @@ public class ProjectService {
 
     @Transactional
     public void updateBasicProjectInfo(Long id, ProjectBasicInfoDTO dto) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Project not found"));
+        Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found"));
         project.setName(dto.getName());
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
@@ -214,9 +214,5 @@ public class ProjectService {
         project.setLocation(dto.getLocation());
         project.setConductor(dto.getConductor());
         project.setProgramme(dto.getProgramme());
-    }
-
-    private Musician getMusicianById(Long id) {
-        return musicianRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Musician not found"));
     }
 }
