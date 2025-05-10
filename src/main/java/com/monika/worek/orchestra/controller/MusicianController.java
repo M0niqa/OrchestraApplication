@@ -1,9 +1,8 @@
 package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
-import com.monika.worek.orchestra.dto.MusicianDTO;
+import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.model.TaxOffice;
-import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.MusicianService;
 import jakarta.validation.Valid;
@@ -13,10 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Arrays;
 
 @Controller
 public class MusicianController {
@@ -33,12 +31,23 @@ public class MusicianController {
     public String showMusicianPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
         MusicianBasicDTO musicianBasicDTO = musicianService.getMusicianBasicDtoByEmail(currentEmail);
-        model.addAttribute("userId", musicianBasicDTO.getId());
+        long musicianId = musicianBasicDTO.getId();
+        model.addAttribute("musicianId", musicianId);
 
         Boolean unreads = chatService.areUnreadMessages(musicianBasicDTO.getId());
         model.addAttribute("unreads", unreads);
         model.addAttribute("musician", musicianBasicDTO);
+        model.addAttribute("pendingProjects", musicianService.getActivePendingProjects(musicianId));
+        model.addAttribute("acceptedProjects", musicianService.getActiveAcceptedProjects(musicianId));
+        model.addAttribute("rejectedProjects", musicianService.getActiveRejectedProjects(musicianId));
         return "musician/musician-home-page";
+    }
+
+    @GetMapping("/musician/{musicianId}/archivedProjects")
+    public String showArchivedProjects(@PathVariable Long musicianId, Model model) {
+        model.addAttribute("archivedAcceptedProjects", musicianService.getArchivedAcceptedProjects(musicianId));
+        model.addAttribute("archivedRejectedProjects", musicianService.getActiveRejectedProjects(musicianId));
+        return "musician/musician-archived-projects";
     }
 
     @GetMapping("/musicianData")
@@ -50,7 +59,7 @@ public class MusicianController {
     }
 
     @PostMapping("/musicianData")
-    public String updateData(@Valid @ModelAttribute("musician") MusicianDTO dto, BindingResult bindingResult,
+    public String updateData(@Valid @ModelAttribute("musician") MusicianDataDTO dto, BindingResult bindingResult,
                              Authentication authentication, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("taxOffices", TaxOffice.values());

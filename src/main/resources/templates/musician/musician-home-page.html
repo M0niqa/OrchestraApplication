@@ -32,7 +32,7 @@
             <i class="bi bi-key-fill me-2"></i>
             Update Password
         </a>
-        <a th:href="@{/archivedProjects}" class="btn btn-grey btn-lg m-2">
+        <a th:href="@{musician/{musicianId}/archivedProjects(musicianId=${musician.id})}" class="btn btn-grey btn-lg m-2">
             <i class="bi bi-archive-fill me-2"></i>
             View Archived Projects
         </a>
@@ -55,26 +55,26 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="project : ${musician.pendingProjects}">
+        <tr th:each="project : ${pendingProjects}">
             <td>
                 <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
             </td>
             <td>Pending</td>
         </tr>
-        <tr th:each="project : ${musician.acceptedProjects}">
+        <tr th:each="project : ${acceptedProjects}">
             <td>
                 <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
             </td>
             <td>Accepted</td>
         </tr>
-        <tr th:each="project : ${musician.rejectedProjects}">
+        <tr th:each="project : ${rejectedProjects}">
             <td th:text="${project.name}"></td>
             <td>Rejected</td>
         </tr>
         </tbody>
     </table>
 </div>
-<div id="userData" th:data-user-id="${userId}" style="display: none;"></div>
+<div id="userData" th:data-user-id="${musicianId}" style="display: none;"></div>
 </div>
 </body>
 </html>

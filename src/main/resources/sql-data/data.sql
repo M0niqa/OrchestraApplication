@@ -177,7 +177,7 @@ Date: ${invoiceData}
 
 Regarding agreement dated: ${agreementDate}
 
-Performer: ${musician.fullName}
+Performer: ${musician.fullName}, pesel:${musician.pesel}
 
 Address: ${musician.address}
 
@@ -202,7 +202,8 @@ VALUES
     ('FMF', 'A film music.', '2025-05-21', '2025-05-31', 1),
     ('Summer Symphony', 'A summer concert series featuring classical music with summer theme.', '2025-09-01', '2025-08-31', 1),
     ('Jazz Nights', 'Weekly jazz performances at the local club.', '2025-04-23', '2025-04-28', 1),
-    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1);
+    ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1),
+    ('Mazowsze and friends', 'A folk music.', '2025-04-11', '2025-04-15', 1);
 
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
@@ -216,8 +217,8 @@ INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) 
     (5, 3, 'Hello Stephen!', '2023-10-26 10:25:00', true);
 
 -- Musician 2 invited to Project 1
-INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 1);
 INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 2);
+INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 3);
 
 -- Musician 2 accepted Project 2
 INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES

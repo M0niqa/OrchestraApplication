@@ -1,11 +1,11 @@
 package com.monika.worek.orchestra.auth;
 
-import com.monika.worek.orchestra.dto.MusicianDTO;
+import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.model.Musician;
 
 public class MusicianDTOMapper {
-    public static MusicianDTO mapToDto(Musician user) {
-        return new MusicianDTO(
+    public static MusicianDataDTO mapToDto(Musician user) {
+        return new MusicianDataDTO(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
@@ -17,10 +17,7 @@ public class MusicianDTOMapper {
                 user.getPesel(),
                 user.getTaxOffice(),
                 user.getBankAccountNumber(),
-                user.getInstrument(),
-                user.getPendingProjects(),
-                user.getAcceptedProjects(),
-                user.getRejectedProjects()
+                user.getInstrument()
         );
     }
 }

@@ -2,8 +2,10 @@ package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
 import com.monika.worek.orchestra.auth.MusicianDTOMapper;
+import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
-import com.monika.worek.orchestra.dto.MusicianDTO;
+import com.monika.worek.orchestra.dto.MusicianDataDTO;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicianRepository;
@@ -12,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,7 +32,7 @@ public class MusicianService {
         return musicianRepository.findByEmail(mail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
     }
 
-    public MusicianDTO getMusicianDtoByEmail(String mail) {
+    public MusicianDataDTO getMusicianDtoByEmail(String mail) {
         return MusicianDTOMapper.mapToDto(getMusicianByEmail(mail));
     }
 
@@ -72,7 +75,7 @@ public class MusicianService {
     }
 
     @Transactional
-    public void updateUserData(String currentEmail, MusicianDTO userDTO) {
+    public void updateUserData(String currentEmail, MusicianDataDTO userDTO) {
         Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
@@ -82,6 +85,32 @@ public class MusicianService {
         user.setBankAccountNumber(userDTO.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
         user.setInstrument(userDTO.getInstrument());
+    }
+
+    private List<ProjectBasicInfoDTO> mapToDTO(List<Project> projects) {
+        return projects.stream()
+                .map(ProjectBasicInfoDTOMapper::mapToDto)
+                .toList();
+    }
+
+    public List<ProjectBasicInfoDTO> getActiveAcceptedProjects(Long musicianId) {
+        return mapToDTO(musicianRepository.findActiveAcceptedProjects(musicianId, LocalDate.now()));
+    }
+
+    public List<ProjectBasicInfoDTO> getActivePendingProjects(Long musicianId) {
+        return mapToDTO(musicianRepository.findActivePendingProjects(musicianId, LocalDate.now()));
+    }
+
+    public List<ProjectBasicInfoDTO> getActiveRejectedProjects(Long musicianId) {
+        return mapToDTO(musicianRepository.findActiveRejectedProjects(musicianId, LocalDate.now()));
+    }
+
+    public List<ProjectBasicInfoDTO> getArchivedAcceptedProjects(Long musicianId) {
+        return mapToDTO(musicianRepository.findArchivedAcceptedProjects(musicianId, LocalDate.now()));
+    }
+
+    public List<ProjectBasicInfoDTO> getArchivedRejectedProjects(Long musicianId) {
+        return mapToDTO(musicianRepository.findArchivedRejectedProjects(musicianId, LocalDate.now()));
     }
 
     private String maskPesel(String pesel) {

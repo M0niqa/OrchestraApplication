@@ -46,7 +46,6 @@ public class ProjectService {
                 && !project.getMusiciansWhoRejected().contains(musician)) {
 
             project.getInvited().add(musician);
-            musician.getPendingProjects().add(project);
             project.setInvitationDeadline(invitationDeadline);
             projectRepository.save(project);
         }

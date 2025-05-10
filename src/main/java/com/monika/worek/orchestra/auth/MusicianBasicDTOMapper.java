@@ -9,10 +9,7 @@ public class MusicianBasicDTOMapper {
                 musician.getId(),
                 musician.getFirstName(),
                 musician.getLastName(),
-                musician.getInstrument(),
-                musician.getPendingProjects(),
-                musician.getAcceptedProjects(),
-                musician.getRejectedProjects()
+                musician.getInstrument()
         );
     }
 }

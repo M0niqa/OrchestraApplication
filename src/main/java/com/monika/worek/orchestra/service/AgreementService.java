@@ -60,7 +60,8 @@ public class AgreementService {
                 Objects.toString(musician.getFirstName(), ""),
                 Objects.toString(musician.getLastName(), "")).trim());
         valuesMap.put("musician.address", musician.getAddress() != null ? musician.getAddress() : na);
-        valuesMap.put("musician.bankAccountNumber", musician.getBankAccountNumber());
+        valuesMap.put("musician.pesel", musician.getPesel() != null ? musician.getPesel() : na);
+        valuesMap.put("musician.bankAccountNumber", musician.getBankAccountNumber() != null ? musician.getBankAccountNumber() : na);
         valuesMap.put("musician.instrument", musician.getInstrument().toString());
 
         valuesMap.put("agreementDate", Objects.toString(getAgreementDate(project), na));

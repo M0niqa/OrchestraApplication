@@ -33,13 +33,13 @@ public class Musician extends User {
     @Enumerated(EnumType.STRING)
     private Instrument instrument;
 
-    @ManyToMany(mappedBy = "invited", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "invited")
     private Set<Project> pendingProjects;
 
-    @ManyToMany(mappedBy = "projectMembers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "projectMembers")
     private Set<Project> acceptedProjects;
 
-    @ManyToMany(mappedBy = "musiciansWhoRejected", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "musiciansWhoRejected")
     private Set<Project> rejectedProjects;
 
 

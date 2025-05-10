@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -126,7 +127,7 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Principal principal) {
         if (bindingResult.hasErrors()) {
             return "/admin/add-project";
         }

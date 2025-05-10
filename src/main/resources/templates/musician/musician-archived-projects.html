@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Archived projects</title>
@@ -9,8 +9,7 @@
 </head>
 <body class="container py-5">
 <div class="d-flex justify-content-end mb-4">
-    <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/adminPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to home</a>
-    <a sec:authorize="hasRole('ROLE_INSPECTOR')" th:href="@{/inspectorPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to home</a>
+    <a th:href="@{/musicianPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to home</a>
     <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
 
@@ -26,7 +25,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="project : ${archivedProjects}">
+    <tr th:each="project : ${archivedAcceptedProjects}">
         <td th:text="${project.name}"></td>
         <td th:text="${project.startDate}"></td>
         <td th:text="${project.endDate}"></td>
@@ -34,6 +33,11 @@
             <a th:href="@{/project/{id}(id=${project.id})}" class="btn btn-primary btn-sm"><i
                     class="bi bi-eye-fill me-1"></i> View</a>
         </td>
+    </tr>
+    <tr th:each="project : ${archivedRejectedProjects}">
+        <td th:text="${project.name}"></td>
+        <td th:text="${project.startDate}"></td>
+        <td th:text="${project.endDate}"></td>
     </tr>
     </tbody>
 </table>

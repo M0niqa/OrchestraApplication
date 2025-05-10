@@ -1,14 +1,11 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
-import com.monika.worek.orchestra.dto.MusicianBasicDTO;
-import com.monika.worek.orchestra.service.MusicianService;
+import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.service.ProjectService;
+import com.monika.worek.orchestra.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -16,11 +13,11 @@ import java.util.List;
 public class AdminController {
 
     private final ProjectService projectService;
-    private final MusicianService musicianService;
+    private final UserService userService;
 
-    public AdminController(ProjectService projectService, MusicianService musicianService) {
+    public AdminController(ProjectService projectService, UserService userService) {
         this.projectService = projectService;
-        this.musicianService = musicianService;
+        this.userService = userService;
     }
 
     @GetMapping("/adminPage")
@@ -36,16 +33,16 @@ public class AdminController {
         return "archived-projects";
     }
 
-    @GetMapping("/admin/allMusicians")
-    public String showAllMusicians(Model model) {
-        List<MusicianBasicDTO> musiciansDTO = musicianService.getAllMusiciansSortedBySurname().stream().map(MusicianBasicDTOMapper::mapToDto).toList();
-        model.addAttribute("allMusicians", musiciansDTO);
-        return "/admin/admin-all-musicians";
+    @GetMapping("/admin/allUsers")
+    public String showAllUsers(Model model) {
+        List<UserBasicDTO> usersDTO = userService.getAllBasicDTOUsers();
+        model.addAttribute("allUsers", usersDTO);
+        return "/admin/admin-all-users";
     }
 
-    @PostMapping("/admin/allMusicians/{musicianId}")
-    public String deleteMusician(@PathVariable Long musicianId) {
-        musicianService.deleteMusicianById(musicianId);
-        return "redirect:/admin/allMusicians";
-    }
+//    @PostMapping("/admin/allUsers/{userId}")
+//    public String deleteMusician(@PathVariable Long userId) {
+//        userService.deleteUserById(userId);
+//        return "redirect:/admin/allUsers";
+//    }
 }
