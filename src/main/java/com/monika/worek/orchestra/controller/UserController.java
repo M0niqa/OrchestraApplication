@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.PasswordUpdateDTO;
-import com.monika.worek.orchestra.dto.UserDTO;
+import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class UserController {
         }
 
         String currentEmail = authentication.getName();
-        UserDTO user = userService.findUserByEmail(currentEmail)
+        UserLoginDTO user = userService.findUserByEmail(currentEmail)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         String storedPassword = user.getPassword();
 

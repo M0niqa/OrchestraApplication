@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class MusicScoreController {
+public class ScoreController {
 
     private final FileStorageService fileStorageService;
     private final MusicScoreRepository musicScoreRepository;
     private final ProjectService projectService;
 
-    public MusicScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectService projectService) {
+    public ScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectService projectService) {
         this.fileStorageService = fileStorageService;
         this.musicScoreRepository = musicScoreRepository;
         this.projectService = projectService;

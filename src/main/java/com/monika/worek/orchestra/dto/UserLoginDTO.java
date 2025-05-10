@@ -3,16 +3,13 @@ package com.monika.worek.orchestra.dto;
 import com.monika.worek.orchestra.model.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class UserBasicDTO {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class UserLoginDTO {
+    private String email;
+    private String password;
     private Set<UserRole> roles;
 }

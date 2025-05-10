@@ -123,7 +123,7 @@ public class ProjectService {
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
                 .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
-                        MusicianBasicDTO::getInstrument,
+                        MusicianBasicDTO::instrument,
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));
@@ -138,7 +138,7 @@ public class ProjectService {
                 .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
                 .map(MusicianBasicDTOMapper::mapToDto)
                 .collect(Collectors.groupingBy(
-                        MusicianBasicDTO::getInstrument,
+                        MusicianBasicDTO::instrument,
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));

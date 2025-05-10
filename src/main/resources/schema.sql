@@ -64,7 +64,7 @@ CREATE TABLE UserRole (
 CREATE TABLE App_user_roles (
       User_id LONG,
       roles_id LONG,
-      FOREIGN KEY (User_id) REFERENCES App_user(id),
+      FOREIGN KEY (User_id) REFERENCES App_user(id) ON DELETE CASCADE,
       FOREIGN KEY (roles_id) REFERENCES UserRole(id)
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE invited_musicians_projects (
     musician_id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     PRIMARY KEY (musician_id, project_id),
-    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES Project(id)
 );
 
@@ -80,7 +80,7 @@ CREATE TABLE accepted_musicians_projects (
     musician_id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     PRIMARY KEY (musician_id, project_id),
-    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES Project(id)
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE rejected_musicians_projects (
     musician_id BIGINT NOT NULL,
     project_id BIGINT NOT NULL,
     PRIMARY KEY (musician_id, project_id),
-    FOREIGN KEY (musician_id) REFERENCES App_user(id),
+    FOREIGN KEY (musician_id) REFERENCES App_user(id) ON DELETE CASCADE,
     FOREIGN KEY (project_id) REFERENCES Project(id)
 );
 

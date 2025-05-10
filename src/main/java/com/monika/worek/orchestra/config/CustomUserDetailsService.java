@@ -1,7 +1,6 @@
 package com.monika.worek.orchestra.config;
 
 import com.monika.worek.orchestra.auth.CustomUserDetails;
-import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -31,10 +31,10 @@ public class MusicianController {
     public String showMusicianPage(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
         MusicianBasicDTO musicianBasicDTO = musicianService.getMusicianBasicDtoByEmail(currentEmail);
-        long musicianId = musicianBasicDTO.getId();
+        long musicianId = musicianBasicDTO.id();
         model.addAttribute("musicianId", musicianId);
 
-        Boolean unreads = chatService.areUnreadMessages(musicianBasicDTO.getId());
+        Boolean unreads = chatService.areUnreadMessages(musicianBasicDTO.id());
         model.addAttribute("unreads", unreads);
         model.addAttribute("musician", musicianBasicDTO);
         model.addAttribute("pendingProjects", musicianService.getActivePendingProjects(musicianId));
@@ -46,7 +46,7 @@ public class MusicianController {
     @GetMapping("/musician/{musicianId}/archivedProjects")
     public String showArchivedProjects(@PathVariable Long musicianId, Model model) {
         model.addAttribute("archivedAcceptedProjects", musicianService.getArchivedAcceptedProjects(musicianId));
-        model.addAttribute("archivedRejectedProjects", musicianService.getActiveRejectedProjects(musicianId));
+        model.addAttribute("archivedRejectedProjects", musicianService.getArchivedRejectedProjects(musicianId));
         return "musician/musician-archived-projects";
     }
 

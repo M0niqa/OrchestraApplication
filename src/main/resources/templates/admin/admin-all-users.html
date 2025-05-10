@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Musician Status</title>
@@ -16,14 +16,15 @@
     <div class="container d-flex justify-content-center">
         <div class="card shadow-sm w-100" style="max-width: 600px;">
             <div class="card-body">
-                <h2 class="card-subtitle text-center text-black mb-4">All musicians</h2>
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <h2 class="card-subtitle text-center text-black mb-4">All users</h2>
                 <ul class="list-group">
-                    <li th:each="musician : ${allMusicians}" class="list-group-item">
+                    <li th:each="user : ${allUsers}" class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span th:text="${musician.firstName} + ' ' + ${musician.lastName}"></span>
-                            <form th:action="@{/admin/allMusicians/{musicianId}(musicianId=${musician.id})}"
+                            <span th:text="${user.firstName} + ' ' + ${user.lastName}"></span>
+                            <form th:action="@{/admin/allUsers/{userId}(userId=${user.id})}"
                                   method="post"
-                                  th:attr="onsubmit=|return confirm('Are you sure you want to delete ${musician.firstName} ${musician.lastName} from the system?');|">
+                                  th:attr="onsubmit=|return confirm('Are you sure you want to delete ${user.firstName} ${user.lastName} from the system?');|">
                                 <button type="submit" class="btn btn-danger btn-sm ms-2">
                                     <i class="bi bi-trash-fill me-1"></i> Delete
                                 </button>

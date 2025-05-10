@@ -109,8 +109,9 @@ public class ProjectController {
     }
 
     @PostMapping("/inspector/project/{projectId}/remove/{musicianId}")
-    public String removeMusicianFromProject(@PathVariable Long projectId, @PathVariable Long musicianId) {
+    public String removeMusicianFromProject(@PathVariable Long projectId, @PathVariable Long musicianId, RedirectAttributes redirectAttributes) {
         projectService.removeProjectMember(projectId, musicianId);
+        redirectAttributes.addFlashAttribute("success", "Musician removed successfully!");
         return "redirect:/inspector/project/{projectId}/musicianStatus";
     }
 

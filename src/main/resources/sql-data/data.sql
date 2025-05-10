@@ -51,7 +51,7 @@ INSERT INTO App_user_roles (User_id, roles_id)
 VALUES (1, 3),
        (2, 2),
        (3, 1),
-       (4, 3),
+  --     (4, 3),
        (4, 2),
        (5, 3),
        (6, 3),
@@ -222,6 +222,7 @@ INSERT INTO invited_musicians_projects (musician_id, project_id) VALUES (3, 3);
 
 -- Musician 2 accepted Project 2
 INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
+    (3, 5),
     (4, 1),
     (5, 1),
     (6, 1),
@@ -255,5 +256,5 @@ INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
     (34, 1),
     (19, 2);
 
--- Musician 2 rejected Project 3
----INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);
+-- Musician 3 rejected Project 3
+INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);

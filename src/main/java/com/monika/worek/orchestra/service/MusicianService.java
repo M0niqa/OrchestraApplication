@@ -84,7 +84,6 @@ public class MusicianService {
         user.setPesel(userDTO.getPesel());
         user.setBankAccountNumber(userDTO.getBankAccountNumber());
         user.setTaxOffice(userDTO.getTaxOffice());
-        user.setInstrument(userDTO.getInstrument());
     }
 
     private List<ProjectBasicInfoDTO> mapToDTO(List<Project> projects) {

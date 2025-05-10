@@ -1,7 +1,6 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.dto.UserDTO;
-import com.monika.worek.orchestra.model.Role;
+import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.service.TwoFactorAuthService;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,7 @@ public class TwoFactorAuthController {
     @PostMapping("/2fa/verify")
     public String verify(@RequestParam String email, @RequestParam String code, Model model) {
         if (twoFactorAuthService.verifyCode(email, code)) {
-            UserDTO user = userService.findUserByEmail(email)
+            UserLoginDTO user = userService.findUserByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             boolean isAdmin = user.getRoles().stream()

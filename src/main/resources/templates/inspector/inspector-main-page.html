@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Inspector Page</title>
@@ -12,7 +12,7 @@
     <div class="container text-center py-5">
         <h1>Welcome, Inspector!</h1>
         <div class="btn-container">
-            <a th:href="@{/musicianPage}" class="btn btn-secondary m-1">Musician home page</a>
+            <a sec:authorize="hasRole('ROLE_MUSICIAN')" th:href="@{/musicianPage}" class="btn btn-secondary m-1">Musician home page</a>
             <a th:href="@{/inspector/registerMusician}" class="btn btn-secondary m-1">Register new musician</a>
             <a th:href="@{/archivedProjects}" class="btn btn-secondary m-1"><i class="bi bi-archive-fill me-2"></i>View Archived Projects</a>
         </div>
