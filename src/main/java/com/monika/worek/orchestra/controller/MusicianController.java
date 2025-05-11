@@ -2,11 +2,14 @@ package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
+import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.TaxOffice;
 import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.MusicianService;
+import com.monika.worek.orchestra.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,10 +24,12 @@ public class MusicianController {
 
     private final MusicianService musicianService;
     private final ChatService chatService;
+    private final UserService userService;
 
-    public MusicianController(MusicianService musicianService, ChatService chatService) {
+    public MusicianController(MusicianService musicianService, ChatService chatService, UserService userService) {
         this.musicianService = musicianService;
         this.chatService = chatService;
+        this.userService = userService;
     }
 
     @GetMapping("/musicianPage")
@@ -66,8 +71,23 @@ public class MusicianController {
             return "musician/musician-data";
         }
 
-        musicianService.updateUserData(authentication.getName(), dto);
+        String currentEmail = authentication.getName();
+        Musician musician = musicianService.getMusicianByEmail(currentEmail);
+
+        boolean emailChanged = !musician.getEmail().equals(dto.getEmail());
+        if (emailChanged) {
+            if (userService.doesUserExist(dto.getEmail())) {
+                bindingResult.rejectValue("email", "error.email", "User with this email already exists.");
+                model.addAttribute("taxOffices", TaxOffice.values());
+                return "musician/musician-data";
+            }
+            musicianService.updateMusicianData(authentication.getName(), dto);
+            SecurityContextHolder.clearContext();
+            return "redirect:/login?emailChanged";
+        }
+
+        musicianService.updateMusicianData(authentication.getName(), dto);
         redirectAttributes.addFlashAttribute("success", "Data updated successfully!");
-        return "redirect:/musicianData";
+        return "redirect:/musicianPage";
     }
 }

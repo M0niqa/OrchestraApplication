@@ -75,15 +75,16 @@ public class MusicianService {
     }
 
     @Transactional
-    public void updateUserData(String currentEmail, MusicianDataDTO userDTO) {
-        Musician user = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setBirthdate(userDTO.getBirthdate());
-        user.setAddress(userDTO.getAddress());
-        user.setPesel(userDTO.getPesel());
-        user.setBankAccountNumber(userDTO.getBankAccountNumber());
-        user.setTaxOffice(userDTO.getTaxOffice());
+    public void updateMusicianData(String currentEmail, MusicianDataDTO musicianDataDTO) {
+        Musician musician = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
+        musician.setFirstName(musicianDataDTO.getFirstName());
+        musician.setLastName(musicianDataDTO.getLastName());
+        musician.setEmail(musicianDataDTO.getEmail());
+        musician.setBirthdate(musicianDataDTO.getBirthdate());
+        musician.setAddress(musicianDataDTO.getAddress());
+        musician.setPesel(musicianDataDTO.getPesel());
+        musician.setBankAccountNumber(musicianDataDTO.getBankAccountNumber());
+        musician.setTaxOffice(musicianDataDTO.getTaxOffice());
     }
 
     private List<ProjectBasicInfoDTO> mapToDTO(List<Project> projects) {
