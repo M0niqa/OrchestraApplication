@@ -18,11 +18,10 @@
         <a th:href="@{/chat}" class="btn btn-grey btn-lg m-2 position-relative" id="chatButton">
             <i class="bi bi-chat-dots-fill me-2"></i>
             Chat
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
-                  id="chatBadge">📩</span>
-            <th:block th:if="${unreads}">
-                <span class="badge bg-danger rounded-pill">📩</span>
-            </th:block>
+            <span th:if="${unreads}"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                  id="chatBadge">&#128233;
+            </span>
         </a>
         <a th:href="@{/musicianData}" class="btn btn-grey btn-lg m-2">
             <i class="bi bi-pencil-square me-2"></i>

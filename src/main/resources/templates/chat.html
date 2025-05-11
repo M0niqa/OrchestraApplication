@@ -33,7 +33,7 @@
                    th:attr="data-user-id=${partner.id}">
                     <span th:text="${partner.firstName + ' ' + partner.lastName}"></span>
                     <span class="badge bg-danger rounded-pill unread-badge"
-                          th:if="${unreadFrom.contains(partner.id)}">🔴</span>
+                          th:if="${unreadFrom.contains(partner.id)}">&#128308;</span>
                 </a>
             </div>
         </div>
