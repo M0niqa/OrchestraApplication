@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.dto.ChatMessageDTO;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.ChatMessage;
 import com.monika.worek.orchestra.service.ChatService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class ChatController {
 
         if (receiverId != null) {
             UserBasicDTO receiver = userService.findUserById(receiverId);
-            List<ChatMessage> messages = chatService.getChatHistory(senderId, receiverId);
+            List<ChatMessageDTO> messages = chatService.getChatHistory(senderId, receiverId);
             chatService.markMessagesAsRead(receiverId, senderId);
 
             model.addAttribute("receiverId", receiverId);
@@ -58,9 +60,12 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    public void sendMessage(ChatMessage message) {
-        chatService.sendMessage(message.getSenderId(), message.getReceiverId(), message.getMessageContent());
-        messagingTemplate.convertAndSend("/topic/messages/" + message.getReceiverId(), message);
-        messagingTemplate.convertAndSend("/topic/messages/" + message.getSenderId(), message);
+    public void sendMessage(ChatMessageDTO messageDTO) {
+        if (messageDTO.getTimestamp() == null) {
+            messageDTO.setTimestamp(LocalDateTime.now());
+        }
+        chatService.sendMessage(messageDTO);
+        messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), messageDTO);
+        messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getSenderId(), messageDTO);
     }
 }

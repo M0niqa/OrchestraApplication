@@ -108,6 +108,10 @@ select {
     text-align: right;
 }
 
+.timestamp-small {
+    font-size: 0.7em;
+}
+
 .agreement-content {
     border: 1px solid #ddd;
     padding: 1em;

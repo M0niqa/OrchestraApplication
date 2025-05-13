@@ -38,17 +38,19 @@
             </div>
         </div>
 
-        <div><h5 th:unless="${receiver != null and receiver.firstName != null and receiver.lastName != null}">Select a
-            user
-            to chat with</h5></div>
+        <div><h5 th:unless="${receiver != null and receiver.firstName != null and receiver.lastName != null}">
+            Select a user to chat with</h5></div>
 
         <div th:if="${receiver != null and receiver.firstName != null and receiver.lastName != null}" class="chat-box">
             <h5>Chat with <span th:text="${receiver.firstName + ' ' + receiver.lastName}">[Receiver]</span></h5>
             <div id="messages">
                 <th:block th:each="message : ${messages}">
                     <div th:class="${message.senderId == senderId} ? 'sender-message' : 'receiver-message'">
-                    <span th:class="${message.senderId == senderId} ? 'badge bg-primary' : 'badge bg-secondary'"
-                          th:text="${message.messageContent}"></span>
+                        <div>
+                            <div class="text-muted small mt-1 ms-1 timestamp-small" th:text="${#temporals.format(message.timestamp, 'dd.MM.yyyy, HH:mm:ss')}"></div>
+            <span th:class="${message.senderId == senderId} ? 'badge bg-primary' : 'badge bg-secondary'"
+                  th:text="${message.messageContent}"></span>
+                        </div>
                     </div>
                 </th:block>
             </div>
