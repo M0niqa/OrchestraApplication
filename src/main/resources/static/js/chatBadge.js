@@ -6,14 +6,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const socket = new SockJS('/websocket');
     const stompClient = Stomp.over(socket);
 
+    const chatBadge = document.getElementById('chatBadge');
+
     stompClient.connect({}, function () {
         stompClient.subscribe('/topic/messages/' + userId, function () {
-            showChatBadge();
+            if (chatBadge) {
+                chatBadge.classList.remove('d-none');
+            }
         });
     });
-
-    function showChatBadge() {
-        const badge = document.getElementById('chatBadge');
-        if (badge) badge.classList.remove('d-none');
-    }
 });
