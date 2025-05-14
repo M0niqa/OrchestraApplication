@@ -13,7 +13,8 @@ public class MessageMapper {
                 dto.getSenderId(),
                 dto.getReceiverId(),
                 dto.getMessageContent(),
-                dto.getTimestamp()
+                dto.getTimestamp(),
+                dto.isRead()
         );
     }
 

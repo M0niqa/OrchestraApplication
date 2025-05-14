@@ -2,7 +2,6 @@ package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.dto.ChatMessageDTO;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
-import com.monika.worek.orchestra.model.ChatMessage;
 import com.monika.worek.orchestra.service.ChatService;
 import com.monika.worek.orchestra.service.UserService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -32,7 +31,7 @@ public class ChatController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @GetMapping({ "", "/", "/{receiverId}" })
+    @GetMapping({"", "/", "/{receiverId}"})
     public String chatPage(@PathVariable(required = false) Long receiverId, Model model, Authentication authentication) {
         UserBasicDTO sender = userService.getUserBasicDtoByEmail(authentication.getName());
         Long senderId = sender.getId();

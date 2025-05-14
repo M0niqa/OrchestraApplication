@@ -22,10 +22,12 @@ public class ChatMessage {
 
     public ChatMessage() {}
 
-    public ChatMessage(Long senderId, Long receiverId, String messageContent, LocalDateTime timestamp) {
+    public ChatMessage(Long senderId, Long receiverId, String messageContent, LocalDateTime timestamp, boolean read) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.messageContent = messageContent;
+        this.timestamp = timestamp;
+        this.read = read;
     }
 
     @Override
