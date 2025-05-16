@@ -59,12 +59,21 @@ public class ChatController {
     }
 
     @MessageMapping("/chat")
-    public void sendMessage(ChatMessageDTO messageDTO) {
+    public void sendMessage(ChatMessageDTO messageDTO, Authentication authentication) {
         if (messageDTO.getTimestamp() == null) {
             messageDTO.setTimestamp(LocalDateTime.now());
         }
         chatService.sendMessage(messageDTO);
-        messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), messageDTO);
-        messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getSenderId(), messageDTO);
+        messagingTemplate.convertAndSendToUser(
+                userService.getUserEmailById(messageDTO.getReceiverId()),
+                "/queue/messages",
+                messageDTO
+        );
+
+        messagingTemplate.convertAndSendToUser(
+                authentication.getName(),
+                "/queue/messages",
+                messageDTO
+        );
     }
 }

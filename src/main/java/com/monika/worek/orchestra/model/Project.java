@@ -50,7 +50,8 @@ public class Project {
     private Set<Musician> invited;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MusicScore> musicScores = new HashSet<>();
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "agreementtemplate_id")
     private AgreementTemplate agreementTemplate;
     @OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Survey survey;

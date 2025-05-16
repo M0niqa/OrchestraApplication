@@ -11,13 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const socket = new SockJS('/websocket');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/messages/' + senderId, (message) => {
+            stompClient.subscribe('/user/queue/messages', (message) => {
                 const msg = JSON.parse(message.body);
                 if (String(msg.senderId) === String(receiverId) || String(msg.receiverId) === String(receiverId)) {
                     showMessage(msg);
                 } else {
                     const badge = document.querySelector(`[data-user-id="${msg.senderId}"] .unread-badge`);
-                    if (badge) badge.classList.remove('d-none');
+                    if (badge) {
+                        badge.classList.remove('d-none');
+                    }
                 }
             });
         });

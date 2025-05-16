@@ -46,6 +46,10 @@ public class UserService {
         return UserBasicDTOMapper.mapToBasicDto(userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
 
+    public String getUserEmailById(Long id) {
+        return userRepository.findById(id).map(User::getEmail).orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
     public boolean doesUserExist(String email) {
         return findUserByEmail(email).isPresent();
     }
