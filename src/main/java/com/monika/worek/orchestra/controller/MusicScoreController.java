@@ -4,8 +4,9 @@ import com.monika.worek.orchestra.dto.MusicScoreDTO;
 import com.monika.worek.orchestra.model.MusicScore;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicScoreRepository;
-import com.monika.worek.orchestra.service.ProjectService;
 import com.monika.worek.orchestra.service.FileStorageService;
+import com.monika.worek.orchestra.service.ProjectService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +16,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class ScoreController {
+public class MusicScoreController {
 
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private final FileStorageService fileStorageService;
     private final MusicScoreRepository musicScoreRepository;
     private final ProjectService projectService;
 
-    public ScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectService projectService) {
+    public MusicScoreController(FileStorageService fileStorageService, MusicScoreRepository musicScoreRepository, ProjectService projectService) {
         this.fileStorageService = fileStorageService;
         this.musicScoreRepository = musicScoreRepository;
         this.projectService = projectService;
@@ -57,8 +61,15 @@ public class ScoreController {
             redirectAttributes.addFlashAttribute("error", "Please select a file to upload.");
             return "redirect:/admin/project/" + projectId + "/scores";
         }
-
         try {
+            String fileType = file.getContentType();
+            if (!List.of("application/pdf", "image/png", "image/jpeg").contains(fileType)) {
+                throw new IllegalArgumentException("Unsupported file type: " + fileType);
+            }
+
+            if (file.getSize() > MAX_FILE_SIZE) {
+                throw new IllegalArgumentException("File too large");
+            }
             Project project = projectService.getProjectById(projectId);
             String filePath = fileStorageService.saveFile(file);
 
@@ -81,9 +92,14 @@ public class ScoreController {
             MusicScore musicScore = musicScoreRepository.findById(fileId)
                     .orElseThrow(() -> new RuntimeException("File not found"));
 
-            fileStorageService.deleteFile(musicScore.getFilePath());
-            musicScoreRepository.delete(musicScore);
+            try {
+                fileStorageService.deleteFile(musicScore.getFilePath());
+            } catch (IOException ex) {
+                redirectAttributes.addFlashAttribute("error", "Failed to delete physical file. Database not modified.");
+                return "redirect:/admin/project/" + projectId + "/scores";
+            }
 
+            musicScoreRepository.delete(musicScore);
             redirectAttributes.addFlashAttribute("success", "File deleted successfully.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to delete file.");
@@ -108,15 +124,16 @@ public class ScoreController {
     @GetMapping({"/admin/project/{projectId}/scores/download/{fileId}",
             "/musician/project/{projectId}/scores/download/{fileId}"})
     @ResponseBody
-    public ResponseEntity<byte[]> downloadScore(@PathVariable Long projectId, @PathVariable Long fileId) throws IOException {
-        MusicScore musicScore = musicScoreRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+    public ResponseEntity<InputStreamResource> downloadScore(@PathVariable Long projectId, @PathVariable Long fileId) throws IOException {
+        MusicScore musicScore = musicScoreRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
 
-        byte[] fileData = fileStorageService.getFile(musicScore.getFilePath());
+        File file = fileStorageService.getFile(musicScore.getFilePath());
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + musicScore.getFileName() + "\"")
                 .contentType(MediaType.parseMediaType(musicScore.getFileType()))
-                .body(fileData);
+                .contentLength(file.length())
+                .body(resource);
     }
 }
