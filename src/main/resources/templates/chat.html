@@ -32,8 +32,8 @@
                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                    th:attr="data-user-id=${partner.id}">
                     <span th:text="${partner.firstName + ' ' + partner.lastName}"></span>
-                    <span class="badge bg-danger rounded-pill unread-badge"
-                          th:if="${unreadFrom.contains(partner.id)}">&#128308;</span>
+                    <span th:class="'badge bg-danger rounded-pill unread-badge ' +
+                    (${unreadFrom.contains(partner.id)} ? '' : 'd-none')">&#128308;</span>
                 </a>
             </div>
         </div>
