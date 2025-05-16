@@ -38,20 +38,20 @@
                                     <i class="bi bi-box-arrow-in-right me-2"></i> Login
                                 </button>
                             </div>
-
                             <a th:href="@{/forgot-password}" class="forgot-link text-center d-block mb-3">Forgot password?</a>
 
                             <div th:if="${param.setSuccess}" class="alert alert-success mt-3 text-center" role="alert">
                                 Your password has been successfully set. Please log in.
                             </div>
-
                             <div th:if="${param.verified}" class="alert alert-success mt-3 text-center" role="alert">
                                 2FA verified successfully!
                             </div>
                             <div th:if="${param.resetSuccess}" class="alert alert-success mt-3 text-center" role="alert">
                                 Your password has been successfully reset. Please log in with your new password.
                             </div>
-
+                            <div th:if="${param.logout}" class="alert alert-success">
+                                You have been successfully logged out.
+                            </div>
                         </form>
                     </div>
                 </div>
