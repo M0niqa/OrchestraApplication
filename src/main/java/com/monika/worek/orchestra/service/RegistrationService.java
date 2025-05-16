@@ -2,7 +2,6 @@ package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.dto.MusicianRegisterDTO;
 import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Role;
 import com.monika.worek.orchestra.model.Token;
 import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.repository.UserRepository;
@@ -42,7 +41,7 @@ public class RegistrationService {
         musician.setLastName(musicianRegisterDTO.getLastName());
         musician.setEmail(musicianRegisterDTO.getEmail());
 
-        UserRole musicianRole = userRoleRepository.findByName(Role.MUSICIAN)
+        UserRole musicianRole = userRoleRepository.findByName("MUSICIAN")
                 .orElseThrow(() -> new IllegalStateException("Role MUSICIAN not found"));
 
         musician.getRoles().add(musicianRole);

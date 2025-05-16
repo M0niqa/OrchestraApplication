@@ -5,7 +5,9 @@ import com.monika.worek.orchestra.auth.UserLoginDTOMapper;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.model.User;
+import com.monika.worek.orchestra.model.UserRole;
 import com.monika.worek.orchestra.repository.UserRepository;
+import com.monika.worek.orchestra.repository.UserRoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,9 +25,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final UserRoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserRoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public List<UserBasicDTO> getAllBasicDTOUsers() {
@@ -54,13 +58,6 @@ public class UserService {
         return findUserByEmail(email).isPresent();
     }
 
-    private boolean isCurrentUserAdmin() {
-        return SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-    }
-
     @Transactional
     public void updatePassword(String currentEmail, String newPassword) {
         User user = userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -77,6 +74,32 @@ public class UserService {
     @Transactional
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void addRoleToUser(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        UserRole role = roleRepository.findByName(roleName.toUpperCase())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+        if (!user.getRoles().contains(role)) {
+            user.getRoles().add(role);
+            userRepository.save(user);
+        }
+    }
+
+    @Transactional
+    public void removeRoleFromUser(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        UserRole role = roleRepository.findByName(roleName.toUpperCase())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+
+        user.getRoles().remove(role);
+        userRepository.save(user);
     }
 
 }
