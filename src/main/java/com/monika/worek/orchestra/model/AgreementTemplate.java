@@ -15,8 +15,6 @@ public class AgreementTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    @Column(columnDefinition = "TEXT")
     private String content;
     @OneToMany(mappedBy = "agreementTemplate", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Project> projects;
