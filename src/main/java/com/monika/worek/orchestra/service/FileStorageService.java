@@ -89,4 +89,13 @@ public class FileStorageService {
             throw new RuntimeException("Failed to save agreement PDF", e);
         }
     }
+
+    public byte[] readFileAsBytes(String path) {
+        try {
+            Path filePath = Paths.get(path).normalize();
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read file at: " + path, e);
+        }
+    }
 }

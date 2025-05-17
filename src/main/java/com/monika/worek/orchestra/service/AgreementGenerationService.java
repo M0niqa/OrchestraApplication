@@ -1,13 +1,15 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.exception.MissingDataException;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.MusicianAgreement;
 import com.monika.worek.orchestra.model.Project;
-import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import jakarta.transaction.Transactional;
+import com.monika.worek.orchestra.repository.MusicianAgreementRepository;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +21,18 @@ import static com.monika.worek.orchestra.calculator.WageCalculator.*;
 @Service
 public class AgreementGenerationService {
 
-    private final AgreementTemplateRepository templateRepository;
+    private final MusicianService musicianService;
+    private final ProjectService projectService;
+    private final MusicianAgreementRepository musicianAgreementRepository;
+    private final FileStorageService fileStorageService;
+    private final PdfService pdfService;
 
-    public AgreementGenerationService(AgreementTemplateRepository templateRepository) {
-        this.templateRepository = templateRepository;
+    public AgreementGenerationService(MusicianService musicianService, ProjectService projectService, MusicianAgreementRepository musicianAgreementRepository, FileStorageService fileStorageService, PdfService pdfService) {
+        this.musicianService = musicianService;
+        this.projectService = projectService;
+        this.musicianAgreementRepository = musicianAgreementRepository;
+        this.fileStorageService = fileStorageService;
+        this.pdfService = pdfService;
     }
 
     public String generateAgreementContent(Project project, Musician musician) {
@@ -79,8 +89,34 @@ public class AgreementGenerationService {
         return valuesMap;
     }
 
-    @Transactional
-    public void saveTemplate(AgreementTemplate agreementTemplate) {
-        templateRepository.save(agreementTemplate);
+    public byte[] getOrGenerateAgreement(Long projectId, Musician musician) {
+        if (musicianService.isDataMissing(musician)) {
+            throw new MissingDataException("Your personal or business data is incomplete.");
+        }
+
+        Project project = projectService.getProjectById(projectId);
+
+        return musicianAgreementRepository.findByMusicianIdAndProjectId(projectId, musician.getId())
+                .map(a -> fileStorageService.readFileAsBytes(a.getFilePath()))
+                .orElseGet(() -> generateAndStoreAgreement(project, musician));
+    }
+
+    private byte[] generateAndStoreAgreement(Project project, Musician musician) {
+        String content = generateAgreementContent(project, musician);
+
+        byte[] pdf = pdfService.generatePdfFromText(content);
+        String path = fileStorageService.saveGeneratedAgreement(pdf, musician, project);
+
+        MusicianAgreement agreement = new MusicianAgreement();
+        agreement.setFileName(musician.getLastName() + "_agreement.pdf");
+        agreement.setFilePath(path);
+        agreement.setFileType("application/pdf");
+        agreement.setCreatedAt(LocalDateTime.now());
+        agreement.setMusician(musician);
+        agreement.setProject(project);
+
+        musicianAgreementRepository.save(agreement);
+
+        return pdf;
     }
 }

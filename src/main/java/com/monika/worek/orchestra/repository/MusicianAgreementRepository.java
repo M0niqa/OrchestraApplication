@@ -5,10 +5,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface AgreementRepository extends CrudRepository<MusicianAgreement, Long> {
+public interface MusicianAgreementRepository extends CrudRepository<MusicianAgreement, Long> {
 
-    MusicianAgreement findByMusicianIdAndProjectId(Long musicianId, Long projectId);
+    Optional<MusicianAgreement> findByMusicianIdAndProjectId(Long musicianId, Long projectId);
     List<MusicianAgreement> findByProjectId(Long projectId);
+    void deleteByMusicianIdAndProjectId(Long musicianId, Long projectId);
 }

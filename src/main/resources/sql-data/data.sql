@@ -48,10 +48,9 @@ VALUES
     ('Musician', 'Jakub', 'Kowalczyk', 'jakub.kowalczyk@example.com', '$2a$10$exampleHash25', '1986-04-15', 'Wrocław, ul. Oławska 10', '86041590128', 'TRUMPET', 'PL900000000000000000000005');
 
 INSERT INTO app_user_roles (user_id, roles_id)
-VALUES (1, 3),
+VALUES (1, 1),
        (2, 2),
        (3, 1),
-       --     (4, 3),
        (4, 2),
        (5, 3),
        (6, 3),

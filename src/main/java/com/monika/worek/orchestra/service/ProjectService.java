@@ -9,6 +9,7 @@ import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.MusicianAgreementRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -26,11 +27,13 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MusicianService musicianService;
     private final EmailService emailService;
+    private final MusicianAgreementRepository musicianAgreementRepository;
 
-    public ProjectService(ProjectRepository projectRepository, MusicianService musicianService, EmailService emailService) {
+    public ProjectService(ProjectRepository projectRepository, MusicianService musicianService, EmailService emailService, MusicianAgreementRepository musicianAgreementRepository) {
         this.projectRepository = projectRepository;
         this.musicianService = musicianService;
         this.emailService = emailService;
+        this.musicianAgreementRepository = musicianAgreementRepository;
     }
 
     public void saveProject(Project project) {
@@ -80,6 +83,7 @@ public class ProjectService {
     public void rejectInvitation(Long projectId, Long musicianId) {
         Project project = getProjectById(projectId);
         Musician musician = musicianService.getMusicianById(musicianId);
+        musicianAgreementRepository.deleteByMusicianIdAndProjectId(musicianId, projectId);
 
         if (!project.getInvited().contains(musician)) {
             throw new IllegalStateException("Musician not currently invited to this project.");
@@ -165,6 +169,7 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         project.getProjectMembers().removeIf(musician -> musician.getId().equals(musicianId));
         project.getMusiciansWhoRejected().add(musicianService.getMusicianById(musicianId));
+        musicianAgreementRepository.deleteByMusicianIdAndProjectId(musicianId, projectId);
         projectRepository.save(project);
     }
 

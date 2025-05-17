@@ -1,12 +1,16 @@
 package com.monika.worek.orchestra.controller;
 
+import com.monika.worek.orchestra.exception.MissingDataException;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.MusicianAgreement;
 import com.monika.worek.orchestra.model.Project;
-import com.monika.worek.orchestra.repository.AgreementRepository;
+import com.monika.worek.orchestra.repository.MusicianAgreementRepository;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import com.monika.worek.orchestra.service.*;
+import com.monika.worek.orchestra.service.AgreementGenerationService;
+import com.monika.worek.orchestra.service.MusicianService;
+import com.monika.worek.orchestra.service.PdfService;
+import com.monika.worek.orchestra.service.ProjectService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,10 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,20 +34,18 @@ public class AgreementController {
 
     private final AgreementGenerationService agreementGenerationService;
     private final MusicianService musicianService;
-    private final ProjectService projectService;
     private final AgreementTemplateRepository agreementTemplateRepository;
     private final PdfService pdfService;
-    private final AgreementRepository agreementRepository;
-    private final FileStorageService fileStorageService;
+    private final MusicianAgreementRepository musicianAgreementRepository;
+    private final ProjectService projectService;
 
-    public AgreementController(AgreementGenerationService agreementGenerationService, MusicianService musicianService, ProjectService projectService, AgreementTemplateRepository agreementTemplateRepository, PdfService pdfService, AgreementRepository agreementRepository, FileStorageService fileStorageService) {
+    public AgreementController(AgreementGenerationService agreementGenerationService, MusicianService musicianService, AgreementTemplateRepository agreementTemplateRepository, PdfService pdfService, MusicianAgreementRepository musicianAgreementRepository, ProjectService projectService) {
         this.agreementGenerationService = agreementGenerationService;
         this.musicianService = musicianService;
-        this.projectService = projectService;
         this.agreementTemplateRepository = agreementTemplateRepository;
         this.pdfService = pdfService;
-        this.agreementRepository = agreementRepository;
-        this.fileStorageService = fileStorageService;
+        this.musicianAgreementRepository = musicianAgreementRepository;
+        this.projectService = projectService;
     }
 
     @GetMapping("/admin/template/edit")
@@ -61,60 +60,39 @@ public class AgreementController {
         AgreementTemplate template = agreementTemplateRepository.findById(1L).orElseThrow((() -> new IllegalArgumentException("Template not found")));
 
         template.setContent(templateContent);
-        agreementGenerationService.saveTemplate(template);
+        agreementTemplateRepository.save(template);
 
         redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
         return "redirect:/admin/template/edit";
     }
 
     @GetMapping("/musician/project/{projectId}/downloadAgreement")
-    public ResponseEntity<byte[]> downloadAgreement(@PathVariable Long projectId, Authentication authentication) {
+    public ResponseEntity<byte[]> downloadAgreement(@PathVariable Long projectId, Authentication auth) {
         try {
-            Musician musician = musicianService.getMusicianByEmail(authentication.getName());
+            Musician musician = musicianService.getMusicianByEmail(auth.getName());
+            byte[] agreement = agreementGenerationService.getOrGenerateAgreement(projectId, musician);
 
-            if (musicianService.isDataMissing(musician)) {
-                return ResponseEntity
-                        .status(HttpStatus.FORBIDDEN)
-                        .body("Your personal or business data is incomplete. Agreement cannot be generated.".getBytes());
-            }
-
-            Project project = projectService.getProjectById(projectId);
-
-            Optional<MusicianAgreement> existing = Optional.ofNullable(
-                    agreementRepository.findByMusicianIdAndProjectId(projectId, musician.getId()));
-            if (existing.isPresent()) {
-                return downloadFromPath(existing.get().getFilePath(), existing.get().getFileName());
-            }
-
-            String content = agreementGenerationService.generateAgreementContent(project, musician);
-            byte[] pdf = pdfService.generatePdfFromText(content);
-            String filePath = fileStorageService.saveGeneratedAgreement(pdf, musician, project);
-
-            MusicianAgreement agreement = new MusicianAgreement();
-            agreement.setFileName(musician.getLastName() + "_agreement.pdf");
-            agreement.setFilePath(filePath);
-            agreement.setFileType("application/pdf");
-            agreement.setCreatedAt(LocalDateTime.now());
-            agreement.setMusician(musician);
-            agreement.setProject(project);
-            agreementRepository.save(agreement);
-
-            agreementRepository.save(agreement);
-
+            String filename = musician.getLastName() + "_agreement.pdf";
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + agreement.getFileName())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdf);
+                    .body(agreement);
 
+        } catch (MissingDataException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(e.getMessage().getBytes());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(("Failed to generate agreement").getBytes());
+            return ResponseEntity.internalServerError()
+                    .body("Failed to generate agreement".getBytes());
         }
     }
 
     @GetMapping("/admin/project/{projectId}/downloadAgreements")
     public ResponseEntity<byte[]> downloadAllAgreements(@PathVariable Long projectId) {
         try {
-            List<MusicianAgreement> agreements = agreementRepository.findByProjectId(projectId);
+            Project project = projectService.getProjectById(projectId);
+            project.getProjectMembers().forEach(m -> agreementGenerationService.getOrGenerateAgreement(projectId, m));
+            List<MusicianAgreement> agreements = musicianAgreementRepository.findByProjectId(projectId);
 
             if (agreements.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -132,19 +110,6 @@ public class AgreementController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(("Failed to generate merged PDF: " + e.getMessage()).getBytes());
-        }
-    }
-
-    private ResponseEntity<byte[]> downloadFromPath(String path, String filename) {
-        try {
-            File file = new File(path);
-            byte[] data = Files.readAllBytes(file.toPath());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(data);
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body(("Failed to read file: " + filename).getBytes());
         }
     }
 }
