@@ -88,3 +88,17 @@ CREATE TABLE app_user_roles (
                                 FOREIGN KEY (roles_id) REFERENCES userrole(id) ON DELETE CASCADE,
                                 PRIMARY KEY (user_id, roles_id)
 );
+
+CREATE TABLE musicianagreement (
+                                   id BIGSERIAL PRIMARY KEY,
+                                   fileName VARCHAR(255),
+                                   fileType VARCHAR(255),
+                                   filePath VARCHAR(255),
+                                   createdAt TIMESTAMP,
+                                   user_id BIGINT NOT NULL,
+                                   project_id BIGINT NOT NULL,
+
+                                   FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
+                                   FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
+);
+

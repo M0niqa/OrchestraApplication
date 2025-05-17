@@ -11,14 +11,18 @@
     <a th:href="@{/musicianPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-house-fill"></i> Back to home</a>
     <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
+<div class="mt-4" th:if="${accepted}">
+    <p class="alert alert-info">You have <strong th:text="accepted"></strong> this project.</p>
+</div>
 <h1 class="text-center mb-4">Project Details</h1>
 <div class="text-center mb-4">
-    <a th:href="@{/musician/project/{id}/agreement(id=${project.id})}" class="btn btn-secondary m-1"><i
-            class="bi bi-file-earmark-text me-1"></i> Agreement</a>
     <a th:href="@{/musician/project/{id}/survey(id=${project.id})}" class="btn btn-secondary m-1"><i
             class="bi bi-question-circle me-1"></i> Survey</a>
     <a th:href="@{/musician/project/{id}/scores(id=${project.id})}" class="btn btn-secondary m-1"><i
             class="bi bi-file-music-fill me-1"></i> Scores</a>
+    <a th:href="@{/musician/project/{projectId}/agreement(projectId=${projectId})}" class="btn btn-primary">
+        <i class="bi bi-file-earmark-arrow-down me-2"></i> Download Agreement
+    </a>
 </div>
 <div class="row justify-content-center">
     <div class="col-md-10">
@@ -69,6 +73,18 @@
         <div class="mb-3">
             <strong class="form-label">Description:</strong>
             <p class="form-control-plaintext" th:text="${project.description}" style="white-space: pre-wrap;"></p>
+        </div>
+        <div class="mt-4" th:if="${!accepted}">
+            <form th:action="@{/musician/project/{id}/invitation/accept(id=${project.id})}" method="post"
+                  class="d-inline me-2">
+                <button type="submit" class="btn btn-success">Accept</button>
+            </form>
+
+            <form th:action="@{/musician/project/{id}/invitation/reject(id=${project.id})}" method="post" class="d-inline"
+                  onsubmit="return confirm('Are you sure you want to reject this project?');">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit" class="btn btn-danger">Reject</button>
+            </form>
         </div>
     </div>
 </div>

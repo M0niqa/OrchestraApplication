@@ -7,7 +7,7 @@
 </head>
 <body class="container py-5">
 <h1>Oops! Something went wrong.</h1>
-<p th:text="${message} ?: 'An unexpected error occurred.'"></p>
+<p th:text="'An unexpected error occurred.'"></p>
 <div class="d-flex justify-content-end mb-4">
     <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/adminPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-house-fill"></i> Back to home</a>
     <a sec:authorize="hasRole('ROLE_MUSICIAN')" th:href="@{/musicianPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to home</a>

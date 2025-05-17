@@ -1,6 +1,7 @@
 package com.monika.worek.orchestra.controller;
 
 import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
@@ -39,7 +40,7 @@ public class ProjectController {
         String email = authentication.getName();
         Musician musician = musicianService.getMusicianByEmail(email);
         projectService.acceptInvitation(projectId, musician.getId());
-        return "redirect:/musician/project/" + projectId + "/agreement";
+        return "redirect:/musician/project/" + projectId;
     }
 
     @PostMapping("/musician/project/{projectId}/invitation/reject")
@@ -51,9 +52,17 @@ public class ProjectController {
     }
 
     @GetMapping("/musician/project/{projectId}")
-    public String viewProjectDetailsForMusician(@PathVariable Long projectId, Model model) {
-        ProjectDTO projectDTO = projectService.getProjectDtoById(projectId);
+    public String viewProjectDetailsForMusician(@PathVariable Long projectId, Model model, Authentication authentication) {
+        String email = authentication.getName();
+        Musician musician = musicianService.getMusicianByEmail(email);
+
+        Project project = projectService.getProjectById(projectId);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
+
+        boolean accepted = project.getProjectMembers().contains(musician);
+
         model.addAttribute("project", projectDTO);
+        model.addAttribute("accepted", accepted);
         return "/musician/musician-project-details";
     }
 

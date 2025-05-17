@@ -56,9 +56,15 @@ public class Project {
     @OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Survey survey;
     @ElementCollection
+    @CollectionTable(
+            name = "project_instrumentcounts",
+            joinColumns = @JoinColumn(name = "project_id")
+    )
     @MapKeyEnumerated(EnumType.STRING)
+    @MapKeyColumn(name = "instrument")
     @Column(name = "musicians_needed")
     private Map<Instrument, Integer> instrumentCounts = new EnumMap<>(Instrument.class);
+
     @ElementCollection
     @CollectionTable(name = "project_group_salaries", joinColumns = @JoinColumn(name = "project_id"))
     @MapKeyColumn(name = "instrument_group")

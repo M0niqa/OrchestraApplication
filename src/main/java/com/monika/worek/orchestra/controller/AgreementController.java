@@ -4,11 +4,14 @@ import com.monika.worek.orchestra.auth.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.MusicianAgreement;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.AgreementRepository;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
-import com.monika.worek.orchestra.service.AgreementService;
-import com.monika.worek.orchestra.service.MusicianService;
-import com.monika.worek.orchestra.service.ProjectService;
+import com.monika.worek.orchestra.service.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,19 +21,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Controller
 public class AgreementController {
 
-    private final ProjectService projectService;
     private final AgreementService agreementService;
     private final MusicianService musicianService;
+    private final ProjectService projectService;
     private final AgreementTemplateRepository agreementTemplateRepository;
+    private final PdfService pdfService;
+    private final AgreementRepository agreementRepository;
+    private final FileStorageService fileStorageService;
 
-    public AgreementController(ProjectService projectService, AgreementService agreementService, MusicianService musicianService, AgreementTemplateRepository agreementTemplateRepository) {
-        this.projectService = projectService;
+    public AgreementController(AgreementService agreementService, MusicianService musicianService, ProjectService projectService, AgreementTemplateRepository agreementTemplateRepository, PdfService pdfService, AgreementRepository agreementRepository, FileStorageService fileStorageService) {
         this.agreementService = agreementService;
         this.musicianService = musicianService;
+        this.projectService = projectService;
         this.agreementTemplateRepository = agreementTemplateRepository;
+        this.pdfService = pdfService;
+        this.agreementRepository = agreementRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping("/admin/template/edit")
@@ -52,20 +69,67 @@ public class AgreementController {
     }
 
     @GetMapping("/musician/project/{projectId}/agreement")
-    public String viewAgreement(@PathVariable Long projectId, Model model, Authentication authentication) {
-        String email = authentication.getName();
-        Musician musician = musicianService.getMusicianByEmail(email);
+    public ResponseEntity<byte[]> viewAgreement(@PathVariable Long projectId, Authentication authentication) {
+        try {
+            Musician musician = musicianService.getMusicianByEmail(authentication.getName());
+            Project project = projectService.getProjectById(projectId);
 
-        Project project = projectService.getProjectById(projectId);
-        String agreementContent = agreementService.generateAgreementContent(project, musician);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
+            Optional<MusicianAgreement> existing = Optional.ofNullable(
+                    agreementRepository.findByMusicianIdAndProjectId(projectId, musician.getId()));
+            if (existing.isPresent()) {
+                return downloadFromPath(existing.get().getFilePath(), existing.get().getFileName());
+            }
 
-        boolean accepted = project.getProjectMembers().contains(musician);
+            String content = agreementService.generateAgreementContent(project, musician);
+            byte[] pdf = pdfService.generatePdfFromText(content);
+            String filePath = fileStorageService.saveGeneratedAgreement(pdf, musician, project);
 
-        model.addAttribute("project", projectDTO);
-        model.addAttribute("agreementContent", agreementContent);
-        model.addAttribute("accepted", accepted);
+            MusicianAgreement agreement = new MusicianAgreement();
+            agreement.setFileName(musician.getLastName() + "_agreement.pdf");
+            agreement.setFilePath(filePath);
+            agreement.setFileType("application/pdf");
+            agreement.setCreatedAt(LocalDateTime.now());
+            agreement.setMusician(musician);
+            agreement.setProject(project);
+            agreementRepository.save(agreement);
 
-        return "/musician/agreement";
+            agreementRepository.save(agreement);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + agreement.getFileName())
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(("Failed to generate agreement").getBytes());
+        }
+    }
+
+    // HANDLE EXCEPTION!!!!!!!!!!!!!!!!!!!!!!
+
+    @GetMapping("/admin/project/{projectId}/downloadAgreements")
+    public ResponseEntity<byte[]> downloadAllAgreements(@PathVariable Long projectId) throws IOException {
+        List<MusicianAgreement> agreements = agreementRepository.findByProjectId(projectId);
+        byte[] merged = pdfService.mergePdfFiles(agreements.stream()
+                .map(a -> new File(a.getFilePath()))
+                .collect(Collectors.toList()));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=all_agreements.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(merged);
+    }
+
+    private ResponseEntity<byte[]> downloadFromPath(String path, String filename) {
+        try {
+            File file = new File(path);
+            byte[] data = Files.readAllBytes(file.toPath());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(data);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(("Failed to read file: " + filename).getBytes());
+        }
     }
 }
