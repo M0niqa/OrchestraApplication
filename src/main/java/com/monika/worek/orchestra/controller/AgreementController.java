@@ -1,7 +1,5 @@
 package com.monika.worek.orchestra.controller;
 
-import com.monika.worek.orchestra.auth.ProjectDTOMapper;
-import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.MusicianAgreement;
@@ -10,6 +8,7 @@ import com.monika.worek.orchestra.repository.AgreementRepository;
 import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.service.*;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 @Controller
 public class AgreementController {
 
-    private final AgreementService agreementService;
+    private final AgreementGenerationService agreementGenerationService;
     private final MusicianService musicianService;
     private final ProjectService projectService;
     private final AgreementTemplateRepository agreementTemplateRepository;
@@ -40,8 +39,8 @@ public class AgreementController {
     private final AgreementRepository agreementRepository;
     private final FileStorageService fileStorageService;
 
-    public AgreementController(AgreementService agreementService, MusicianService musicianService, ProjectService projectService, AgreementTemplateRepository agreementTemplateRepository, PdfService pdfService, AgreementRepository agreementRepository, FileStorageService fileStorageService) {
-        this.agreementService = agreementService;
+    public AgreementController(AgreementGenerationService agreementGenerationService, MusicianService musicianService, ProjectService projectService, AgreementTemplateRepository agreementTemplateRepository, PdfService pdfService, AgreementRepository agreementRepository, FileStorageService fileStorageService) {
+        this.agreementGenerationService = agreementGenerationService;
         this.musicianService = musicianService;
         this.projectService = projectService;
         this.agreementTemplateRepository = agreementTemplateRepository;
@@ -62,16 +61,23 @@ public class AgreementController {
         AgreementTemplate template = agreementTemplateRepository.findById(1L).orElseThrow((() -> new IllegalArgumentException("Template not found")));
 
         template.setContent(templateContent);
-        agreementService.saveTemplate(template);
+        agreementGenerationService.saveTemplate(template);
 
         redirectAttributes.addFlashAttribute("success", "Template updated successfully.");
         return "redirect:/admin/template/edit";
     }
 
-    @GetMapping("/musician/project/{projectId}/agreement")
-    public ResponseEntity<byte[]> viewAgreement(@PathVariable Long projectId, Authentication authentication) {
+    @GetMapping("/musician/project/{projectId}/downloadAgreement")
+    public ResponseEntity<byte[]> downloadAgreement(@PathVariable Long projectId, Authentication authentication) {
         try {
             Musician musician = musicianService.getMusicianByEmail(authentication.getName());
+
+            if (musicianService.isDataMissing(musician)) {
+                return ResponseEntity
+                        .status(HttpStatus.FORBIDDEN)
+                        .body("Your personal or business data is incomplete. Agreement cannot be generated.".getBytes());
+            }
+
             Project project = projectService.getProjectById(projectId);
 
             Optional<MusicianAgreement> existing = Optional.ofNullable(
@@ -80,7 +86,7 @@ public class AgreementController {
                 return downloadFromPath(existing.get().getFilePath(), existing.get().getFileName());
             }
 
-            String content = agreementService.generateAgreementContent(project, musician);
+            String content = agreementGenerationService.generateAgreementContent(project, musician);
             byte[] pdf = pdfService.generatePdfFromText(content);
             String filePath = fileStorageService.saveGeneratedAgreement(pdf, musician, project);
 
@@ -105,19 +111,28 @@ public class AgreementController {
         }
     }
 
-    // HANDLE EXCEPTION!!!!!!!!!!!!!!!!!!!!!!
-
     @GetMapping("/admin/project/{projectId}/downloadAgreements")
-    public ResponseEntity<byte[]> downloadAllAgreements(@PathVariable Long projectId) throws IOException {
-        List<MusicianAgreement> agreements = agreementRepository.findByProjectId(projectId);
-        byte[] merged = pdfService.mergePdfFiles(agreements.stream()
-                .map(a -> new File(a.getFilePath()))
-                .collect(Collectors.toList()));
+    public ResponseEntity<byte[]> downloadAllAgreements(@PathVariable Long projectId) {
+        try {
+            List<MusicianAgreement> agreements = agreementRepository.findByProjectId(projectId);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=all_agreements.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(merged);
+            if (agreements.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body("No agreements found for this project.".getBytes());
+            }
+
+            byte[] merged = pdfService.mergePdfFiles(
+                    agreements.stream().map(a -> new File(a.getFilePath())).collect(Collectors.toList())
+            );
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=all_agreements.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(merged);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Failed to generate merged PDF: " + e.getMessage()).getBytes());
+        }
     }
 
     private ResponseEntity<byte[]> downloadFromPath(String path, String filename) {

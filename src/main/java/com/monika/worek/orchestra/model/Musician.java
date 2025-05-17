@@ -24,9 +24,9 @@ public class Musician extends User {
     private String address;
     @PESEL
     private String pesel;
-//    @NIP
-//    private String nip;
-//    private String companyName;
+    @NIP
+    private String nip;
+    private String companyName;
     @Enumerated(EnumType.STRING)
     private TaxOffice taxOffice;
     private String bankAccountNumber;

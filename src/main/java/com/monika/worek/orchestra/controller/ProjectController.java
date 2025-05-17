@@ -18,11 +18,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import static com.monika.worek.orchestra.calculator.WageCalculator.getGrossWage;
 
 @Controller
 public class ProjectController {
@@ -33,6 +36,25 @@ public class ProjectController {
     public ProjectController(ProjectService projectService, MusicianService musicianService) {
         this.projectService = projectService;
         this.musicianService = musicianService;
+    }
+
+    @GetMapping("/musician/project/{projectId}")
+    public String viewProjectDetailsForMusician(@PathVariable Long projectId, Model model, Authentication authentication) {
+        String email = authentication.getName();
+        Musician musician = musicianService.getMusicianByEmail(email);
+        Boolean isDataMissing = musicianService.isDataMissing(musician);
+
+        Project project = projectService.getProjectById(projectId);
+        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
+
+        boolean accepted = project.getProjectMembers().contains(musician);
+        BigDecimal wage = getGrossWage(project, musician);
+
+        model.addAttribute("isDataMissing", isDataMissing);
+        model.addAttribute("project", projectDTO);
+        model.addAttribute("accepted", accepted);
+        model.addAttribute("wage", wage);
+        return "/musician/musician-project-details";
     }
 
     @PostMapping("/musician/project/{projectId}/invitation/accept")
@@ -49,21 +71,6 @@ public class ProjectController {
         Musician musician = musicianService.getMusicianByEmail(email);
         projectService.rejectInvitation(projectId, musician.getId());
         return "redirect:/musicianPage";
-    }
-
-    @GetMapping("/musician/project/{projectId}")
-    public String viewProjectDetailsForMusician(@PathVariable Long projectId, Model model, Authentication authentication) {
-        String email = authentication.getName();
-        Musician musician = musicianService.getMusicianByEmail(email);
-
-        Project project = projectService.getProjectById(projectId);
-        ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
-
-        boolean accepted = project.getProjectMembers().contains(musician);
-
-        model.addAttribute("project", projectDTO);
-        model.addAttribute("accepted", accepted);
-        return "/musician/musician-project-details";
     }
 
 

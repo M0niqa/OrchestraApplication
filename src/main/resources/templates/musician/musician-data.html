@@ -57,6 +57,17 @@
             </div>
 
             <div class="mb-3">
+                <label for="companyName" class="form-label">Company name</label>
+                <input th:field="*{companyName}" type="text" class="form-control" id="companyName"/>
+            </div>
+
+            <div class="mb-3">
+                <label for="nip" class="form-label">nip</label>
+                <input th:field="*{nip}" type="text" class="form-control" id="nip"/>
+                <div class="text-danger" th:if="${#fields.hasErrors('nip')}" th:errors="*{nip}"></div>
+            </div>
+
+            <div class="mb-3">
                 <label for="taxOffice" class="form-label">Tax Office</label>
                 <select th:field="*{taxOffice}" class="form-control" id="taxOffice">
                     <option th:each="office : ${taxOffices}" th:value="${office.name}"

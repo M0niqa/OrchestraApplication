@@ -8,27 +8,24 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.monika.worek.orchestra.calculator.DatesCalculator.*;
+import static com.monika.worek.orchestra.calculator.WageCalculator.*;
+
 @Service
-public class AgreementService {
+public class AgreementGenerationService {
 
     private final AgreementTemplateRepository templateRepository;
 
-    public AgreementService(AgreementTemplateRepository templateRepository) {
+    public AgreementGenerationService(AgreementTemplateRepository templateRepository) {
         this.templateRepository = templateRepository;
     }
 
     public String generateAgreementContent(Project project, Musician musician) {
-        Objects.requireNonNull(project, "Project cannot be null");
-        Objects.requireNonNull(musician, "Musician cannot be null");
-
         String templateContent = getTemplateContent(project);
         Map<String, String> valuesMap = prepareValueMap(project, musician);
         StringSubstitutor substitutor = new StringSubstitutor(valuesMap, "${", "}");
@@ -57,10 +54,12 @@ public class AgreementService {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         valuesMap.put("musician.fullName", String.format("%s %s",
-                Objects.toString(musician.getFirstName(), ""),
-                Objects.toString(musician.getLastName(), "")).trim());
+                musician.getFirstName() != null ? musician.getFirstName() : na,
+                musician.getLastName() != null ? musician.getLastName() : na).trim());
         valuesMap.put("musician.address", musician.getAddress() != null ? musician.getAddress() : na);
         valuesMap.put("musician.pesel", musician.getPesel() != null ? musician.getPesel() : na);
+        valuesMap.put("musician.companyName", musician.getCompanyName() != null ? musician.getCompanyName() : na);
+        valuesMap.put("musician.nip", musician.getNip() != null ? musician.getNip() : na);
         valuesMap.put("musician.bankAccountNumber", musician.getBankAccountNumber() != null ? musician.getBankAccountNumber() : na);
         valuesMap.put("musician.instrument", musician.getInstrument().toString());
 
@@ -78,54 +77,6 @@ public class AgreementService {
         valuesMap.put("tax", Objects.toString(getTax(project, musician), na));
 
         return valuesMap;
-    }
-
-    private LocalDate getAgreementDate(Project project) {
-        return project.getStartDate().minusDays(10);
-    }
-
-    private LocalDate getResignationPenaltyDate(Project project) {
-        return project.getStartDate().minusDays(7);
-    }
-
-    private BigDecimal getGrossWage(Project project, Musician musician) {
-        String group = musician.getInstrument() != null ? musician.getInstrument().getGroup() : null;
-        if (group != null) {
-            return project.getGroupSalaries().get(group);
-        }
-        return null;
-    }
-
-    private BigDecimal getNetWage(Project project, Musician musician) {
-        BigDecimal grossWage = getGrossWage(project, musician);
-        if (grossWage == null) {
-            return null;
-        }
-        return grossWage.multiply(BigDecimal.valueOf(0.91)).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal getCostOfIncome(Project project, Musician musician) {
-        BigDecimal grossWage = getGrossWage(project, musician);
-        if (grossWage == null) {
-            return null;
-        }
-        return grossWage.multiply(BigDecimal.valueOf(0.5)).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal getTax(Project project, Musician musician) {
-        BigDecimal grossWage = getGrossWage(project, musician);
-        if (grossWage == null) {
-            return null;
-        }
-        return grossWage.multiply(BigDecimal.valueOf(0.09)).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private LocalDate getPaymentDeadline(Project project) {
-        return project.getEndDate().plusDays(14);
-    }
-
-    private LocalDate getInvoiceDate(Project project) {
-        return project.getEndDate().plusDays(7);
     }
 
     @Transactional

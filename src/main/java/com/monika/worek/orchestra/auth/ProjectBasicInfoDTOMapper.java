@@ -3,6 +3,8 @@ package com.monika.worek.orchestra.auth;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Project;
 
+import java.util.List;
+
 public class ProjectBasicInfoDTOMapper {
 
     public static ProjectBasicInfoDTO mapToDto(Project project) {
@@ -35,5 +37,11 @@ public class ProjectBasicInfoDTOMapper {
                 .conductor(dto.getConductor())
                 .programme(dto.getProgramme())
                 .build();
+    }
+
+    public static List<ProjectBasicInfoDTO> mapToListDTO(List<Project> projects) {
+        return projects.stream()
+                .map(ProjectBasicInfoDTOMapper::mapToDto)
+                .toList();
     }
 }

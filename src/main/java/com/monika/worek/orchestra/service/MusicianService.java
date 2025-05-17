@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper.mapToListDTO;
+
 @Service
 public class MusicianService {
     private final UserRepository userRepository;
@@ -51,30 +53,6 @@ public class MusicianService {
     }
 
     @Transactional
-    public void deleteMusicianById(Long id) {
-        Musician musician = musicianRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Musician not found"));
-
-        for (Project project : musician.getAcceptedProjects()) {
-            project.getProjectMembers().remove(musician);
-        }
-
-        for (Project project : musician.getRejectedProjects()) {
-            project.getMusiciansWhoRejected().remove(musician);
-        }
-
-        for (Project project : musician.getPendingProjects()) {
-            project.getInvited().remove(musician);
-        }
-
-        musician.getAcceptedProjects().clear();
-        musician.getRejectedProjects().clear();
-        musician.getPendingProjects().clear();
-
-        musicianRepository.delete(musician);
-    }
-
-    @Transactional
     public void updateMusicianData(String currentEmail, MusicianDataDTO musicianDataDTO) {
         Musician musician = (Musician) userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("Musician not found"));
         musician.setFirstName(musicianDataDTO.getFirstName());
@@ -87,36 +65,41 @@ public class MusicianService {
         musician.setTaxOffice(musicianDataDTO.getTaxOffice());
     }
 
-    private List<ProjectBasicInfoDTO> mapToDTO(List<Project> projects) {
-        return projects.stream()
-                .map(ProjectBasicInfoDTOMapper::mapToDto)
-                .toList();
+    public boolean isDataMissing(Musician musician) {
+        boolean hasPersonalData = isNotBlank(musician.getFirstName()) &&
+                isNotBlank(musician.getLastName()) &&
+                isNotBlank(musician.getAddress()) &&
+                isNotBlank(musician.getPesel()) &&
+                isNotBlank(musician.getBankAccountNumber());
+
+        boolean hasBusinessData = isNotBlank(musician.getCompanyName()) &&
+                isNotBlank(musician.getNip()) &&
+                isNotBlank(musician.getBankAccountNumber());
+
+        return !hasPersonalData && !hasBusinessData;
+    }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
     }
 
     public List<ProjectBasicInfoDTO> getActiveAcceptedProjects(Long musicianId) {
-        return mapToDTO(musicianRepository.findActiveAcceptedProjects(musicianId, LocalDate.now()));
+        return mapToListDTO(musicianRepository.findActiveAcceptedProjects(musicianId, LocalDate.now()));
     }
 
     public List<ProjectBasicInfoDTO> getActivePendingProjects(Long musicianId) {
-        return mapToDTO(musicianRepository.findActivePendingProjects(musicianId, LocalDate.now()));
+        return mapToListDTO(musicianRepository.findActivePendingProjects(musicianId, LocalDate.now()));
     }
 
     public List<ProjectBasicInfoDTO> getActiveRejectedProjects(Long musicianId) {
-        return mapToDTO(musicianRepository.findActiveRejectedProjects(musicianId, LocalDate.now()));
+        return mapToListDTO(musicianRepository.findActiveRejectedProjects(musicianId, LocalDate.now()));
     }
 
     public List<ProjectBasicInfoDTO> getArchivedAcceptedProjects(Long musicianId) {
-        return mapToDTO(musicianRepository.findArchivedAcceptedProjects(musicianId, LocalDate.now()));
+        return mapToListDTO(musicianRepository.findArchivedAcceptedProjects(musicianId, LocalDate.now()));
     }
 
     public List<ProjectBasicInfoDTO> getArchivedRejectedProjects(Long musicianId) {
-        return mapToDTO(musicianRepository.findArchivedRejectedProjects(musicianId, LocalDate.now()));
-    }
-
-    private String maskPesel(String pesel) {
-        if (!pesel.isBlank()) {
-            return "*******" + pesel.substring(pesel.length()-3);
-        }
-        return "";
+        return mapToListDTO(musicianRepository.findArchivedRejectedProjects(musicianId, LocalDate.now()));
     }
 }

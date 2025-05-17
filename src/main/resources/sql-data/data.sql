@@ -19,7 +19,7 @@ VALUES
     ('Musician', 'David', 'Lee', 'david.lee@example.com', '{noop}pass456', '1992-08-22', '789 Pine Ln', '56789012345', 'FLUTE', '98765432109876543210987654'),
     ('Musician', 'Emily', 'Chen', 'emily.chen@example.com', 'pass789', '1988-03-10', '1011 Maple Dr', '34567890123', 'TRUMPET', '56789012345678901234567890'),
     ('Musician', 'Michael', 'Brown', 'michael.brown@example.com', 'pass101', '1995-11-28', '1213 Cedar Rd', '78901234567', 'PIANO', '10987654321098765432109876'),
-    ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', 'pass202', '1983-07-05', '1415 Birch Ct', '10123456789', 'PERCUSSION', '65432109876543210987654321'),
+    ('Musician', 'Sarah', 'Jones', 'sarah.jones@example.com', '{noop}pass202', '1983-07-05', '1415 Birch Ct', '10123456789', 'PERCUSSION', '65432109876543210987654321'),
     ('Musician', 'Robert', 'Garcia', 'robert.garcia@example.com', 'pass303', '1998-01-18', '1617 Willow Pl', '23456789012', 'VIOLA', '21098765432109876543210987'),
     ('Musician', 'Anna', 'Kowalska', 'anna.kowalska@example.com', '$2a$10$exampleHash1', '1990-07-15', 'Kraków, ul. Wiślana 10', '90071512345', 'VIOLIN_I', 'PL123456789012345678901234'),
     ('Musician', 'Piotr', 'Nowak', 'piotr.nowak@example.com', '$2a$10$exampleHash2', '1988-03-20', 'Warszawa, al. Niepodległości 25', '88032054321', 'VIOLIN_I', 'PL987654321098765432109876'),

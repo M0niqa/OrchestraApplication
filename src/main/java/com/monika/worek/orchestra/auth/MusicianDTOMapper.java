@@ -11,9 +11,15 @@ public class MusicianDTOMapper {
                 user.getEmail(),
                 user.getBirthdate(),
                 user.getAddress(),
-                user.getPesel(),
+                maskPesel(user.getPesel()),
+                user.getCompanyName(),
+                user.getNip(),
                 user.getTaxOffice(),
                 user.getBankAccountNumber()
         );
+    }
+
+    private static String maskPesel(String pesel) {
+        return pesel != null ? "***********" : null;
     }
 }
