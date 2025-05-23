@@ -10,7 +10,7 @@ public class PasswordResetDTO {
     @NotBlank(message = "New password is required")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d])[A-Za-z\\d\\S]{8,}$",
-            message = "Password must be at least 8 characters long, include upper and lower case letters, a number, and a special character"
+            message = "Password must be at least 8 characters long, including upper and lower case letters, a number, and a special character"
     )
     private String newPassword;
 

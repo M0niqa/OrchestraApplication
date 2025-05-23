@@ -56,6 +56,6 @@ public class UpdatePasswordController {
 
         userService.updatePassword(currentEmail, form.getNewPassword());
         redirectAttributes.addFlashAttribute("success", "Password updated successfully!");
-        return "redirect:/update-password";
+        return "redirect:/userPassword";
     }
 }

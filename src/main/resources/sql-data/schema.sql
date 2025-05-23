@@ -102,3 +102,10 @@ CREATE TABLE musicianagreement (
                                    FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
 
+CREATE TABLE token (
+                       id BIGSERIAL PRIMARY KEY,
+                       token VARCHAR(255),
+                       email VARCHAR(255),
+                       expiryDate TIMESTAMP WITHOUT TIME ZONE
+);
+
