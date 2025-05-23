@@ -1,7 +1,7 @@
 INSERT INTO app_user (DTYPE, firstName, lastName, email, password, instrument)
 VALUES
     -- smith@gmail.com / 2222
-    ('User', 'John', 'Smith', 'smith@gmail.com', '{noop}2222', 'FRENCH_HORN'),
+    ('User', 'John', 'Smith', 'smith@gmail.com', '{noop}2222'),
     -- alex@pja.edu.pl / 2222
     ('Musician','Alex', 'King', 'alex@pja.edu.pl',
      '{MD5}{rT4wBLjXEvWpB8F0MgvLUDt8v36HSZoTWcDiusl7jh4=}fda9321dca602a2bb6c42955a315a3fa', 'TUBA'),

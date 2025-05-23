@@ -1,13 +1,11 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
-import com.monika.worek.orchestra.auth.MusicianDTOMapper;
-import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.MusicianBasicDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.MusicianDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper.mapToListDTO;
+import static com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper.mapToListDTO;
 
 @Service
 public class MusicianService {

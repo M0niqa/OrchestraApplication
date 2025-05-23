@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.auth.UserBasicDTOMapper;
-import com.monika.worek.orchestra.auth.UserLoginDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.UserBasicDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.UserLoginDTOMapper;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.model.User;
@@ -10,7 +10,6 @@ import com.monika.worek.orchestra.repository.UserRepository;
 import com.monika.worek.orchestra.repository.UserRoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.auth.MusicianBasicDTOMapper;
-import com.monika.worek.orchestra.auth.ProjectBasicInfoDTOMapper;
-import com.monika.worek.orchestra.auth.ProjectDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.MusicianBasicDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;

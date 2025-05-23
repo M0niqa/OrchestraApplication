@@ -1,15 +1,12 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.admin;
 
 import com.monika.worek.orchestra.dto.SurveyQuestionDTO;
-import com.monika.worek.orchestra.dto.SurveySubmissionDTO;
-import com.monika.worek.orchestra.model.*;
-import com.monika.worek.orchestra.repository.MusicianRepository;
-import com.monika.worek.orchestra.service.MusicianService;
+import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.model.Survey;
+import com.monika.worek.orchestra.model.SurveyQuestion;
 import com.monika.worek.orchestra.service.ProjectService;
 import com.monika.worek.orchestra.service.SurveyService;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,80 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Controller
-public class SurveyController {
+public class AdminSurveyController {
 
-    private final MusicianRepository musicianRepository;
     private final SurveyService surveyService;
-    private final MusicianService musicianService;
     private final ProjectService projectService;
 
-    public SurveyController(MusicianRepository musicianRepository, SurveyService surveyService, MusicianService musicianService, ProjectService projectService) {
-        this.musicianRepository = musicianRepository;
+    public AdminSurveyController(SurveyService surveyService, ProjectService projectService) {
         this.surveyService = surveyService;
-        this.musicianService = musicianService;
         this.projectService = projectService;
-    }
-
-    @GetMapping("/musician/project/{projectId}/survey")
-    public String showSurvey(@PathVariable Long projectId, Model model, Authentication authentication) {
-        Musician musician = musicianRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new UsernameNotFoundException("Musician not found"));
-
-        Optional<Survey> surveyOptional = surveyService.findByProjectId(projectId);
-
-        if (surveyOptional.isEmpty() || surveyOptional.get().getQuestions().isEmpty()) {
-            model.addAttribute("noSurvey", true);
-            return "musician/musician-survey";
-        }
-
-        Survey survey = surveyOptional.get();
-
-        if (survey.isClosed()) {
-            model.addAttribute("surveyClosed", true);
-            return "musician/musician-survey";
-        }
-
-        boolean surveySubmitted = surveyService.existsBySurveyAndMusician(survey, musician);
-        model.addAttribute("surveySubmitted", surveySubmitted);
-        if (surveySubmitted) {
-            return "musician/musician-survey";
-        }
-
-        SurveySubmissionDTO submissionDTO = new SurveySubmissionDTO();
-        model.addAttribute("submissionDTO", submissionDTO);
-        model.addAttribute("projectId", survey.getProject().getId());
-        model.addAttribute("projectName", survey.getProject().getName());
-        model.addAttribute("questions", survey.getQuestions());
-
-        return "musician/musician-survey";
-    }
-
-    @PostMapping("/musician/project/{projectId}/survey")
-    public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO, Authentication authentication, RedirectAttributes redirectAttributes) {
-        Map<Long, String> responses = submissionDTO.getResponses();
-        Musician musician = musicianService.getMusicianByEmail(authentication.getName());
-        Survey survey = surveyService.findByProjectId(projectId).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
-
-        for (Map.Entry<Long, String> entry : responses.entrySet()) {
-            Long questionId = entry.getKey();
-            SurveyQuestion question = surveyService.findQuestionById(questionId);
-
-            if (entry.getValue().equals("YES")) {
-                question.setYesCount(question.getYesCount() + 1);
-            } else {
-                question.setNoCount(question.getNoCount() + 1);
-            }
-        }
-
-        surveyService.saveQuestions(survey.getQuestions());
-        surveyService.saveSubmission(new SurveySubmission(survey, musician));
-        redirectAttributes.addFlashAttribute("submissionSuccess", "survey submitted successfully!");
-
-        return "redirect:/musician/project/" + projectId + "/survey";
     }
 
     @GetMapping("/admin/project/{projectId}/survey")

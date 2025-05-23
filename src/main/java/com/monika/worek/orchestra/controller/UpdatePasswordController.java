@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-public class UserController {
+public class UpdatePasswordController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    public UserController(UserService userService) {
+    public UpdatePasswordController(UserService userService) {
         this.userService = userService;
     }
 

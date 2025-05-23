@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.inspector;
 
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.service.ProjectService;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-public class InspectorController {
+public class InspectorPageController {
 
     private final ProjectService projectService;
 
-    public InspectorController(ProjectService projectService) {
+    public InspectorPageController(ProjectService projectService) {
         this.projectService = projectService;
     }
 

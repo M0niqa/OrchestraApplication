@@ -5,13 +5,16 @@ import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.MusicianAgreement;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.repository.AgreementTemplateRepository;
 import com.monika.worek.orchestra.repository.MusicianAgreementRepository;
+import jakarta.transaction.Transactional;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,18 +22,20 @@ import static com.monika.worek.orchestra.calculator.DatesCalculator.*;
 import static com.monika.worek.orchestra.calculator.WageCalculator.*;
 
 @Service
-public class AgreementGenerationService {
+public class AgreementService {
 
     private final MusicianService musicianService;
     private final ProjectService projectService;
     private final MusicianAgreementRepository musicianAgreementRepository;
+    private final AgreementTemplateRepository agreementTemplateRepository;
     private final FileStorageService fileStorageService;
     private final PdfService pdfService;
 
-    public AgreementGenerationService(MusicianService musicianService, ProjectService projectService, MusicianAgreementRepository musicianAgreementRepository, FileStorageService fileStorageService, PdfService pdfService) {
+    public AgreementService(MusicianService musicianService, ProjectService projectService, MusicianAgreementRepository musicianAgreementRepository, AgreementTemplateRepository agreementTemplateRepository, FileStorageService fileStorageService, PdfService pdfService) {
         this.musicianService = musicianService;
         this.projectService = projectService;
         this.musicianAgreementRepository = musicianAgreementRepository;
+        this.agreementTemplateRepository = agreementTemplateRepository;
         this.fileStorageService = fileStorageService;
         this.pdfService = pdfService;
     }
@@ -118,5 +123,18 @@ public class AgreementGenerationService {
         musicianAgreementRepository.save(agreement);
 
         return pdf;
+    }
+
+    public AgreementTemplate findTemplateById(Long templateId) {
+        return agreementTemplateRepository.findById(templateId).orElseThrow((() -> new IllegalArgumentException("Template not found")));
+    }
+
+    @Transactional
+    public void saveTemplate(AgreementTemplate template) {
+        agreementTemplateRepository.save(template);
+    }
+
+    public List<MusicianAgreement> findAgreementsByProjectId(Long projectId) {
+        return musicianAgreementRepository.findByProjectId(projectId);
     }
 }

@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.auth;
+package com.monika.worek.orchestra.dtoMappers;
 
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Project;
