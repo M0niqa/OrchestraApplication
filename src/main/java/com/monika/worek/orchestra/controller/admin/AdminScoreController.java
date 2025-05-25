@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Controller
 public class AdminScoreController {
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
     private final FileStorageService fileStorageService;
     private final MusicScoreService musicScoreService;
     private final ProjectService projectService;
@@ -74,10 +74,12 @@ public class AdminScoreController {
             musicScoreService.saveScore(scoreFile);
 
             redirectAttributes.addFlashAttribute("success", "File uploaded successfully.");
-        } catch (Exception e) {
+        }  catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to upload file.");
         }
-
         return "redirect:/admin/project/" + projectId + "/scores";
     }
 

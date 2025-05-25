@@ -109,3 +109,18 @@ CREATE TABLE token (
                        expiryDate TIMESTAMP WITHOUT TIME ZONE
 );
 
+CREATE TABLE survey_question (
+                                 id BIGSERIAL PRIMARY KEY,
+                                 questiontext TEXT,
+                                 yescount INTEGER DEFAULT 0,
+                                 nocount INTEGER DEFAULT 0,
+                                 survey_id BIGINT REFERENCES survey(id)
+);
+
+CREATE TABLE survey_submission (
+                                   id BIGSERIAL PRIMARY KEY,
+                                   survey_id BIGINT REFERENCES survey(id),
+                                   musician_id BIGINT REFERENCES app_user(id),
+                                   UNIQUE (survey_id, musician_id)
+);
+

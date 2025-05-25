@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.dto;
 
+import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.TaxOffice;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @Getter
 public class MusicianDataDTO {
 
+    private final Instrument instrument;
     @NotBlank(message = "Name is required")
     private String firstName;
     @NotBlank(message = "Surname is required")
@@ -38,7 +40,8 @@ public class MusicianDataDTO {
     @NotBlank(message = "Bank account number is required")
     private String bankAccountNumber;
 
-    public MusicianDataDTO(String firstName, String lastName, String email, LocalDate birthdate, String address, String pesel, String companyName, String nip, TaxOffice taxOffice, String bankAccountNumber) {
+    public MusicianDataDTO(Instrument instrument, String firstName, String lastName, String email, LocalDate birthdate, String address, String pesel, String companyName, String nip, TaxOffice taxOffice, String bankAccountNumber) {
+        this.instrument = instrument;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

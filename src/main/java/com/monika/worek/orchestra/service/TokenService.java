@@ -19,12 +19,12 @@ public class TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    public Token createToken(String email) {
+    public Token createToken(String email, int validityInMinutes) {
         String randomUUID = UUID.randomUUID().toString();
         Token token = new Token();
         token.setToken(randomUUID);
         token.setEmail(email);
-        token.setExpiryDate(LocalDateTime.now().plusMinutes(5));
+        token.setExpiryDate(LocalDateTime.now().plusMinutes(validityInMinutes));
 
         tokenRepository.save(token);
         return token;

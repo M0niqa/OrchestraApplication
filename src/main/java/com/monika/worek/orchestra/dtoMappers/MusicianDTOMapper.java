@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.model.Musician;
 public class MusicianDTOMapper {
     public static MusicianDataDTO mapToDto(Musician user) {
         return new MusicianDataDTO(
+                user.getInstrument(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),

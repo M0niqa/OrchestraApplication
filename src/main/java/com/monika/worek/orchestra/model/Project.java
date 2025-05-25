@@ -15,7 +15,7 @@ import java.util.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project {
+public class Project implements Comparable<Project> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,4 +72,9 @@ public class Project {
     private Map<String, BigDecimal> groupSalaries = new HashMap<>();
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime invitationDeadline;
+
+    @Override
+    public int compareTo(Project o) {
+        return this.startDate.compareTo(o.startDate);
+    }
 }

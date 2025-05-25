@@ -35,7 +35,7 @@
                   id="chatBadge">&#128233;
             </span>
         </a>
-        <a th:href="@{/archived}" class="btn btn-grey btn-lg m-2">
+        <a th:href="@{admin/archived}" class="btn btn-grey btn-lg m-2">
             <i class="bi bi-archive-fill me-2"></i>
             View Archived Projects
         </a>
@@ -75,12 +75,6 @@
         <h2>Future Projects</h2>
         <table class="table table-striped shadow-sm">
             <thead>
-            <tr>
-                <th>Project Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Actions</th>
-            </tr>
             </thead>
             <tbody>
             <tr th:each="project : ${futureProjects}">

@@ -58,6 +58,7 @@ public class InspectorProjectController {
     private void prepareSendInvitationModel(Long projectId, Model model) {
         Project project = projectService.getProjectById(projectId);
         model.addAttribute("projectId", projectId);
+        model.addAttribute("projectName", project.getName());
         model.addAttribute("remainingCounts", projectService.getRemainingInstrumentsCount(project));
         model.addAttribute("musiciansByInstrument", projectService.getAvailableMusiciansByInstrument(projectId));
     }
@@ -73,7 +74,7 @@ public class InspectorProjectController {
         model.addAttribute("pendingMusicians", projectDTO.getInvited());
         model.addAttribute("project", projectDTO);
 
-        return "musician-status";
+        return "inspector/musician-status";
     }
 
     @PostMapping("/inspector/project/{projectId}/remove/{musicianId}")

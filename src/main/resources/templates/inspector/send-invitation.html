@@ -14,7 +14,7 @@
     <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
 
-<h1 class="mb-4">Add Musicians</h1>
+<h1 class="mb-4">Invite musicians to the <span th:text="${projectName}"></span> project</h1>
 
 <div th:if="${success}" class="alert alert-success" role="alert">
     <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>

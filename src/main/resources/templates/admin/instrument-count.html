@@ -14,7 +14,7 @@
     <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
 
-<h2 class="mb-4">Edit Instrument Needs and Salaries for Project</h2>
+<h2 class="mb-4">Edit instrument needs and salaries for the <span th:text="${projectName}"></span> project</h2>
 <div th:if="${success}" class="alert alert-success mt-3" role="alert">
     <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
 </div>
@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <h4 class="mt-4 mb-3">Salaries per Instrument Group</h4>
+    <h4 class="mt-4 mb-3">Salaries per instrument group</h4>
     <div class="row">
         <div th:each="group : ${instrumentGroups}" class="col-md-3 mb-3">
             <label class="form-label" th:text="${group}"></label>

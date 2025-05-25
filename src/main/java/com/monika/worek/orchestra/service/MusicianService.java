@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -81,23 +82,23 @@ public class MusicianService {
         return value != null && !value.isBlank();
     }
 
-    public List<ProjectBasicInfoDTO> getActiveAcceptedProjects(Long musicianId) {
-        return mapToListDTO(musicianRepository.findActiveAcceptedProjects(musicianId, LocalDate.now()));
+    public List<ProjectBasicInfoDTO> getActiveAcceptedProjectsDTOs(Long musicianId) {
+        return mapToListDTO(musicianRepository.findActiveAcceptedProjects(musicianId, LocalDate.now()).stream().sorted().toList());
     }
 
-    public List<ProjectBasicInfoDTO> getActivePendingProjects(Long musicianId) {
-        return mapToListDTO(musicianRepository.findActivePendingProjects(musicianId, LocalDate.now()));
+    public List<ProjectBasicInfoDTO> getActivePendingProjectsDTOs(Long musicianId) {
+        return mapToListDTO(musicianRepository.findActivePendingProjects(musicianId, LocalDate.now()).stream().sorted().toList());
     }
 
-    public List<ProjectBasicInfoDTO> getActiveRejectedProjects(Long musicianId) {
-        return mapToListDTO(musicianRepository.findActiveRejectedProjects(musicianId, LocalDate.now()));
+    public List<ProjectBasicInfoDTO> getActiveRejectedProjectsDTOs(Long musicianId) {
+        return mapToListDTO(musicianRepository.findActiveRejectedProjects(musicianId, LocalDate.now()).stream().sorted().toList());
     }
 
-    public List<ProjectBasicInfoDTO> getArchivedAcceptedProjects(Long musicianId) {
-        return mapToListDTO(musicianRepository.findArchivedAcceptedProjects(musicianId, LocalDate.now()));
+    public List<ProjectBasicInfoDTO> getArchivedAcceptedProjectsDTOs(Long musicianId) {
+        return mapToListDTO(musicianRepository.findArchivedAcceptedProjects(musicianId, LocalDate.now()).stream().sorted().toList());
     }
 
-    public List<ProjectBasicInfoDTO> getArchivedRejectedProjects(Long musicianId) {
-        return mapToListDTO(musicianRepository.findArchivedRejectedProjects(musicianId, LocalDate.now()));
+    public List<ProjectBasicInfoDTO> getArchivedRejectedProjectsDTOs(Long musicianId) {
+        return mapToListDTO(musicianRepository.findArchivedRejectedProjects(musicianId, LocalDate.now()).stream().sorted().toList());
     }
 }

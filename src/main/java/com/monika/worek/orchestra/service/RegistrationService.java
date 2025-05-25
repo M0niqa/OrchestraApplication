@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegistrationService {
 
+    private static final int TOKEN_EXPIRATION_IN_MINUTES = 120;
     private final EmailService emailService;
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
@@ -25,7 +26,7 @@ public class RegistrationService {
     }
 
     public void sendLink(String email) {
-        Token token = tokenService.createToken(email);
+        Token token = tokenService.createToken(email, TOKEN_EXPIRATION_IN_MINUTES);
         String setupLink = "http://localhost:8080/set-password?token=" + token.getToken();
         emailService.sendEmail(email, "Complete Your Registration", "Click here to set your password and complete registration: " + setupLink);
     }
@@ -40,6 +41,7 @@ public class RegistrationService {
         musician.setFirstName(musicianRegisterDTO.getFirstName());
         musician.setLastName(musicianRegisterDTO.getLastName());
         musician.setEmail(musicianRegisterDTO.getEmail());
+        musician.setInstrument(musicianRegisterDTO.getInstrument());
 
         UserRole musicianRole = userRoleRepository.findByName("MUSICIAN")
                 .orElseThrow(() -> new IllegalStateException("Role MUSICIAN not found"));

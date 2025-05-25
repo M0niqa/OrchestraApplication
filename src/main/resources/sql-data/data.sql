@@ -47,6 +47,24 @@ VALUES
     ('Musician', 'Zuzanna', 'Dudek', 'zuzanna.dudek@example.com', '$2a$10$exampleHash24', '1999-02-28', 'Poznań, ul. Wrocławska 20', '99022834569', 'CLARINET', 'PL780000000000000000000004'),
     ('Musician', 'Jakub', 'Kowalczyk', 'jakub.kowalczyk@example.com', '$2a$10$exampleHash25', '1986-04-15', 'Wrocław, ul. Oławska 10', '86041590128', 'TRUMPET', 'PL900000000000000000000005');
 
+INSERT INTO app_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, instrument, bankAccountNumber)
+VALUES
+    ('Musician', 'Anna', 'Nowak', 'anna.nowak@example.com', '$2a$10$randomHash1', '1990-07-15', 'ul. Kwiatowa 5, Kraków', '91071512345', 'Violin_I', 'PL123456789012345678901234'),
+    ('Musician', 'Piotr', 'Kowalski', 'piotr.kowalski@example.com', '$2a$10$anotherHash2', '1988-11-22', 'Rynek Główny 10, Kraków', '88112254321', 'Cello', 'PL987654321098765432101234'),
+    ('Musician', 'Katarzyna', 'Wiśniewska', 'kasia.wisniewska@example.com', '$2a$10$yetAnotherHash3', '1995-03-01', 'ul. Długa 20, Kraków', '95030101010', 'Flute', 'PL555555555555555555555555');
+
+INSERT INTO app_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, instrument, bankAccountNumber)
+VALUES
+    ('Musician', 'Marek', 'Zieliński', 'marek.zielinski@example.com', '$2a$10$anotherOne2', '1980-09-18', 'Kraków, ul. Starowiślna 8', '80091823456', 'VIOLA', 'PL222222222222222222222227'),
+    ('Musician', 'Sylwia', 'Wójcik', 'sylwia.wojcik@example.com', '$2a$10$anotherOne3', '1987-04-25', 'Kraków, pl. Mariacki 3', '87042578901', 'DOUBLE_BASS', 'PL333333333333333333333338'),
+    ('Musician', 'Tomasz', 'Lis', 'tomasz.lis@example.com', '$2a$10$anotherOne4', '1994-12-01', 'Kraków, ul. Szewska 12', '94120134567', 'OBOE', 'PL444444444444444444444449'),
+    ('Musician', 'Adam', 'Nowakowski', 'adam.nowakowski@example.com', '$2a$10$anotherOne5', '1991-07-20', 'Kraków, ul. Floriańska 45', '91072089012', 'BASSOON', 'PL555555555555555555555550'),
+    ('Musician', 'Karolina', 'Lewandowska', 'karolina.lewandowska@example.com', '$2a$10$anotherOne6', '1989-05-10', 'Kraków, ul. Grodzka 60', '89051023451', 'FRENCH_HORN', 'PL666666666666666666666661'),
+    ('Musician', 'Grzegorz', 'Kamiński', 'grzegorz.kaminski@example.com', '$2a$10$anotherOne7', '1982-03-03', 'Kraków, ul. Bracka 15', '82030378901', 'TROMBONE', 'PL777777777777777777777772'),
+    ('Musician', 'Natalia', 'Woźniak', 'natalia.wozniak@example.com', '$2a$10$anotherOne8', '1996-10-28', 'Kraków, ul. Jagiellońska 1', '96102823456', 'TUBA', 'PL888888888888888888888883'),
+    ('Musician', 'Rafał', 'Szymański', 'rafal.szymanski@example.com', '$2a$10$anotherOne9', '1985-01-12', 'Kraków, ul. Wiślna 10', '85011278901', 'PERCUSSION', 'PL999999999999999999999994'),
+    ('Musician', 'Alicja', 'Grabowska', 'alicja.grabowska@example.com', '$2a$10$anotherOne10', '1993-08-07', 'Kraków, ul. św. Jana 5', '93080723451', 'HARP', 'PL000000000000000000000005');
+
 INSERT INTO app_user_roles (user_id, roles_id)
 VALUES (1, 1),
        (2, 2),
@@ -82,6 +100,30 @@ VALUES (1, 1),
        (32, 3),
        (33, 3),
        (34, 3);
+
+INSERT INTO app_user_roles (user_id, roles_id)
+VALUES (37, 3),
+       (38, 3),
+       (39, 3);
+
+INSERT INTO app_user_roles (user_id, roles_id)
+VALUES (41, 3),
+       (42, 3),
+       (43, 3),
+       (44, 3),
+       (45, 3),
+       (46, 3),
+       (47, 3),
+       (48, 3);
+
+UPDATE app_user
+SET instrument = 'VIOLIN_I'
+WHERE firstName = 'Monika' AND lastName = 'Worek';
+
+Select * from app_user;
+
+DELETE FROM app_user WHERE lastname = 'Polka';
+
 
 INSERT INTO agreementtemplate (content) VALUES
     ('Work Contract with the Transfer of Rights to Artistic Performance,
@@ -204,6 +246,21 @@ VALUES
     ('Rock Festival', 'A weekend-long rock music festival with various bands.', '2025-09-15', '2025-09-17', 1),
     ('Mazowsze and friends', 'A folk music.', '2025-04-11', '2025-04-15', 1);
 
+
+INSERT INTO project (name, description, startDate, endDate, agreementTemplate_id)
+VALUES
+    ('Autumn Gala', 'An evening of opera and ballet highlights.', '2025-10-20', '2025-10-25', 1),
+    ('New Year''s Concert', 'A traditional concert to celebrate the new year.', '2025-12-31', '2026-01-01', 1),
+    ('Spring Awakening', 'A vibrant concert celebrating the arrival of spring.', '2026-03-15', '2026-03-20', 1),
+    ('Indie Music Fest', 'A showcase of emerging indie artists.', '2026-07-05', '2026-07-07', 1),
+    ('Classical Masterpieces', 'A performance of renowned classical compositions.', '2025-11-10', '2025-11-15', 1);
+
+
+UPDATE project SET location = 'Poznań' WHERE name = 'Autumn Gala';
+UPDATE project SET location = 'Warszawa' WHERE name = 'New Year''s Concert';
+UPDATE project SET location = 'Wrocław' WHERE name = 'Spring Awakening';
+UPDATE project SET location = 'Katowice' WHERE name = 'Indie Music Fest';
+UPDATE project SET location = 'Kraków' WHERE name = 'Classical Masterpieces';
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
                                                                                     (3, 4, 'Hello, how are you Jane?', '2023-10-26 10:00:00', true),

@@ -5,16 +5,15 @@ import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Instrument;
+import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
+import com.monika.worek.orchestra.service.EmailService;
 import com.monika.worek.orchestra.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -24,9 +23,11 @@ import java.util.List;
 public class AdminProjectController {
 
     private final ProjectService projectService;
+    private final EmailService emailService;
 
-    public AdminProjectController(ProjectService projectService) {
+    public AdminProjectController(ProjectService projectService, EmailService emailService) {
         this.projectService = projectService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/admin/addProject")
@@ -60,12 +61,34 @@ public class AdminProjectController {
     }
 
     @PostMapping("/admin/project/{projectId}/update")
-    public String updateProject(@PathVariable Long projectId, @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+    public String updateProject(@PathVariable Long projectId,
+                                @Valid @ModelAttribute("project") ProjectBasicInfoDTO projectBasicDTO,
+                                BindingResult bindingResult,
+                                @RequestParam(value = "notifyMembers", defaultValue = "false") boolean notifyMembers,
+                                @RequestParam(value = "updateMessage", required = false) String updateMessage,
+                                RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "admin/admin-project-details";
         }
+
         projectService.updateBasicProjectInfo(projectId, projectBasicDTO);
+
+        if (notifyMembers) {
+            Project project = projectService.getProjectById(projectId);
+            String subject = "Update to project: " + project.getName();
+            String baseMessage = "Dear Musician,\n\nThere have been updates to the project \"" + project.getName() + "\".";
+            if (updateMessage != null && !updateMessage.trim().isEmpty()) {
+                baseMessage += "\n\n" + updateMessage.trim();
+            }
+            baseMessage += "\n\nPlease log in to view the latest project details.\n\nBest regards,\nOrchestra Manager";
+
+            for (Musician musician : project.getProjectMembers()) {
+                emailService.sendEmail(musician.getEmail(), subject, baseMessage);
+            }
+        }
+
         redirectAttributes.addFlashAttribute("success", "Project updated successfully!");
+
         return "redirect:/admin/project/" + projectId;
     }
 
@@ -81,6 +104,7 @@ public class AdminProjectController {
         model.addAttribute("instruments", Instrument.values());
         model.addAttribute("instrumentGroups", List.of("Strings", "Winds", "Brass", "Solo"));
         model.addAttribute("configDTO", instrCountAndSalaryDTO);
+        model.addAttribute("projectName", project.getName());
         return "admin/instrument-count";
     }
 

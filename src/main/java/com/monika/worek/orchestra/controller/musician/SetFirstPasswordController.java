@@ -40,6 +40,7 @@ public class SetFirstPasswordController {
         model.addAttribute("token", form.getToken());
 
         if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult.getAllErrors());
             return "set-password";
         }
 

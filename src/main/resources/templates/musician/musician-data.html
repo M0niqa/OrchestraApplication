@@ -20,6 +20,13 @@
                 <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
             </div>
             <div class="mb-3">
+                <label for="firstName" class="form-label">Instrument</label>
+                <div class="col-md-9">
+                    <div class="form-control-plaintext" th:text="${musician.getInstrument()}"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
                 <label for="firstName" class="form-label">First name</label>
                 <input th:field="*{firstName}" type="text" class="form-control" id="firstName"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>

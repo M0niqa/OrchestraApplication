@@ -30,6 +30,8 @@ public class MusicianDataController {
     @GetMapping("/musicianData")
     public String showUpdateDataForm(Model model, Authentication authentication) {
         String currentEmail = authentication.getName();
+        MusicianDataDTO dto = musicianService.getMusicianDtoByEmail(currentEmail);
+        System.out.println(dto.getInstrument());
         model.addAttribute("musician", musicianService.getMusicianDtoByEmail(currentEmail));
         model.addAttribute("taxOffices", TaxOffice.values());
         return "musician/musician-data";

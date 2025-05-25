@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper.mapToListDTO;
+
 @Service
 public class ProjectService {
 
@@ -173,22 +175,33 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public List<ProjectBasicInfoDTO> getOngoingProjects() {
+    public List<ProjectBasicInfoDTO> getOngoingProjectsDTOs() {
         LocalDate today = LocalDate.now();
         List<Project> projects = projectRepository.findByStartDateBeforeAndEndDateAfter(today.plusDays(1), today.minusDays(1));
-        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
+        return projects.stream().sorted().map(ProjectBasicInfoDTOMapper::mapToDto).toList();
     }
 
-    public List<ProjectBasicInfoDTO> getFutureProjects() {
+    public List<ProjectBasicInfoDTO> getFutureProjectsDTOs() {
         LocalDate today = LocalDate.now();
         List<Project> projects = projectRepository.findByStartDateAfter(today);
-        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
+        return projects.stream().sorted().map(ProjectBasicInfoDTOMapper::mapToDto).toList();
     }
 
-    public List<ProjectBasicInfoDTO> getArchivedProjects() {
+    public List<ProjectBasicInfoDTO> getFutureProjectsDTOsByMusicianId(Long musicianId) {
+        LocalDate today = LocalDate.now().plusDays(7);
+        List<Project> projects = projectRepository.findByStartDateAfter(today);
+        Musician musician = musicianService.getMusicianById(musicianId);
+        return projects.stream().filter(project -> !project.getProjectMembers().contains(musician))
+                .filter(project -> !project.getInvited().contains(musician))
+                .filter(project -> !project.getMusiciansWhoRejected().contains(musician))
+                .sorted().map(ProjectBasicInfoDTOMapper::mapToDto).toList();
+
+    }
+
+    public List<ProjectBasicInfoDTO> getArchivedProjectsDTOs() {
         LocalDate today = LocalDate.now();
         List<Project> projects = projectRepository.findByEndDateBefore(today);
-        return projects.stream().map(ProjectBasicInfoDTOMapper::mapToDto).collect(Collectors.toList());
+        return projects.stream().sorted().map(ProjectBasicInfoDTOMapper::mapToDto).toList();
     }
 
     @Transactional
