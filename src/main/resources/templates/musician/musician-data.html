@@ -19,12 +19,6 @@
             <div th:if="${success}" class="alert alert-success mt-3" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
             </div>
-            <div class="mb-3">
-                <label for="firstName" class="form-label">Instrument</label>
-                <div class="col-md-9">
-                    <div class="form-control-plaintext" th:text="${musician.getInstrument()}"></div>
-                </div>
-            </div>
 
             <div class="mb-3">
                 <label for="firstName" class="form-label">First name</label>

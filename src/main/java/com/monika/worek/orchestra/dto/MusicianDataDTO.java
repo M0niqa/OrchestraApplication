@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Getter
 public class MusicianDataDTO {
 
-    private final Instrument instrument;
     @NotBlank(message = "Name is required")
     private String firstName;
     @NotBlank(message = "Surname is required")
@@ -34,14 +33,13 @@ public class MusicianDataDTO {
     private String pesel;
     @NIP
     private String nip;
-    private String companyName;
+    private final String companyName;
     @NotNull(message = "Tax office must be selected")
     private TaxOffice taxOffice;
     @NotBlank(message = "Bank account number is required")
     private String bankAccountNumber;
 
-    public MusicianDataDTO(Instrument instrument, String firstName, String lastName, String email, LocalDate birthdate, String address, String pesel, String companyName, String nip, TaxOffice taxOffice, String bankAccountNumber) {
-        this.instrument = instrument;
+    public MusicianDataDTO(String firstName, String lastName, String email, LocalDate birthdate, String address, String pesel, String companyName, String nip, TaxOffice taxOffice, String bankAccountNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
