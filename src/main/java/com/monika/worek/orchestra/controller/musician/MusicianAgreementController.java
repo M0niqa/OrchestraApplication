@@ -20,17 +20,19 @@ public class MusicianAgreementController {
 
     private final AgreementService agreementService;
     private final MusicianService musicianService;
+    private final ProjectService projectService;
 
-
-    public MusicianAgreementController(AgreementService agreementService, MusicianService musicianService, PdfService pdfService, ProjectService projectService) {
+    public MusicianAgreementController(AgreementService agreementService, MusicianService musicianService, PdfService pdfService, ProjectService projectService, ProjectService projectService1) {
         this.agreementService = agreementService;
         this.musicianService = musicianService;
+        this.projectService = projectService1;
     }
 
     @GetMapping("/musician/project/{projectId}/downloadAgreement")
-    public ResponseEntity<byte[]> downloadAgreement(@PathVariable Long projectId, Authentication auth) {
+    public ResponseEntity<byte[]> downloadAgreement(@PathVariable Long projectId, Authentication authentication) {
+        Musician musician = musicianService.getMusicianByEmail(authentication.getName());
+        projectService.throwIfUnauthorized(projectId, authentication.getName());
         try {
-            Musician musician = musicianService.getMusicianByEmail(auth.getName());
             byte[] agreement = agreementService.getOrGenerateAgreement(projectId, musician);
 
             String filename = musician.getLastName() + "_agreement.pdf";

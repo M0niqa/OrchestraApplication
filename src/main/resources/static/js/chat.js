@@ -43,17 +43,18 @@ document.addEventListener("DOMContentLoaded", function () {
     function showMessage(message) {
         const messagesDiv = document.getElementById("messages");
         const messageElement = document.createElement("div");
-        messageElement.className = "message " + (String(message.senderId) === String(senderId) ? "sender-message" : "receiver-message");
+        const isSender = String(message.senderId) === String(senderId);
+        messageElement.className = "message " + isSender ? "sender-message" : "receiver-message";
         const timestamp = new Date(message.timestamp).toLocaleString();
 
         messageElement.innerHTML = `
         <div>
             <div class="text-muted small mt-1 ms-1 timestamp-small">${timestamp}</div>
-            <span class="badge ${String(message.senderId) === String(senderId) ? 'bg-primary' : 'bg-secondary'}">
-                ${message.messageContent}
-            </span>
+            <div>
+                <span class="${isSender ? 'bg-primary' : 'bg-secondary'}">${message.messageContent}</span>
+            </div>
         </div>
-    `;
+        `;
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }

@@ -90,22 +90,30 @@ select {
     flex-direction: column;
 }
 
-#messages {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 15px;
-}
-
-.message {
-    margin: 5px 0;
-}
-
 .sender-message {
     text-align: left;
 }
 
 .receiver-message {
     text-align: right;
+}
+
+.sender-message span,
+.receiver-message span,
+.message span.bg-primary,
+.message span.bg-secondary {
+    display: inline-block;
+    max-width: 50%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    margin: 6px 0;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    background-color: #0d6efd;
 }
 
 .timestamp-small {

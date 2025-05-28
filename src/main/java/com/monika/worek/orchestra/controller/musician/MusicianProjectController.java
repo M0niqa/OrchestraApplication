@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +32,13 @@ public class MusicianProjectController {
     @GetMapping("/musician/project/{projectId}")
     public String viewProjectDetails(@PathVariable Long projectId, Model model, Authentication authentication) {
         String email = authentication.getName();
+
+        projectService.throwIfUnauthorized(projectId, email);
+
         Musician musician = musicianService.getMusicianByEmail(email);
-        Boolean isDataMissing = musicianService.isDataMissing(musician);
-
         Project project = projectService.getProjectById(projectId);
+        Boolean isDataMissing = musicianService.isDataMissing(musician);
         ProjectDTO projectDTO = ProjectDTOMapper.mapToDto(project);
-
         boolean accepted = project.getProjectMembers().contains(musician);
         BigDecimal wage = getGrossWage(project, musician);
 
@@ -47,17 +49,21 @@ public class MusicianProjectController {
         return "/musician/musician-project-details";
     }
 
-    @PostMapping("/musician/project/{projectId}/invitation/accept")
+    @PostMapping("/musician/project/{projectId}/accept")
     public String acceptInvitation(@PathVariable Long projectId, Authentication authentication) {
         String email = authentication.getName();
+        projectService.throwIfUnauthorized(projectId, email);
+
         Musician musician = musicianService.getMusicianByEmail(email);
         projectService.acceptInvitation(projectId, musician.getId());
         return "redirect:/musician/project/" + projectId;
     }
 
-    @PostMapping("/musician/project/{projectId}/invitation/reject")
+    @PostMapping("/musician/project/{projectId}/reject")
     public String rejectInvitation(@PathVariable Long projectId, Authentication authentication) {
         String email = authentication.getName();
+        projectService.throwIfUnauthorized(projectId, email);
+
         Musician musician = musicianService.getMusicianByEmail(email);
         projectService.rejectInvitation(projectId, musician.getId());
         return "redirect:/musicianPage";

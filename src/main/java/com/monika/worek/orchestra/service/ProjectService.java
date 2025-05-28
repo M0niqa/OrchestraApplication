@@ -13,6 +13,7 @@ import com.monika.worek.orchestra.repository.MusicianAgreementRepository;
 import com.monika.worek.orchestra.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -66,14 +67,19 @@ public class ProjectService {
         emailService.sendEmail(musician.getEmail(), subject, text);
     }
 
+    public void throwIfUnauthorized(Long projectId, String email) {
+        Project project = getProjectById(projectId);
+        Musician musician = musicianService.getMusicianByEmail(email);
+
+        if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
+            throw new AccessDeniedException("You are not a member of this project.");
+        }
+    }
+
     @Transactional
     public void acceptInvitation(Long projectId, Long musicianId) {
         Project project = getProjectById(projectId);
         Musician musician = musicianService.getMusicianById(musicianId);
-
-        if (!project.getInvited().contains(musician)) {
-            throw new IllegalStateException("Musician not currently invited to this project.");
-        }
 
         project.getInvited().remove(musician);
         project.getProjectMembers().add(musician);
@@ -86,10 +92,6 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         Musician musician = musicianService.getMusicianById(musicianId);
         musicianAgreementRepository.deleteByMusicianIdAndProjectId(musicianId, projectId);
-
-        if (!project.getInvited().contains(musician)) {
-            throw new IllegalStateException("Musician not currently invited to this project.");
-        }
 
         project.getInvited().remove(musician);
         project.getMusiciansWhoRejected().add(musician);

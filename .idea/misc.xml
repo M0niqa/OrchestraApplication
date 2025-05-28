@@ -4,6 +4,7 @@
     <writeAnnotations>
       <writeAnnotation name="jakarta.validation.constraints.NotBlank" />
       <writeAnnotation name="jakarta.validation.constraints.NotNull" />
+      <writeAnnotation name="org.hibernate.validator.constraints.pl.NIP" />
       <writeAnnotation name="org.hibernate.validator.constraints.pl.PESEL" />
     </writeAnnotations>
   </component>

@@ -3,7 +3,7 @@ package com.monika.worek.orchestra.dtoMappers;
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.model.Musician;
 
-public class MusicianDTOMapper {
+public class MusicianDataDTOMapper {
     public static MusicianDataDTO mapToDto(Musician user) {
         return new MusicianDataDTO(
                 user.getFirstName(),
@@ -20,6 +20,9 @@ public class MusicianDTOMapper {
     }
 
     private static String maskPesel(String pesel) {
-        return pesel != null ? "***********" : null;
+        if (pesel != null && !pesel.isBlank()) {
+            return "*******" + pesel.substring(pesel.length()-2);
+        }
+        return "";
     }
 }

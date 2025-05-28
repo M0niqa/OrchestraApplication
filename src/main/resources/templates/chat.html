@@ -45,11 +45,12 @@
             <h5>Chat with <span th:text="${receiver.firstName + ' ' + receiver.lastName}">[Receiver]</span></h5>
             <div id="messages">
                 <th:block th:each="message : ${messages}">
-                    <div th:class="${message.senderId == senderId} ? 'sender-message' : 'receiver-message'">
+                    <div class="message" th:classappend="${message.senderId == senderId} ? ' sender-message' : ' receiver-message'">
                         <div>
-                            <div class="text-muted small mt-1 ms-1 timestamp-small" th:text="${#temporals.format(message.timestamp, 'dd.MM.yyyy, HH:mm:ss')}"></div>
-            <span th:class="${message.senderId == senderId} ? 'badge bg-primary' : 'badge bg-secondary'"
-                  th:text="${message.messageContent}"></span>
+                            <div class="text-muted small mt-1 ms-1 timestamp-small"
+                                 th:text="${#temporals.format(message.timestamp, 'dd.MM.yyyy, HH:mm:ss')}"></div>
+                            <span th:class="${message.senderId == senderId} ? 'bg-primary' : 'bg-secondary'"
+                                  th:text="${message.messageContent}"></span>
                         </div>
                     </div>
                 </th:block>

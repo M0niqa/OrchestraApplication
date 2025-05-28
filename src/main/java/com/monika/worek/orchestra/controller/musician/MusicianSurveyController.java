@@ -6,6 +6,7 @@ import com.monika.worek.orchestra.model.Survey;
 import com.monika.worek.orchestra.model.SurveyQuestion;
 import com.monika.worek.orchestra.model.SurveySubmission;
 import com.monika.worek.orchestra.service.MusicianService;
+import com.monika.worek.orchestra.service.ProjectService;
 import com.monika.worek.orchestra.service.SurveyService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,14 +26,18 @@ public class MusicianSurveyController {
 
     private final MusicianService musicianService;
     private final SurveyService surveyService;
+    private final ProjectService projectService;
 
-    public MusicianSurveyController(MusicianService musicianService, SurveyService surveyService) {
+    public MusicianSurveyController(MusicianService musicianService, SurveyService surveyService, ProjectService projectService) {
         this.musicianService = musicianService;
         this.surveyService = surveyService;
+        this.projectService = projectService;
     }
 
     @GetMapping("/musician/project/{projectId}/survey")
     public String showSurvey(@PathVariable Long projectId, Model model, Authentication authentication) {
+        projectService.throwIfUnauthorized(projectId, authentication.getName());
+
         Musician musician = musicianService.getMusicianByEmail(authentication.getName());
 
         Optional<Survey> surveyOptional = surveyService.findByProjectId(projectId);
@@ -66,6 +71,8 @@ public class MusicianSurveyController {
 
     @PostMapping("/musician/project/{projectId}/survey")
     public String submitSurvey(@PathVariable Long projectId, @ModelAttribute SurveySubmissionDTO submissionDTO, Authentication authentication, RedirectAttributes redirectAttributes) {
+        projectService.throwIfUnauthorized(projectId, authentication.getName());
+
         Map<Long, String> responses = submissionDTO.getResponses();
         Musician musician = musicianService.getMusicianByEmail(authentication.getName());
         Survey survey = surveyService.findByProjectId(projectId).orElseThrow(() -> new IllegalArgumentException("Survey not found"));
