@@ -1,9 +1,9 @@
 package com.monika.worek.orchestra.controller.admin;
 
 
-import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
+import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
@@ -16,7 +16,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -37,7 +36,7 @@ public class AdminProjectController {
     }
 
     @PostMapping("/admin/addProject")
-    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Principal principal) {
+    public String addProject(@Valid @ModelAttribute("projectDTO") ProjectBasicInfoDTO projectDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "/admin/add-project";
         }

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UserRoleRepository roleRepository;
 
     public UserService(UserRepository userRepository, UserRoleRepository roleRepository) {
@@ -61,6 +60,7 @@ public class UserService {
     public void updatePassword(String currentEmail, String newPassword) {
         User user = userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("User not found"));
         if (newPassword != null && !newPassword.isEmpty()) {
+            PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
             user.setPassword(passwordEncoder.encode(newPassword));
         }
         userRepository.save(user);
