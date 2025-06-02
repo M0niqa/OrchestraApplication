@@ -12,12 +12,9 @@ public class SurveyQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String questionText;
-
     private int yesCount;
     private int noCount;
-
     @ManyToOne
     private Survey survey;
 }

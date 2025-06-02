@@ -77,8 +77,7 @@ CREATE TABLE chatmessage (
 
 CREATE TABLE userrole (
                           id BIGSERIAL PRIMARY KEY,
-                          name VARCHAR(255) UNIQUE,
-                          description VARCHAR(255)
+                          name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE app_user_roles (
@@ -109,7 +108,14 @@ CREATE TABLE token (
                        expiryDate TIMESTAMP WITHOUT TIME ZONE
 );
 
-CREATE TABLE survey_question (
+CREATE TABLE verificationcode (
+                      id BIGSERIAL PRIMARY KEY,
+                      email VARCHAR(255),
+                      code VARCHAR(255),
+                      expiration TIMESTAMP WITHOUT TIME ZONE
+);
+
+CREATE TABLE surveyquestion (
                                  id BIGSERIAL PRIMARY KEY,
                                  questiontext TEXT,
                                  yescount INTEGER DEFAULT 0,
@@ -117,7 +123,7 @@ CREATE TABLE survey_question (
                                  survey_id BIGINT REFERENCES survey(id)
 );
 
-CREATE TABLE survey_submission (
+CREATE TABLE surveysubmission (
                                    id BIGSERIAL PRIMARY KEY,
                                    survey_id BIGINT REFERENCES survey(id),
                                    musician_id BIGINT REFERENCES app_user(id),

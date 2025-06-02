@@ -314,3 +314,7 @@ INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
 
 -- Musician 3 rejected Project 3
 INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);
+
+
+ALTER TABLE userrole
+DROP COLUMN description;

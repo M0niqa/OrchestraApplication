@@ -4,20 +4,16 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Entity(name = "App_user")
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 @Builder
-@ToString
+@Data
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "DTYPE")
+@DiscriminatorColumn()
 @DiscriminatorValue("User")
 public class User {
 
@@ -34,5 +30,5 @@ public class User {
             joinColumns = @JoinColumn(name = "User_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id")
     )
-    private Set<UserRole> roles = new HashSet<>();
+    private Set<UserRole> roles;
 }

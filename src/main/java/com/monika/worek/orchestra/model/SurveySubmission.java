@@ -14,10 +14,8 @@ public class SurveySubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     private Survey survey;
-
     @ManyToOne
     private Musician musician;
 

@@ -49,7 +49,7 @@ public class Project implements Comparable<Project> {
     )
     private Set<Musician> invited;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MusicScore> musicScores = new HashSet<>();
+    private Set<MusicScore> musicScores;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "agreementtemplate_id")
     private AgreementTemplate agreementTemplate;

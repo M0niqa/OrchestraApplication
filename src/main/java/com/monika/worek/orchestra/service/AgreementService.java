@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -115,8 +114,6 @@ public class AgreementService {
         MusicianAgreement agreement = new MusicianAgreement();
         agreement.setFileName(musician.getLastName() + "_agreement.pdf");
         agreement.setFilePath(path);
-        agreement.setFileType("application/pdf");
-        agreement.setCreatedAt(LocalDateTime.now());
         agreement.setMusician(musician);
         agreement.setProject(project);
 

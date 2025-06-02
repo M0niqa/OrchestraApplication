@@ -9,16 +9,15 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Setter
+@Getter
 @Entity
-public class Token {
-
+public class VerificationCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String token;
     private String email;
-    private LocalDateTime expiryDate;
 
+    private String code;
+
+    private LocalDateTime expiryDate;
 }

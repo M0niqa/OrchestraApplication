@@ -14,13 +14,10 @@ public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @OneToOne
     @JoinColumn(name = "project_id", nullable = false, unique = true)
     private Project project;
-
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SurveyQuestion> questions = new ArrayList<>();
-
     private boolean closed = false;
 }
