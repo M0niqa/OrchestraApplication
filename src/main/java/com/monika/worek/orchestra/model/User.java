@@ -28,7 +28,7 @@ public class User {
     @JoinTable(
             name = "App_user_roles",
             joinColumns = @JoinColumn(name = "User_id"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id")
+            inverseJoinColumns = @JoinColumn(name = "Roles_id")
     )
     private Set<UserRole> roles;
 }
