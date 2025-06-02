@@ -21,16 +21,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
-                .requestMatchers("/", "/login", "/forgot-password", "/reset-password", "/set-password").permitAll()
+                .requestMatchers("/login", "/forgot-password", "/reset-password", "/set-password").permitAll()
                 .requestMatchers("/adminPage", "admin/**").hasAnyRole("ADMIN")
                 .requestMatchers("/inspectorPage", "inspector/**").hasAnyRole("INSPECTOR")
                 .anyRequest().authenticated());
-            //    .anyRequest().permitAll());
 
         http.formLogin(login -> login
                 .loginPage("/login").permitAll()
-             //   .successHandler(customAuthenticationSuccessHandler()));
-                .defaultSuccessUrl("/musicianPage"));
+                .successHandler(customAuthenticationSuccessHandler()));
 
         http.logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout/**", HttpMethod.GET.name()))

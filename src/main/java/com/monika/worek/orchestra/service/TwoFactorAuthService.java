@@ -40,7 +40,7 @@ public class TwoFactorAuthService {
                 "Please use the following code to complete your login: " + code);
     }
 
-    public boolean verifyCode(String userEmail, String userEnteredCode) {
+    public boolean isCodeValid(String userEmail, String userEnteredCode) {
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(userEmail);
         if (verificationCode.getCode() != null && verificationCode.getCode().equals(userEnteredCode)) {
             verificationCodeRepository.delete(verificationCode);

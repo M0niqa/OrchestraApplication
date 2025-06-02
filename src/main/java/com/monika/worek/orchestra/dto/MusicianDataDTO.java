@@ -6,13 +6,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.pl.NIP;
 import org.hibernate.validator.constraints.pl.PESEL;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @Getter
 public class MusicianDataDTO {
 
@@ -38,17 +41,4 @@ public class MusicianDataDTO {
     private TaxOffice taxOffice;
     @NotBlank(message = "Bank account number is required")
     private String bankAccountNumber;
-
-    public MusicianDataDTO(String firstName, String lastName, String email, LocalDate birthdate, String address, String pesel, String companyName, String nip, TaxOffice taxOffice, String bankAccountNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.birthdate = birthdate;
-        this.address = address;
-        this.pesel = pesel;
-        this.companyName = companyName;
-        this.nip = nip;
-        this.taxOffice = taxOffice;
-        this.bankAccountNumber = bankAccountNumber;
-    }
 }

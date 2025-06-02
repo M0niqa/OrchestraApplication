@@ -28,7 +28,7 @@ public class TwoFactorAuthController {
 
     @PostMapping("/2fa/verify")
     public String verify(@RequestParam String email, @RequestParam String code, Model model) {
-        if (twoFactorAuthService.verifyCode(email, code)) {
+        if (twoFactorAuthService.isCodeValid(email, code)) {
             UserLoginDTO user = userService.findUserByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
