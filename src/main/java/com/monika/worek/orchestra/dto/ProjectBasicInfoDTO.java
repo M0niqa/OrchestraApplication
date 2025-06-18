@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.dto;
 
+import com.monika.worek.orchestra.constraint.StartDateBeforeEndDate;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+@StartDateBeforeEndDate
 @Builder
 @Getter
 @Setter

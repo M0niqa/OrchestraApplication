@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +10,6 @@ public class CustomErrorController {
     @GetMapping("/error")
     public String handleError(Model model) {
         model.addAttribute("message", "Unexpected error occurred.");
-        return "error";
+        return "common/error";
     }
 }

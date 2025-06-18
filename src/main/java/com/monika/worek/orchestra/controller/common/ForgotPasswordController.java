@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import com.monika.worek.orchestra.dto.PasswordResetDTO;
 import com.monika.worek.orchestra.service.PasswordResetService;
@@ -40,13 +40,13 @@ public class ForgotPasswordController {
     @GetMapping("/reset-password")
     public String resetPasswordPage(@RequestParam String token, Model model) {
         if (tokenService.getEmailForToken(token) == null) {
-            return "token-invalid";
+            return "common/token-invalid";
         }
 
         PasswordResetDTO form = new PasswordResetDTO();
         form.setToken(token);
         model.addAttribute("passwordForm", form);
-        return "reset-password";
+        return "common/reset-password";
     }
 
     @PostMapping("/reset-password")
@@ -54,17 +54,17 @@ public class ForgotPasswordController {
         model.addAttribute("token", form.getToken());
 
         if (bindingResult.hasErrors()) {
-            return "reset-password";
+            return "common/reset-password";
         }
 
         String email = tokenService.getEmailForToken(form.getToken());
         if (email == null) {
-            return "token-invalid";
+            return "common/token-invalid";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
             bindingResult.rejectValue("confirmNewPassword", "error.confirmNewPassword", "Passwords do not match.");
-            return "reset-password";
+            return "common/reset-password";
         }
 
         userService.updatePassword(email, form.getNewPassword());

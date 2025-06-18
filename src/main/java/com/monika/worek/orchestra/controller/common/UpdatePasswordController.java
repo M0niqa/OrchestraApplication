@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import com.monika.worek.orchestra.dto.PasswordUpdateDTO;
 import com.monika.worek.orchestra.dto.UserLoginDTO;
@@ -29,14 +29,14 @@ public class UpdatePasswordController {
     @GetMapping("/userPassword")
     public String showUpdatePasswordForm(Model model) {
         model.addAttribute("passwordForm", new PasswordUpdateDTO());
-        return "update-password";
+        return "common/update-password";
     }
 
     @PostMapping("/userPassword")
     public String updatePassword(@Valid @ModelAttribute("passwordForm") PasswordUpdateDTO form, BindingResult bindingResult,
                                  Authentication authentication, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "update-password";
+            return "common/update-password";
         }
 
         String currentEmail = authentication.getName();
@@ -46,12 +46,12 @@ public class UpdatePasswordController {
 
         if (!passwordEncoder.matches(form.getOldPassword(), storedPassword)) {
             bindingResult.rejectValue("oldPassword", "error.oldPassword", "Old password is incorrect");
-            return "update-password";
+            return "common/update-password";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
             bindingResult.rejectValue("confirmNewPassword", "error.confirmNewPassword", "Passwords do not match");
-            return "update-password";
+            return "common/update-password";
         }
 
         userService.updatePassword(currentEmail, form.getNewPassword());

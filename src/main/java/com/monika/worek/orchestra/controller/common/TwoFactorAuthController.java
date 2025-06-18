@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.service.TwoFactorAuthService;
@@ -23,7 +23,7 @@ public class TwoFactorAuthController {
     @GetMapping("/2fa-page")
     public String twoFactorPage(@RequestParam String email, Model model) {
         model.addAttribute("email", email);
-        return "2fa";
+        return "common/2fa";
     }
 
     @PostMapping("/2fa/verify")
@@ -56,7 +56,7 @@ public class TwoFactorAuthController {
         } else {
             model.addAttribute("email", email);
             model.addAttribute("error", "Invalid code. Please try again.");
-            return "2fa";
+            return "common/2fa";
         }
     }
 }

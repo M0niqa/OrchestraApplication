@@ -16,6 +16,9 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
     <form th:action="@{/admin/addProject}" th:object="${projectDTO}" method="post">
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger" role="alert">
+            <p th:each="error : ${#fields.globalErrors()}" th:text="${error}"></p>
+        </div>
         <div th:if="${success}" class="alert alert-success mt-3" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
         </div>

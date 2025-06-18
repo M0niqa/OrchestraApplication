@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import com.monika.worek.orchestra.dto.ChatMessageDTO;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
@@ -55,7 +55,7 @@ public class ChatController {
             model.addAttribute("messages", Collections.emptyList());
         }
 
-        return "chat";
+        return "common/chat";
     }
 
     @MessageMapping("/chat")

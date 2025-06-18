@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.controller;
+package com.monika.worek.orchestra.controller.common;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +8,6 @@ public class LoginController {
 
     @GetMapping("/login")
     String loginForm(){
-        return "login-form";
+        return "common/login-form";
     }
 }
