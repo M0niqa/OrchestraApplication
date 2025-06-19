@@ -1,6 +1,5 @@
 package com.monika.worek.orchestra.dto;
 
-import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.TaxOffice;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.pl.NIP;
 import org.hibernate.validator.constraints.pl.PESEL;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -10,7 +10,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Builder
 @Data
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn()

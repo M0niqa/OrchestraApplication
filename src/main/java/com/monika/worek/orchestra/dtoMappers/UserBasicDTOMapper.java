@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 public class UserBasicDTOMapper {
 
     public static UserBasicDTO mapToBasicDto(User user) {
+        if (user == null) {
+            return null;
+        }
         return new UserBasicDTO(
                 user.getId(),
                 user.getFirstName(),
@@ -16,5 +19,4 @@ public class UserBasicDTOMapper {
                 user.getRoles().stream().map(UserRole::getName).collect(Collectors.toSet())
         );
     }
-
 }

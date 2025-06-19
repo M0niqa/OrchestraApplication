@@ -70,7 +70,13 @@ public class AdminScoreController {
             Project project = projectService.getProjectById(projectId);
             String filePath = fileStorageService.saveFile(file);
 
-            MusicScore scoreFile = new MusicScore(file.getOriginalFilename(), file.getContentType(), filePath, project);
+            MusicScore scoreFile = MusicScore.builder()
+                    .fileName(file.getOriginalFilename())
+                    .fileType(file.getContentType())
+                    .filePath(filePath)
+                    .project(project)
+                    .build();
+
             musicScoreService.saveScore(scoreFile);
 
             redirectAttributes.addFlashAttribute("success", "File uploaded successfully.");

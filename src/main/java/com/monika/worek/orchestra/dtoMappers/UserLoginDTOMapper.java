@@ -6,6 +6,9 @@ import com.monika.worek.orchestra.model.User;
 public class UserLoginDTOMapper {
 
     public static UserLoginDTO mapToDto(User user) {
+        if (user == null) {
+            return null;
+        }
         return new UserLoginDTO(
                 user.getEmail(),
                 user.getPassword(),

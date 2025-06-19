@@ -3,7 +3,7 @@ package com.monika.worek.orchestra.dtoMappers;
 import com.monika.worek.orchestra.dto.ChatMessageDTO;
 import com.monika.worek.orchestra.model.ChatMessage;
 
-public class MessageMapper {
+public class MessageDTOMapper {
 
     public static ChatMessage mapToEntity(ChatMessageDTO dto) {
         if (dto == null) {
