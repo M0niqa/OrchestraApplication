@@ -10,17 +10,16 @@
 <div class="d-flex justify-content-end mb-4">
   <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/adminPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-house-fill"></i> Back to home</a>
   <a sec:authorize="hasRole('ROLE_INSPECTOR')" th:href="@{/inspectorPage}" class="btn btn-outline-secondary me-2"><i class="bi bi-house-fill"></i> Back to home</a>
-  <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{admin/archived}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to archived</a>
-  <a sec:authorize="hasRole('ROLE_INSPECTOR')" th:href="@{inspector/archived}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to archived</a>
+  <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin/archived}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to archived</a>
+  <a sec:authorize="hasRole('ROLE_INSPECTOR')" th:href="@{/inspector/archived}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left-circle-fill"></i> Back to archived</a>
   <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
-<h1 class="text-center mb-4">Project Details</h1>
-<div class="text-center mb-4">
-  <a th:href="@{/musician/project/{id}/survey(id=${project.id})}" class="btn btn-secondary m-1"><i
-          class="bi bi-question-circle me-1"></i> Survey</a>
-  <a th:href="@{/admin/project/{projectId}/scores(projectId=${project.id})}" class="btn btn-secondary m-1"><i
-          class="bi bi-file-music-fill me-1"></i> Scores</a>
+<div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+  <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin/project/{projectId}/downloadAgreements(projectId=${projectId})}" class="btn btn-primary m-1">
+    <i class="bi bi-file-earmark-arrow-down me-2"></i> Download Agreements
+  </a>
 </div>
+<h1 class="text-center mb-4">Project Details</h1>
 <div class="row justify-content-center">
   <div class="col-md-10">
     <div class="row mb-3">

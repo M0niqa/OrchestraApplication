@@ -8,10 +8,10 @@ VALUES
     -- sj@my.com / 2222
     ('Musician', 'Stephen', 'Jones', 'monikwor91@gmail.com', '{noop}2222', 'OBOE');
 
-INSERT INTO userrole (name, description)
-VALUES ('ADMIN', 'Adding/updating projects'),
-       ('INSPECTOR', 'Inviting musicians to projects'),
-       ('MUSICIAN', 'Regular user privileges');
+INSERT INTO userrole (name)
+VALUES ('ADMIN'),
+       ('INSPECTOR'),
+       ('MUSICIAN');
 
 INSERT INTO app_user (DTYPE, firstName, lastName, email, password, birthdate, address, pesel, instrument, bankAccountNumber)
 VALUES
@@ -262,6 +262,8 @@ UPDATE project SET location = 'Wrocław' WHERE name = 'Spring Awakening';
 UPDATE project SET location = 'Katowice' WHERE name = 'Indie Music Fest';
 UPDATE project SET location = 'Kraków' WHERE name = 'Classical Masterpieces';
 
+UPDATE project SET startDate = '2025-07-20' , endDate = '2025-07-28' WHERE name = 'Film Music Festival';
+
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
                                                                                     (3, 4, 'Hello, how are you Jane?', '2023-10-26 10:00:00', true),
                                                                                     (4, 3, 'I am doing well, thanks Stephen!', '2023-10-26 10:05:00', true),
@@ -315,6 +317,3 @@ INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
 -- Musician 3 rejected Project 3
 INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);
 
-
-ALTER TABLE userrole
-DROP COLUMN description;
