@@ -21,14 +21,14 @@ public class RegisterMusicianController {
         this.registrationService = registrationService;
     }
 
-    @GetMapping({"/inspector/registerMusician", "/admin/registerMusician"})
+    @GetMapping({"/inspector/registerMusician"})
     public String showRegisterMusician(Model model) {
         model.addAttribute("musician", MusicianRegisterDTO.builder().build());
         model.addAttribute("instruments", Instrument.values());
         return "/inspector/registration-form";
     }
 
-    @PostMapping({"/inspector/registerMusician", "/admin/registerMusician"})
+    @PostMapping({"/inspector/registerMusician"})
     public String registerMusician(@Valid @ModelAttribute("musician") MusicianRegisterDTO dto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("instruments", Instrument.values());

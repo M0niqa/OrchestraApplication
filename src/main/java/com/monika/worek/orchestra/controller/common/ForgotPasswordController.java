@@ -28,7 +28,7 @@ public class ForgotPasswordController {
 
     @GetMapping("/forgot-password")
     public String forgotPasswordPage() {
-        return "forgot-password";
+        return "common/forgot-password";
     }
 
     @PostMapping("/forgot-password")

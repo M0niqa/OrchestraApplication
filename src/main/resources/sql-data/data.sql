@@ -263,6 +263,9 @@ UPDATE project SET location = 'Katowice' WHERE name = 'Indie Music Fest';
 UPDATE project SET location = 'Kraków' WHERE name = 'Classical Masterpieces';
 
 UPDATE project SET startDate = '2025-07-20' , endDate = '2025-07-28' WHERE name = 'Film Music Festival';
+DELETE from accepted_musicians_projects where musician_id = 23 and project_id=1;
+select * FROM musicianagreement;
+DELETE FROM musicianagreement where project_id=12;
 
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
                                                                                     (3, 4, 'Hello, how are you Jane?', '2023-10-26 10:00:00', true),

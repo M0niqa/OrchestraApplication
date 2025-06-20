@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.exception.FileStorageException;
 import com.monika.worek.orchestra.exception.MissingDataException;
 import com.monika.worek.orchestra.model.AgreementTemplate;
 import com.monika.worek.orchestra.model.Musician;
@@ -12,10 +13,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.monika.worek.orchestra.calculator.DatesCalculator.*;
 import static com.monika.worek.orchestra.calculator.WageCalculator.*;
@@ -93,16 +91,26 @@ public class AgreementService {
         return valuesMap;
     }
 
+    @Transactional
     public byte[] getOrGenerateAgreement(Long projectId, Musician musician) {
         if (musicianService.isDataMissing(musician)) {
             throw new MissingDataException("Your personal or business data is incomplete.");
         }
 
         Project project = projectService.getProjectById(projectId);
+        Optional<MusicianAgreement> agreementOpt = musicianAgreementRepository.findByMusicianIdAndProjectId(projectId, musician.getId());
 
-        return musicianAgreementRepository.findByMusicianIdAndProjectId(projectId, musician.getId())
-                .map(a -> fileStorageService.readFileAsBytes(a.getFilePath()))
-                .orElseGet(() -> generateAndStoreAgreement(project, musician));
+        if (agreementOpt.isPresent()) {
+            MusicianAgreement agreementRecord = agreementOpt.get();
+            try {
+                return fileStorageService.readFileAsBytes(agreementRecord.getFilePath());
+            } catch (FileStorageException e) {
+                musicianAgreementRepository.delete(agreementRecord);
+                return generateAndStoreAgreement(project, musician);
+            }
+        } else {
+            return generateAndStoreAgreement(project, musician);
+        }
     }
 
     private byte[] generateAndStoreAgreement(Project project, Musician musician) {

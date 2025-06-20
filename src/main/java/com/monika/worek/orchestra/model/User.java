@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "App_user")
@@ -29,5 +30,5 @@ public class User {
             joinColumns = @JoinColumn(name = "User_id"),
             inverseJoinColumns = @JoinColumn(name = "Roles_id")
     )
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
 }

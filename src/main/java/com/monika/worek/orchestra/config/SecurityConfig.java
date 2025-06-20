@@ -22,8 +22,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
                 .requestMatchers("/login", "/forgot-password", "/reset-password", "/set-password").permitAll()
-                .requestMatchers("/adminPage", "admin/**").hasAnyRole("ADMIN")
-                .requestMatchers("/inspectorPage", "inspector/**").hasAnyRole("INSPECTOR")
+                .requestMatchers("/inspectorPage").hasRole("INSPECTOR")
+                .requestMatchers("/adminPage", "/admin/**").hasRole("ADMIN")
+                .requestMatchers("/inspector/**").hasAnyRole("ADMIN", "INSPECTOR")
                 .anyRequest().authenticated());
 
         http.formLogin(login -> login

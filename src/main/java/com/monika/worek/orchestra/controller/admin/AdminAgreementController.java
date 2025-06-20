@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -59,7 +60,15 @@ public class AdminAgreementController {
         try {
             Project project = projectService.getProjectById(projectId);
             project.getProjectMembers().forEach(m -> agreementService.getOrGenerateAgreement(projectId, m));
-            List<MusicianAgreement> agreements = agreementService.findAgreementsByProjectId(projectId);
+            List<MusicianAgreement> agreements = project.getProjectMembers().stream()
+                    .map(m -> {
+                        agreementService.getOrGenerateAgreement(projectId, m);
+                        return agreementService.findAgreementsByProjectId(projectId).stream()
+                                .filter(a -> a.getMusician().getId().equals(m.getId()))
+                                .findFirst().orElse(null);
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
 
             if (agreements.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)

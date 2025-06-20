@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VerificationCodeRepository extends CrudRepository<VerificationCode, Long> {
     VerificationCode findByEmail(String userEmail);
+    void deleteByEmail(String userEmail);
 }

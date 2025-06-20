@@ -26,13 +26,13 @@ public class SetFirstPasswordController {
     @GetMapping("/set-password")
     public String setPasswordPage(@RequestParam String token, Model model) {
         if (tokenService.getEmailForToken(token) == null) {
-            return "token-invalid";
+            return "common/token-invalid";
         }
 
         PasswordResetDTO form = new PasswordResetDTO();
         form.setToken(token);
         model.addAttribute("passwordForm", form);
-        return "set-password";
+        return "common/set-password";
     }
 
     @PostMapping("/set-password")
@@ -40,18 +40,17 @@ public class SetFirstPasswordController {
         model.addAttribute("token", form.getToken());
 
         if (bindingResult.hasErrors()) {
-            System.out.println(bindingResult.getAllErrors());
-            return "set-password";
+            return "common/set-password";
         }
 
         String email = tokenService.getEmailForToken(form.getToken());
         if (email == null) {
-            return "token-invalid";
+            return "common/token-invalid";
         }
 
         if (!form.getNewPassword().equals(form.getConfirmNewPassword())) {
             bindingResult.rejectValue("confirmNewPassword", "error.confirmNewPassword", "Passwords do not match.");
-            return "set-password";
+            return "common/set-password";
         }
 
         userService.updatePassword(email, form.getNewPassword());

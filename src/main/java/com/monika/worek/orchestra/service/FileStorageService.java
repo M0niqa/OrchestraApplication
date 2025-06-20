@@ -1,5 +1,6 @@
 package com.monika.worek.orchestra.service;
 
+import com.monika.worek.orchestra.exception.FileStorageException;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import jakarta.annotation.PostConstruct;
@@ -77,9 +78,7 @@ public class FileStorageService {
 
     public String saveGeneratedAgreement(byte[] pdf, Musician musician, Project project) {
         try {
-            String sanitizedName = musician.getLastName().replaceAll("[^a-zA-Z0-9]", "_");
-            String projectName = project.getName().replaceAll("[^a-zA-Z0-9]", "_");
-            String fileName = projectName + "_" + sanitizedName + "_agreement.pdf";
+            String fileName = musician.getLastName() + "_agreement.pdf";
 
             Path targetPath = this.fileStorageLocation.resolve(fileName);
             Files.write(targetPath, pdf, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -93,9 +92,12 @@ public class FileStorageService {
     public byte[] readFileAsBytes(String path) {
         try {
             Path filePath = Paths.get(path).normalize();
+            if (!Files.exists(filePath)) {
+                throw new FileStorageException("File not found at path: " + path);
+            }
             return Files.readAllBytes(filePath);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read file at: " + path, e);
+            throw new FileStorageException("Failed to read file at: " + path, e);
         }
     }
 }

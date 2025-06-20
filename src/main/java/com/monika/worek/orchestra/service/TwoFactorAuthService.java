@@ -3,6 +3,7 @@ package com.monika.worek.orchestra.service;
 import com.monika.worek.orchestra.model.VerificationCode;
 import com.monika.worek.orchestra.repository.VerificationCodeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -25,6 +26,7 @@ public class TwoFactorAuthService {
     }
 
     public void createCode(String email, String code, int validityInMinutes) {
+        verificationCodeRepository.deleteByEmail(email);
         VerificationCode verificationCode = new VerificationCode();
         verificationCode.setCode(code);
         verificationCode.setEmail(email);
@@ -33,6 +35,7 @@ public class TwoFactorAuthService {
         verificationCodeRepository.save(verificationCode);
     }
 
+    @Transactional
     public void sendVerificationCode(String email) {
         String code = generateVerificationCode();
         createCode(email, code, CODE_EXPIRATION_IN_MINUTES);
