@@ -150,7 +150,7 @@ class AgreementServiceTest {
         when(musicianAgreementRepository.findByMusicianIdAndProjectId(1L, 1L))
                 .thenReturn(Optional.empty());
         when(pdfService.generatePdfFromText(anyString())).thenReturn(newPdf);
-        when(fileStorageService.saveGeneratedAgreement(any(), any(), any())).thenReturn("/path/to/new.pdf");
+        when(fileStorageService.saveGeneratedAgreement(any(), any())).thenReturn("/path/to/new.pdf");
 
         // when
         byte[] result = agreementService.getOrGenerateAgreement(1L, musician);

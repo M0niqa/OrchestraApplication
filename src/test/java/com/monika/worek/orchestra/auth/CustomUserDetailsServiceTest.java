@@ -27,7 +27,6 @@ public class CustomUserDetailsServiceTest {
     @InjectMocks
     private CustomUserDetailsService customUserDetailsService;
 
-
     @Test
     void loadUserByUsername_whenUserFound_thenShouldReturnUserDetails() {
         // given

@@ -117,7 +117,7 @@ public class AgreementService {
         String content = generateAgreementContent(project, musician);
 
         byte[] pdf = pdfService.generatePdfFromText(content);
-        String path = fileStorageService.saveGeneratedAgreement(pdf, musician, project);
+        String path = fileStorageService.saveGeneratedAgreement(pdf, musician);
 
         MusicianAgreement agreement = new MusicianAgreement();
         agreement.setFileName(musician.getLastName() + "_agreement.pdf");

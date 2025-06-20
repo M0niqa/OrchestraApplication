@@ -76,9 +76,10 @@ public class FileStorageService {
         }
     }
 
-    public String saveGeneratedAgreement(byte[] pdf, Musician musician, Project project) {
+    public String saveGeneratedAgreement(byte[] pdf, Musician musician) {
         try {
-            String fileName = musician.getLastName() + "_agreement.pdf";
+            String sanitizedName = musician.getLastName().replaceAll("[^a-zA-Z0-9]", "_");
+            String fileName = sanitizedName + "_agreement.pdf";
 
             Path targetPath = this.fileStorageLocation.resolve(fileName);
             Files.write(targetPath, pdf, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
