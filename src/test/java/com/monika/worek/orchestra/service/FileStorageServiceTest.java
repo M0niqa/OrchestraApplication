@@ -5,12 +5,15 @@ import com.monika.worek.orchestra.model.Musician;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -29,12 +32,55 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(MockitoExtension.class)
 class FileStorageServiceTest {
 
+    @TempDir
+    private Path tempDir;
     private FileStorageService fileStorageService;
     private final String uploadDirectory = "/test-uploads";
 
     @BeforeEach
     void setUp() {
         fileStorageService = new FileStorageService(uploadDirectory);
+    }
+
+    @Test
+    void getFile_whenFileExistsAndIsReadable_thenShouldReturnFile() throws IOException {
+        // given
+        File testFile = tempDir.resolve("readable-file.txt").toFile();
+        testFile.createNewFile();
+
+        // when
+        File resultFile = fileStorageService.getFile(testFile.getAbsolutePath());
+
+        // then
+        assertThat(resultFile).isNotNull();
+        assertThat(resultFile.exists()).isTrue();
+        assertThat(resultFile).isEqualTo(testFile);
+    }
+
+    @Test
+    void getFile_whenFileDoesNotExist_thenShouldThrowFileNotFoundException() {
+        // given
+        String nonExistentFilePath = tempDir.resolve("non-existent-file.txt").toString();
+
+        // when
+        // then
+        assertThatThrownBy(() -> fileStorageService.getFile(nonExistentFilePath))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("File does not exist or cannot be read");
+    }
+
+    @Test
+    void getFile_whenFileIsNotReadable_thenShouldThrowFileNotFoundException() throws IOException {
+        // given
+        File unreadableFile = tempDir.resolve("unreadable-file.txt").toFile();
+        unreadableFile.createNewFile();
+        unreadableFile.setReadable(false);
+
+        // when
+        // then
+        assertThatThrownBy(() -> fileStorageService.getFile(unreadableFile.getAbsolutePath()))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("File does not exist or cannot be read");
     }
 
     @Test

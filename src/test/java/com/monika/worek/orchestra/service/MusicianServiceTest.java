@@ -1,7 +1,9 @@
 package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
+import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.model.Musician;
+import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.model.TaxOffice;
 import com.monika.worek.orchestra.repository.MusicianRepository;
 import com.monika.worek.orchestra.repository.UserRepository;
@@ -13,11 +15,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,6 +60,49 @@ class MusicianServiceTest {
         // when
         // then
         assertThatThrownBy(() -> musicianService.getMusicianByEmail(email))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Musician not found");
+    }
+
+    @Test
+    void getMusicianDtoByEmail_whenUserExists_thenShouldReturnMappedDto() {
+        // given
+        String email = "test@example.com";
+        Musician musician = Musician.builder().id(1L).firstName("John").lastName("Smith").email(email).build();
+        when(musicianRepository.findByEmail(email)).thenReturn(Optional.of(musician));
+
+        // when
+        MusicianDataDTO resultDto = musicianService.getMusicianDtoByEmail(email);
+
+        // then
+        assertThat(resultDto).isNotNull();
+        assertThat(resultDto.getFirstName()).isEqualTo("John");
+        assertThat(resultDto.getLastName()).isEqualTo("Smith");
+        assertThat(resultDto.getEmail()).isEqualTo(email);
+    }
+
+    @Test
+    void getMusicianById_whenMusicianExists_thenShouldReturnMusician() {
+        // given
+        Long musicianId = 1L;
+        Musician musician = Musician.builder().id(1L).firstName("John").lastName("Smith").build();
+        when(musicianRepository.findById(musicianId)).thenReturn(Optional.of(musician));
+
+        // when
+        Musician result = musicianService.getMusicianById(musicianId);
+
+        // then
+        assertThat(result).isEqualTo(musician);
+    }
+
+    @Test
+    void getMusicianById_whenMusicianDoesNotExist_thenShouldThrowException() {
+        // given
+        Long musicianId = 99L;
+        when(musicianRepository.findById(musicianId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> musicianService.getMusicianById(musicianId))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("Musician not found");
     }
@@ -205,5 +253,93 @@ class MusicianServiceTest {
 
         // then
         assertThat(isMissing).isTrue();
+    }
+
+    @Test
+    void getActiveAcceptedProjectsDTOs_whenProjectsExist_thenShouldReturnDtoList() {
+        // given
+        Long musicianId = 1L;
+        Project project = Project.builder().id(10L).name("Active Project").build();
+        List<Project> projectsFromRepo = List.of(project);
+
+        when(musicianRepository.findActiveAcceptedProjects(eq(musicianId), any(LocalDate.class)))
+                .thenReturn(projectsFromRepo);
+
+        // when
+        List<ProjectBasicInfoDTO> result = musicianService.getActiveAcceptedProjectsDTOs(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getName()).isEqualTo("Active Project");
+    }
+
+    @Test
+    void getActivePendingProjectsDTOs_whenNoProjectsExist_thenShouldReturnEmptyList() {
+        // given
+        Long musicianId = 1L;
+        when(musicianRepository.findActivePendingProjects(eq(musicianId), any(LocalDate.class)))
+                .thenReturn(Collections.emptyList());
+
+        // when
+        List<ProjectBasicInfoDTO> result = musicianService.getActivePendingProjectsDTOs(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getActiveRejectedProjectsDTOs_whenProjectsExist_thenShouldReturnDtoList() {
+        // given
+        Long musicianId = 1L;
+        Project rejectedProject = Project.builder().id(20L).name("Rejected Project").build();
+        List<Project> projectsFromRepo = List.of(rejectedProject);
+        when(musicianRepository.findActiveRejectedProjects(eq(musicianId), any(LocalDate.class)))
+                .thenReturn(projectsFromRepo);
+
+        // when
+        List<ProjectBasicInfoDTO> result = musicianService.getActiveRejectedProjectsDTOs(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getName()).isEqualTo("Rejected Project");
+    }
+
+    @Test
+    void getArchivedAcceptedProjectsDTOs_whenProjectsExist_thenShouldReturnDtoList() {
+        // given
+        Long musicianId = 1L;
+        Project archivedProject = Project.builder().id(30L).name("Archived Project").build();
+        List<Project> projectsFromRepo = List.of(archivedProject);
+        when(musicianRepository.findArchivedAcceptedProjects(eq(musicianId), any(LocalDate.class)))
+                .thenReturn(projectsFromRepo);
+
+        // when
+        List<ProjectBasicInfoDTO> result = musicianService.getArchivedAcceptedProjectsDTOs(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getName()).isEqualTo("Archived Project");
+    }
+
+    @Test
+    void getArchivedRejectedProjectsDTOs_whenProjectsExist_thenShouldReturnDtoList() {
+        // given
+        Long musicianId = 1L;
+        Project archivedProject = Project.builder().id(30L).name("Archived Project").build();
+        List<Project> projectsFromRepo = List.of(archivedProject);
+        when(musicianRepository.findArchivedRejectedProjects(eq(musicianId), any(LocalDate.class)))
+                .thenReturn(projectsFromRepo);
+
+        // when
+        List<ProjectBasicInfoDTO> result = musicianService.getArchivedRejectedProjectsDTOs(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getName()).isEqualTo("Archived Project");
     }
 }

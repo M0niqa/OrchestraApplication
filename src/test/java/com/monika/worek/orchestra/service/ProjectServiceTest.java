@@ -2,6 +2,7 @@ package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
+import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
@@ -301,6 +302,47 @@ class ProjectServiceTest {
     }
 
     @Test
+    void getFutureProjectsDTOsByMusicianId_whenCalled_thenReturnsOnlyProjectsWhereMusicianIsNotInvolved() {
+        // given
+        Long musicianId = 1L;
+        Musician currentMusician = Musician.builder().id(musicianId).build();
+
+        Project projectA_Member = Project.builder().id(10L).name("Project A")
+                .projectMembers(Set.of(currentMusician))
+                .invited(new HashSet<>())
+                .musiciansWhoRejected(new HashSet<>())
+                .build();
+        Project projectB_Invited = Project.builder().id(11L).name("Project B")
+                .projectMembers(new HashSet<>())
+                .invited(Set.of(currentMusician))
+                .musiciansWhoRejected(new HashSet<>())
+                .build();
+        Project projectC_Rejected = Project.builder().id(12L).name("Project C")
+                .projectMembers(new HashSet<>())
+                .invited(new HashSet<>())
+                .musiciansWhoRejected(Set.of(currentMusician))
+                .build();
+        Project projectD_Available = Project.builder().id(13L).name("Project D")
+                .projectMembers(new HashSet<>())
+                .invited(new HashSet<>())
+                .musiciansWhoRejected(new HashSet<>())
+                .build();
+
+        List<Project> allFutureProjects = List.of(projectA_Member, projectB_Invited, projectC_Rejected, projectD_Available);
+
+        when(projectRepository.findByStartDateAfter(any(LocalDate.class))).thenReturn(allFutureProjects);
+        when(musicianService.getMusicianById(musicianId)).thenReturn(currentMusician);
+
+        // when
+        List<ProjectBasicInfoDTO> result = projectService.getFutureProjectsDTOsByMusicianId(musicianId);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getName()).isEqualTo("Project D");
+    }
+
+    @Test
     void getArchivedProjectsDTOs_whenNoProjectsExist_thenShouldReturnEmptyList() {
         // given
         when(projectRepository.findByEndDateBefore(any(LocalDate.class))).thenReturn(Collections.emptyList());
@@ -336,6 +378,36 @@ class ProjectServiceTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("Test Project");
+    }
+
+    @Test
+    void getProjectDtoById_whenProjectExists_thenShouldReturnMappedDto() {
+        // given
+        Long projectId = 1L;
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+
+        // when
+        ProjectDTO resultDto = projectService.getProjectDtoById(projectId);
+
+        // then
+        assertThat(resultDto).isNotNull();
+        assertThat(resultDto.getId()).isEqualTo(projectId);
+        assertThat(resultDto.getName()).isEqualTo(project.getName());
+    }
+
+    @Test
+    void getProjectBasicDtoById_whenProjectExists_thenShouldReturnMappedDto() {
+        // given
+        Long projectId = 1L;
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+
+        // when
+        ProjectBasicInfoDTO resultDto = projectService.getProjectBasicDtoById(projectId);
+
+        // then
+        assertThat(resultDto).isNotNull();
+        assertThat(resultDto.getId()).isEqualTo(projectId);
+        assertThat(resultDto.getName()).isEqualTo(project.getName());
     }
 
     @Test

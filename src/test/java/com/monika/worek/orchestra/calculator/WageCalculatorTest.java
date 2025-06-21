@@ -3,170 +3,308 @@ package com.monika.worek.orchestra.calculator;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockedStatic;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mockStatic;
 
-@ExtendWith(MockitoExtension.class)
+
 public class WageCalculatorTest {
 
-    @Mock
-    private Project mockProject;
+    @Test
+    void getGrossWage_whenProjectIsNull_thenShouldReturnNull() {
+        // given
+        Project project = null;
+        Musician musician = Musician.builder().build();
 
-    @Mock
-    private Musician mockMusician;
+        // when
+        BigDecimal result = WageCalculator.getGrossWage(project, musician);
+
+        // then
+        assertNull(result);
+    }
 
     @Test
-    void getGrossWage_ifGroupExists_thenShouldReturnCorrectWage() {
+    void getGrossWage_whenMusicianIsNull_thenShouldReturnNull() {
         // given
-        Instrument violinI = Instrument.VIOLIN_I;
-        String group = violinI.getGroup(); // "Strings"
-        BigDecimal expectedWage = new BigDecimal("1000.00");
+        Project project = Project.builder().build();
+        Musician musician = null;
+
+        // when
+        BigDecimal result = WageCalculator.getGrossWage(project, musician);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void getGrossWage_whenGroupSalariesMapIsNull_thenShouldReturnNull() {
+        // given
+        Project project = Project.builder().groupSalaries(null).build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+
+        // when
+        BigDecimal result = WageCalculator.getGrossWage(project, musician);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void getGrossWage_whenMusicianInstrumentIsNull_thenShouldReturnNull() {
+        // given
+        Project project = Project.builder().groupSalaries(new HashMap<>()).build();
+        Musician musician = Musician.builder().instrument(null).build();
+
+        // when
+        BigDecimal result = WageCalculator.getGrossWage(project, musician);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void getGrossWage_whenAllInputsAreValid_thenShouldReturnCorrectWageFromMap() {
+        // given
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build(); // Belongs to "Strings" group
+
         Map<String, BigDecimal> groupSalaries = new HashMap<>();
-        groupSalaries.put(group, expectedWage);
+        groupSalaries.put("Strings", new BigDecimal("1000"));
+        groupSalaries.put("Winds", new BigDecimal("1100"));
 
-        when(mockMusician.getInstrument()).thenReturn(violinI);
-        when(mockProject.getGroupSalaries()).thenReturn(groupSalaries);
+        Project project = Project.builder()
+                .groupSalaries(groupSalaries)
+                .build();
 
         // when
-        BigDecimal actualWage = WageCalculator.getGrossWage(mockProject, mockMusician);
+        BigDecimal result = WageCalculator.getGrossWage(project, musician);
 
         // then
-        Assertions.assertNotNull(actualWage);
-        assertEquals(expectedWage.setScale(2, RoundingMode.HALF_UP), actualWage.setScale(2, RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.valueOf(1000), result);
     }
 
     @Test
-    void getGrossWage_ifGroupDoesNotExist_thenShouldReturnNull() {
+    void getNetWage_whenProjectIsNull_thenShouldReturnNull() {
         // given
-        Instrument clarinet = Instrument.CLARINET; // "Winds"
-        Map<String, BigDecimal> groupSalaries = new HashMap<>();
-        groupSalaries.put("Strings", new BigDecimal("1000.00"));
-
-        when(mockMusician.getInstrument()).thenReturn(clarinet);
-        when(mockProject.getGroupSalaries()).thenReturn(groupSalaries);
+        Project project = null;
+        Musician musician = Musician.builder().build();
 
         // when
-        BigDecimal actualWage = WageCalculator.getGrossWage(mockProject, mockMusician);
+        BigDecimal result = WageCalculator.getNetWage(project, musician);
 
         // then
-        assertNull(actualWage);
+        assertNull(result);
     }
 
     @Test
-    void getGrossWage_ifMusicianHasNoInstrument_thenShouldReturnNull() {
+    void getNetWage_whenMusicianIsNull_thenShouldReturnNull() {
         // given
-        when(mockMusician.getInstrument()).thenReturn(null);
+        Project project = Project.builder().build();
+        Musician musician = null;
 
         // when
-        BigDecimal actualWage = WageCalculator.getGrossWage(mockProject, mockMusician);
+        BigDecimal result = WageCalculator.getNetWage(project, musician);
 
         // then
-        assertNull(actualWage);
+        assertNull(result);
     }
 
     @Test
-    void getNetWage_ifGrossWageExists_thenShouldCalculateCorrectly() {
+    void getNetWage_whenGrossWageIsNull_thenShouldReturnNull() {
         // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getNetWage(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(null);
+
+            // when
+            BigDecimal result = WageCalculator.getNetWage(project, musician);
+
+            // then
+            assertNull(result);
+        }
+    }
+
+    @Test
+    void getNetWage_whenGrossWageIsValid_thenShouldReturnCorrectlyCalculatedNetWage() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
         BigDecimal grossWage = new BigDecimal("1000.00");
-        BigDecimal expectedNetWage = new BigDecimal("910.00"); // 1000 * 0.91
 
-        when(mockMusician.getInstrument()).thenReturn(Instrument.VIOLIN_I);
-        Map<String, BigDecimal> groupSalaries = new HashMap<>();
-        groupSalaries.put("Strings", grossWage);
-        when(mockProject.getGroupSalaries()).thenReturn(groupSalaries);
+        // Use try-with-resources to mock the static getGrossWage method
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getNetWage(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
 
-        // when
-        BigDecimal actualNetWage = WageCalculator.getNetWage(mockProject, mockMusician);
+            // when
+            BigDecimal result = WageCalculator.getNetWage(project, musician);
 
-        // then
-        Assertions.assertNotNull(actualNetWage);
-        assertEquals(expectedNetWage.setScale(2, RoundingMode.HALF_UP), actualNetWage.setScale(2, RoundingMode.HALF_UP));
+            // then
+            assertEquals(new BigDecimal("910.00"), result);
+        }
     }
 
     @Test
-    void getNetWage_ifGrossWageIsNull_thenShouldReturnNull() {
+    void getNetWage_whenCalculationNeedsRounding_thenShouldRoundCorrectly() {
         // given
-        when(mockMusician.getInstrument()).thenReturn(null);
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+        BigDecimal grossWage = new BigDecimal("1000");
 
-        // when
-        BigDecimal actualNetWage = WageCalculator.getNetWage(mockProject, mockMusician);
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getNetWage(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
 
-        // then
-        assertNull(actualNetWage);
+            // when
+            BigDecimal result = WageCalculator.getNetWage(project, musician);
+
+            // then
+            assertEquals(new BigDecimal("910.00"), result);
+        }
     }
 
     @Test
-    void getCostOfIncome_ifGrossWageExists_thenShouldCalculateCorrectly() {
+    void getCostOfIncome_whenProjectIsNull_thenShouldReturnNull() {
         // given
+        Project project = null;
+        Musician musician = Musician.builder().build();
+
+        // when
+        BigDecimal result = WageCalculator.getCostOfIncome(project, musician);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void getCostOfIncome_whenMusicianIsNull_thenShouldReturnNull() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = null;
+
+        // when
+        BigDecimal result = WageCalculator.getCostOfIncome(project, musician);
+
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void getCostOfIncome_whenGrossWageIsNull_thenShouldReturnNull() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getCostOfIncome(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(null);
+
+            // when
+            BigDecimal result = WageCalculator.getCostOfIncome(project, musician);
+
+            // then
+            assertNull(result);
+        }
+    }
+
+    @Test
+    void getCostOfIncome_whenGrossWageIsValid_thenShouldReturnCorrectlyCalculatedValue() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+        BigDecimal grossWage = new BigDecimal("1200.50");
+
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getCostOfIncome(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
+
+            // when
+            BigDecimal result = WageCalculator.getCostOfIncome(project, musician);
+
+            // then
+            assertEquals(new BigDecimal("600.25"), result);
+        }
+    }
+
+    @Test
+    void getCostOfIncome_whenCalculationNeedsRounding_thenShouldRoundCorrectly() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().instrument(Instrument.VIOLIN_I).build();
+        BigDecimal grossWage = new BigDecimal("1101.51");
+
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getCostOfIncome(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
+
+            // when
+            BigDecimal result = WageCalculator.getCostOfIncome(project, musician);
+
+            // then
+            assertEquals(new BigDecimal("550.76"), result);
+        }
+    }
+    @Test
+    void getTax_whenGrossWageIsNull_thenShouldReturnNull() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().build();
+
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getTax(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(null);
+
+            // when
+            BigDecimal result = WageCalculator.getTax(project, musician);
+
+            // then
+            assertNull(result);
+        }
+    }
+
+    @Test
+    void getTax_whenGrossWageIsValid_thenShouldReturnCorrectlyCalculatedTax() {
+        // given
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().build();
         BigDecimal grossWage = new BigDecimal("1000.00");
-        BigDecimal expectedCost = new BigDecimal("500.00"); // 1000 * 0.5
 
-        when(mockMusician.getInstrument()).thenReturn(Instrument.VIOLIN_I);
-        Map<String, BigDecimal> groupSalaries = new HashMap<>();
-        groupSalaries.put("Strings", grossWage);
-        when(mockProject.getGroupSalaries()).thenReturn(groupSalaries);
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getTax(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
 
-        // when
-        BigDecimal actualCost = WageCalculator.getCostOfIncome(mockProject, mockMusician);
+            // when
+            BigDecimal result = WageCalculator.getTax(project, musician);
 
-        // then
-        Assertions.assertNotNull(actualCost);
-        assertEquals(expectedCost.setScale(2, RoundingMode.HALF_UP), actualCost.setScale(2, RoundingMode.HALF_UP));
+            // then
+            assertEquals(new BigDecimal("90.00"), result);
+        }
     }
 
     @Test
-    void getCostOfIncome_ifGrossWageIsNull_thenShouldReturnNull() {
+    void getTax_whenCalculationNeedsRounding_thenShouldRoundCorrectly() {
         // given
-        when(mockMusician.getInstrument()).thenReturn(null);
+        Project project = Project.builder().build();
+        Musician musician = Musician.builder().build();
+        BigDecimal grossWage = new BigDecimal("1123.45");
 
-        // when
-        BigDecimal actualCost = WageCalculator.getCostOfIncome(mockProject, mockMusician);
+        try (MockedStatic<WageCalculator> mockedCalculator = mockStatic(WageCalculator.class)) {
+            mockedCalculator.when(() -> WageCalculator.getTax(project, musician)).thenCallRealMethod();
+            mockedCalculator.when(() -> WageCalculator.getGrossWage(project, musician)).thenReturn(grossWage);
 
-        // then
-        assertNull(actualCost);
-    }
+            // when
+            BigDecimal result = WageCalculator.getTax(project, musician);
 
-    @Test
-    void getTax_ifGrossWageExists_thenShouldCalculateCorrectly() {
-        // given
-        BigDecimal grossWage = new BigDecimal("1000.00");
-        BigDecimal expectedTax = new BigDecimal("90.00"); // 1000 * 0.09
-
-        when(mockMusician.getInstrument()).thenReturn(Instrument.VIOLIN_I);
-        Map<String, BigDecimal> groupSalaries = new HashMap<>();
-        groupSalaries.put("Strings", grossWage);
-        when(mockProject.getGroupSalaries()).thenReturn(groupSalaries);
-
-        // when
-        BigDecimal actualTax = WageCalculator.getTax(mockProject, mockMusician);
-
-        // then
-        Assertions.assertNotNull(actualTax);
-        assertEquals(expectedTax.setScale(2, RoundingMode.HALF_UP), actualTax.setScale(2, RoundingMode.HALF_UP));
-    }
-
-    @Test
-    void getTax_ifGrossWageIsNull_thenShouldReturnNull() {
-        // given
-        when(mockMusician.getInstrument()).thenReturn(null);
-
-        // when
-        BigDecimal actualTax = WageCalculator.getTax(mockProject, mockMusician);
-
-        // then
-        assertNull(actualTax);
+            // then
+            assertEquals(new BigDecimal("101.11"), result);
+        }
     }
 }
-
