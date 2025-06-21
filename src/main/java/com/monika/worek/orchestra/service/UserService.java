@@ -59,7 +59,7 @@ public class UserService {
     @Transactional
     public void updatePassword(String currentEmail, String newPassword) {
         User user = userRepository.findByEmail(currentEmail).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        if (newPassword != null && !newPassword.isEmpty()) {
+        if (newPassword != null && !newPassword.trim().isEmpty()) {
             PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
             user.setPassword(passwordEncoder.encode(newPassword));
         }

@@ -1,11 +1,11 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.dtoMappers.MusicianBasicDTOMapper;
-import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
-import com.monika.worek.orchestra.dtoMappers.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
 import com.monika.worek.orchestra.dto.ProjectDTO;
+import com.monika.worek.orchestra.dtoMappers.MusicianBasicDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.dtoMappers.ProjectDTOMapper;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
@@ -22,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper.mapToListDTO;
-
 @Service
 public class ProjectService {
 
@@ -39,10 +37,6 @@ public class ProjectService {
         this.musicianAgreementRepository = musicianAgreementRepository;
     }
 
-    public void saveProject(Project project) {
-        projectRepository.save(project);
-    }
-
     public void inviteMusician(Long projectId, Long musicianId, LocalDateTime invitationDeadline) {
         Project project = getProjectById(projectId);
         Musician musician = musicianService.getMusicianById(musicianId);
@@ -54,25 +48,16 @@ public class ProjectService {
             project.getInvited().add(musician);
             project.setInvitationDeadline(invitationDeadline);
             projectRepository.save(project);
-        }
 
-        String subject = "New Project Invitation";
-        String link = "http://localhost:8080/login";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        String formattedDeadline = invitationDeadline.format(formatter);
-        String text = "You have been invited to join the project: " + project.getName() + ".\n" +
-                "Log in to the system (" + link + ") to check details, " +
-                "and accept or reject the project by " + formattedDeadline + ".";
+            String subject = "New Project Invitation";
+            String link = "http://localhost:8080/login";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDeadline = invitationDeadline.format(formatter);
+            String text = "You have been invited to join the project: " + project.getName() + ".\n" +
+                    "Log in to the system (" + link + ") to check details, " +
+                    "and accept or reject the project by " + formattedDeadline + ".";
 
-        emailService.sendEmail(musician.getEmail(), subject, text);
-    }
-
-    public void throwIfUnauthorized(Long projectId, String email) {
-        Project project = getProjectById(projectId);
-        Musician musician = musicianService.getMusicianByEmail(email);
-
-        if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
-            throw new AccessDeniedException("You are not a member of this project.");
+            emailService.sendEmail(musician.getEmail(), subject, text);
         }
     }
 
@@ -99,6 +84,15 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
+    public void throwIfUnauthorized(Long projectId, String email) {
+        Project project = getProjectById(projectId);
+        Musician musician = musicianService.getMusicianByEmail(email);
+
+        if (!project.getInvited().contains(musician) && !project.getProjectMembers().contains(musician)) {
+            throw new AccessDeniedException("You are not a member of this project.");
+        }
+    }
+
     @Transactional
     public void updatePendingInvitations(Long projectId) {
         Project project = getProjectById(projectId);
@@ -113,6 +107,17 @@ public class ProjectService {
         }
     }
 
+    public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getAvailableMusiciansByInstrument(Long projectId) {
+        return getAvailableMusiciansSorted(projectId).stream()
+                .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
+                .map(MusicianBasicDTOMapper::mapToDto)
+                .collect(Collectors.groupingBy(
+                        MusicianBasicDTO::instrument,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+    }
+
     private List<Musician> getAvailableMusiciansSorted(Long projectId) {
         Project project = getProjectById(projectId);
 
@@ -124,17 +129,6 @@ public class ProjectService {
                         !project.getInvited().contains(musician))
                 .sorted(Comparator.comparingInt((Musician m) -> m.getAcceptedProjects().size()).reversed())
                 .toList();
-    }
-
-    public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getAvailableMusiciansByInstrument(Long projectId) {
-        return getAvailableMusiciansSorted(projectId).stream()
-                .sorted(Comparator.comparingInt(musician -> musician.getInstrument().ordinal()))
-                .map(MusicianBasicDTOMapper::mapToDto)
-                .collect(Collectors.groupingBy(
-                        MusicianBasicDTO::instrument,
-                        LinkedHashMap::new,
-                        Collectors.toList()
-                ));
     }
 
     public LinkedHashMap<Instrument, List<MusicianBasicDTO>> getProjectMembersByInstrument(Project project) {
@@ -233,5 +227,9 @@ public class ProjectService {
         project.setLocation(dto.getLocation());
         project.setConductor(dto.getConductor());
         project.setProgramme(dto.getProgramme());
+    }
+
+    public void saveProject(Project project) {
+        projectRepository.save(project);
     }
 }

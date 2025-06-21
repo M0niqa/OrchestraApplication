@@ -15,6 +15,9 @@ import java.util.List;
 public class PdfService {
 
     public byte[] generatePdfFromText(String content) {
+        if (content == null || content.isBlank()) {
+            throw new IllegalArgumentException("Cannot generate a PDF from empty or blank content.");
+        }
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Document document = new Document();
             PdfWriter.getInstance(document, out);

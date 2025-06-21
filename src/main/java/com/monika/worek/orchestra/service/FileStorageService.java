@@ -2,7 +2,6 @@ package com.monika.worek.orchestra.service;
 
 import com.monika.worek.orchestra.exception.FileStorageException;
 import com.monika.worek.orchestra.model.Musician;
-import com.monika.worek.orchestra.model.Project;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,17 +39,6 @@ public class FileStorageService {
         return file;
     }
 
-    private String generateUniqueFileName(String originalFileName) {
-        String extension = "";
-        if (originalFileName != null && originalFileName.contains(".")) {
-            extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        }
-        String baseName = (originalFileName != null)
-                ? originalFileName.substring(0, originalFileName.length() - extension.length()).replaceAll("[^a-zA-Z0-9.-]", "_")
-                : "file";
-        return UUID.randomUUID() + "_" + baseName + extension;
-    }
-
     public String saveFile(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             throw new IOException("Failed to store empty file.");
@@ -65,6 +53,17 @@ public class FileStorageService {
         }
 
         return targetLocation.toString();
+    }
+
+    private String generateUniqueFileName(String originalFileName) {
+        String extension = "";
+        if (originalFileName != null && originalFileName.contains(".")) {
+            extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        }
+        String baseName = (originalFileName != null)
+                ? originalFileName.substring(0, originalFileName.length() - extension.length()).replaceAll("[^a-zA-Z0-9.-]", "_")
+                : "file";
+        return UUID.randomUUID() + "_" + baseName + extension;
     }
 
     public void deleteFile(String filePath) throws IOException {

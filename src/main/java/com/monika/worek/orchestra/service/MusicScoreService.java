@@ -3,11 +3,11 @@ package com.monika.worek.orchestra.service;
 import com.monika.worek.orchestra.model.MusicScore;
 import com.monika.worek.orchestra.repository.MusicScoreRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Controller
+@Service
 public class MusicScoreService {
 
     private final MusicScoreRepository musicScoreRepository;

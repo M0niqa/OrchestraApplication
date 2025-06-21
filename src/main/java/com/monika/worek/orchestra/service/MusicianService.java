@@ -59,6 +59,8 @@ public class MusicianService {
         musician.setBirthdate(musicianDataDTO.getBirthdate());
         musician.setAddress(musicianDataDTO.getAddress());
         musician.setPesel(musicianDataDTO.getPesel());
+        musician.setNip(musicianDataDTO.getNip());
+        musician.setCompanyName(musicianDataDTO.getCompanyName());
         musician.setBankAccountNumber(musicianDataDTO.getBankAccountNumber());
         musician.setTaxOffice(musicianDataDTO.getTaxOffice());
     }

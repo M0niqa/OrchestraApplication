@@ -27,6 +27,14 @@ public class SurveyService {
         return surveyQuestionRepository.findAllBySurvey(survey);
     }
 
+    public Optional<Survey> findByProjectId(Long id) {
+        return surveyRepository.findByProjectId(id);
+    }
+
+    public SurveyQuestion findQuestionById(Long id) {
+        return surveyQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey question not found"));
+    }
+
     public boolean existsBySurveyAndMusician(Survey survey, Musician musician) {
         return surveySubmissionRepository.existsBySurveyAndMusician(survey, musician);
     }
@@ -34,14 +42,6 @@ public class SurveyService {
     public long calculateMissingSubmissions(Survey survey, Project project) {
         long count = surveySubmissionRepository.countBySurvey(survey);
         return project.getProjectMembers().size() - count;
-    }
-
-    public Optional<Survey> findByProjectId(Long id) {
-        return surveyRepository.findByProjectId(id);
-    }
-
-    public SurveyQuestion findQuestionById(Long id) {
-        return surveyQuestionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Survey question not found"));
     }
 
     @Transactional

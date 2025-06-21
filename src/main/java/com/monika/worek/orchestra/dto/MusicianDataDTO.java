@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.pl.NIP;
 import org.hibernate.validator.constraints.pl.PESEL;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +16,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
 @Getter
 public class MusicianDataDTO {
 
@@ -34,7 +38,7 @@ public class MusicianDataDTO {
     private String pesel;
     @NIP
     private String nip;
-    private final String companyName;
+    private String companyName;
     @NotNull(message = "Tax office must be selected")
     private TaxOffice taxOffice;
     @NotBlank(message = "Bank account number is required")
