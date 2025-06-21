@@ -15,7 +15,6 @@ public class StartDateBeforeEndDateValidator implements ConstraintValidator<Star
         if (projectDto.getStartDate() == null || projectDto.getEndDate() == null) {
             return true;
         }
-
         return !projectDto.getStartDate().isAfter(projectDto.getEndDate());
     }
 }

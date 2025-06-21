@@ -5,6 +5,7 @@ import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.repository.MusicScoreRepository;
 import com.monika.worek.orchestra.service.FileStorageService;
 import com.monika.worek.orchestra.service.ProjectService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -51,7 +52,7 @@ public class MusicianScoreController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadScore(@PathVariable Long projectId, @PathVariable Long fileId, Authentication authentication) throws IOException {
         projectService.throwIfUnauthorized(projectId, authentication.getName());
-        MusicScore musicScore = musicScoreRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
+        MusicScore musicScore = musicScoreRepository.findById(fileId).orElseThrow(() -> new EntityNotFoundException("File not found with id: " + fileId));
 
         File file = fileStorageService.getFile(musicScore.getFilePath());
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
@@ -62,5 +63,4 @@ public class MusicianScoreController {
                 .contentLength(file.length())
                 .body(resource);
     }
-
 }

@@ -13,10 +13,6 @@ public class RootController {
     public String handleRootRedirect() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
-        }
-
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             if ("ROLE_ADMIN".equals(authority.getAuthority())) {
                 return "redirect:/adminPage";
@@ -29,6 +25,6 @@ public class RootController {
             }
         }
 
-        return "redirect:/common/error";
+        return "redirect:/error";
     }
 }

@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.pl.NIP;
 import org.hibernate.validator.constraints.pl.PESEL;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -34,13 +35,13 @@ public class Musician extends User {
     private Instrument instrument;
 
     @ManyToMany(mappedBy = "invited")
-    private Set<Project> pendingProjects;
+    private Set<Project> pendingProjects = new HashSet<>();
 
     @ManyToMany(mappedBy = "projectMembers")
-    private Set<Project> acceptedProjects;
+    private Set<Project> acceptedProjects = new HashSet<>();
 
     @ManyToMany(mappedBy = "musiciansWhoRejected")
-    private Set<Project> rejectedProjects;
+    private Set<Project> rejectedProjects = new HashSet<>();
 
 
     @Override

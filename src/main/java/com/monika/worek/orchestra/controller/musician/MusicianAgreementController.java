@@ -4,7 +4,6 @@ import com.monika.worek.orchestra.exception.MissingDataException;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.service.AgreementService;
 import com.monika.worek.orchestra.service.MusicianService;
-import com.monika.worek.orchestra.service.PdfService;
 import com.monika.worek.orchestra.service.ProjectService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,7 @@ public class MusicianAgreementController {
     private final MusicianService musicianService;
     private final ProjectService projectService;
 
-    public MusicianAgreementController(AgreementService agreementService, MusicianService musicianService, PdfService pdfService, ProjectService projectService, ProjectService projectService1) {
+    public MusicianAgreementController(AgreementService agreementService, MusicianService musicianService, ProjectService projectService1) {
         this.agreementService = agreementService;
         this.musicianService = musicianService;
         this.projectService = projectService1;

@@ -3,6 +3,7 @@ package com.monika.worek.orchestra.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,5 +18,5 @@ public class AgreementTemplate {
     private Long id;
     private String content;
     @OneToMany(mappedBy = "agreementTemplate", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<>();
 }

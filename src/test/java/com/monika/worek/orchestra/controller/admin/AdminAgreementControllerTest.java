@@ -12,28 +12,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminAgreementController.class)
+@WithMockUser(username = "admin@example.com", roles = "ADMIN")
 class AdminAgreementControllerTest {
 
-    // MockMvc allows you to send HTTP requests to your controller
     @Autowired
     private MockMvc mockMvc;
 
-    // Use @MockBean to create mock versions of the service dependencies
     @MockBean
     private PdfService pdfService;
     @MockBean
@@ -41,7 +42,6 @@ class AdminAgreementControllerTest {
     @MockBean
     private AgreementService agreementService;
 
-    // --- Tests for editTemplateForm() ---
     @Test
     void editTemplateForm_whenGetRequest_thenReturnsEditTemplateViewWithContent() throws Exception {
         // given
@@ -50,14 +50,14 @@ class AdminAgreementControllerTest {
         template.setContent(templateContent);
         when(agreementService.findTemplateById(1L)).thenReturn(template);
 
-        // when & then
+        // when
+        // then
         mockMvc.perform(get("/admin/template/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/admin/admin-edit-template"))
                 .andExpect(model().attribute("templateContent", templateContent));
     }
 
-    // --- Tests for updateTemplate() ---
     @Test
     void updateTemplate_whenPostRequest_thenUpdatesTemplateAndRedirects() throws Exception {
         // given
@@ -65,32 +65,34 @@ class AdminAgreementControllerTest {
         AgreementTemplate existingTemplate = new AgreementTemplate();
         when(agreementService.findTemplateById(1L)).thenReturn(existingTemplate);
 
-        // when & then
+        // when
+        // then
         mockMvc.perform(post("/admin/template/edit")
-                        .param("templateContent", newContent))
+                        .param("templateContent", newContent)
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/template/edit"))
                 .andExpect(flash().attribute("success", "Template updated successfully."));
 
-        // Verify that the save method was called on the service
         verify(agreementService, times(1)).saveTemplate(any(AgreementTemplate.class));
     }
 
-    // --- Tests for downloadAllAgreements() ---
     @Test
     void downloadAllAgreements_whenAgreementsExist_thenReturnsMergedPdf() throws Exception {
         // given
         Project project = new Project();
-        project.setProjectMembers(Collections.singleton(new Musician())); // Add at least one member
-        MusicianAgreement agreement = new MusicianAgreement();
-        agreement.setFilePath("dummy/path/agreement.pdf");
+        Musician musician = Musician.builder().id(1L).build();
+        project.setProjectMembers(Set.of(musician));
+        MusicianAgreement agreement = MusicianAgreement.builder().musician(musician).build();
+        agreement.setFilePath("test/path/agreement.pdf");
         byte[] pdfBytes = "PDF content".getBytes();
 
         when(projectService.getProjectById(1L)).thenReturn(project);
         when(agreementService.findAgreementsByProjectId(1L)).thenReturn(List.of(agreement));
         when(pdfService.mergePdfFiles(anyList())).thenReturn(pdfBytes);
 
-        // when & then
+        // when
+        // then
         mockMvc.perform(get("/admin/project/1/downloadAgreements"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_PDF))
@@ -106,7 +108,8 @@ class AdminAgreementControllerTest {
         when(projectService.getProjectById(1L)).thenReturn(project);
         when(agreementService.findAgreementsByProjectId(1L)).thenReturn(Collections.emptyList());
 
-        // when & then
+        // when
+        // then
         mockMvc.perform(get("/admin/project/1/downloadAgreements"))
                 .andExpect(status().isNoContent());
     }
@@ -115,16 +118,17 @@ class AdminAgreementControllerTest {
     void downloadAllAgreements_whenPdfMergeFails_thenReturnsInternalServerError() throws Exception {
         // given
         Project project = new Project();
-        project.setProjectMembers(Collections.singleton(new Musician()));
-        MusicianAgreement agreement = new MusicianAgreement();
+        Musician musician = Musician.builder().id(1L).build();
+        project.setProjectMembers(Set.of(musician));
+        MusicianAgreement agreement = MusicianAgreement.builder().musician(musician).build();
         agreement.setFilePath("dummy/path/agreement.pdf");
 
         when(projectService.getProjectById(1L)).thenReturn(project);
         when(agreementService.findAgreementsByProjectId(1L)).thenReturn(List.of(agreement));
-        // Simulate an IOException during the PDF merge
         when(pdfService.mergePdfFiles(anyList())).thenThrow(new IOException("Disk is full"));
 
-        // when & then
+        // when
+        // then
         mockMvc.perform(get("/admin/project/1/downloadAgreements"))
                 .andExpect(status().isInternalServerError());
     }

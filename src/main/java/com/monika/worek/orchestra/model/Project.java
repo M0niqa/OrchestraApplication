@@ -33,21 +33,21 @@ public class Project implements Comparable<Project> {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "musician_id")
     )
-    private Set<Musician> projectMembers;
+    private Set<Musician> projectMembers = new HashSet<>();
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "rejected_musicians_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "musician_id")
     )
-    private Set<Musician> musiciansWhoRejected;
+    private Set<Musician> musiciansWhoRejected = new HashSet<>();
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "invited_musicians_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "musician_id")
     )
-    private Set<Musician> invited;
+    private Set<Musician> invited = new HashSet<>();
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MusicScore> musicScores;
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

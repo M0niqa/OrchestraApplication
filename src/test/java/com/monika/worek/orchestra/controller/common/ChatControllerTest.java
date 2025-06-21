@@ -56,7 +56,6 @@ public class ChatControllerTest {
 
     @BeforeEach
     void setUp() {
-        // given
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())

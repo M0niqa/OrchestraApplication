@@ -10,10 +10,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 public class UserRole {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
 }

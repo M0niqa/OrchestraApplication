@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div class="col" th:if="${not pendingMusicians.isEmpty()}">
+        <div class="col" th:if="${pendingMusicians != null && not pendingMusicians.isEmpty()}">
             <div class="card shadow-sm h-100 border--dark">
                 <div class="card-body">
                     <h3 class="card-title text-dark"> Pending Invitations</h3>
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="col" th:if="${pendingMusicians.isEmpty()}">
+        <div class="col" th:if="${pendingMusicians != null && pendingMusicians.isEmpty()}">
             <div class="card shadow-sm h-100 border-dark">
                 <div class="card-body text-center">
                     <p class="card-text text-dark"><i class="bi bi-info-circle-fill me-2"></i> No musicians have pending invitations.</p>
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <div class="col" th:if="${not musiciansWhoRejected.isEmpty()}">
+        <div class="col" th:if="${pendingMusicians != null && not musiciansWhoRejected.isEmpty()}">
             <div class="card shadow-sm h-100 border-dark">
                 <div class="card-body">
                     <h3 class="card-title text-dark"><i class="bi bi-x-octagon-fill me-2"></i> Musicians who Rejected</h3>
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <div class="col" th:if="${musiciansWhoRejected.isEmpty()}">
+        <div class="col" th:if="${musiciansWhoRejected != null && musiciansWhoRejected.isEmpty()}">
             <div class="card shadow-sm h-100 border-dark">
                 <div class="card-body text-center">
                     <p class="card-text text-dark"><i class="bi bi-info-circle-fill me-2"></i> No musicians have rejected the project yet.</p>

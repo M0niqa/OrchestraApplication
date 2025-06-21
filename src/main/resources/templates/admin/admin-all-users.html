@@ -28,7 +28,7 @@
                             </div>
                             <div>
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <th:block th:if="${#strings.contains(user.roles, 'INSPECTOR')}">
+                                    <th:block th:if="${user.roles != null and user.roles.contains('INSPECTOR')}">
                                         <form th:action="@{/admin/allUsers/{userId}/removeRole(userId=${user.id})}"
                                               method="post"
                                               class="d-inline me-2">
@@ -38,7 +38,7 @@
                                             </button>
                                         </form>
                                     </th:block>
-                                    <th:block th:unless="${#strings.contains(user.roles, 'INSPECTOR')}">
+                                    <th:block th:unless="${user.roles != null and user.roles.contains('INSPECTOR')}">
                                         <form th:action="@{/admin/allUsers/{userId}/addRole(userId=${user.id})}"
                                               method="post"
                                               class="d-inline me-2">
