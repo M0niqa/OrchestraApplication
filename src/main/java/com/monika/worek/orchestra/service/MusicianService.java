@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.dtoMappers.MusicianBasicDTOMapper;
-import com.monika.worek.orchestra.dtoMappers.MusicianDataDTOMapper;
+import com.monika.worek.orchestra.mappers.MusicianBasicDTOMapper;
+import com.monika.worek.orchestra.mappers.MusicianDataDTOMapper;
 import com.monika.worek.orchestra.dto.MusicianBasicDTO;
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper.mapToListDTO;
+import static com.monika.worek.orchestra.mappers.ProjectBasicInfoDTOMapper.mapToListDTO;
 
 @Service
 public class MusicianService {

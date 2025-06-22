@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.mapper;
 
 import com.monika.worek.orchestra.dto.UserBasicDTO;
-import com.monika.worek.orchestra.dtoMappers.UserBasicDTOMapper;
+import com.monika.worek.orchestra.mappers.UserBasicDTOMapper;
 import com.monika.worek.orchestra.model.User;
 import com.monika.worek.orchestra.model.UserRole;
 import org.junit.jupiter.api.Test;

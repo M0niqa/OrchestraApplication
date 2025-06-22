@@ -2,7 +2,7 @@ package com.monika.worek.orchestra.mapper;
 
 
 import com.monika.worek.orchestra.dto.ChatMessageDTO;
-import com.monika.worek.orchestra.dtoMappers.MessageDTOMapper;
+import com.monika.worek.orchestra.mappers.MessageDTOMapper;
 import com.monika.worek.orchestra.model.ChatMessage;
 import org.junit.jupiter.api.Test;
 

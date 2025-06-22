@@ -76,6 +76,7 @@ public class AgreementService {
         valuesMap.put("musician.instrument", musician.getInstrument().toString());
 
         valuesMap.put("agreementDate", Objects.toString(getAgreementDate(project), na));
+        valuesMap.put("project.startDate", project.getStartDate() != null ? project.getStartDate().format(dateFormatter) : na);
         valuesMap.put("project.endDate", project.getEndDate() != null ? project.getEndDate().format(dateFormatter) : na);
         valuesMap.put("project.location", Objects.toString(project.getLocation(), na));
         valuesMap.put("project.conductor", project.getConductor() != null ? project.getConductor() : na);

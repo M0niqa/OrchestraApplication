@@ -1,6 +1,6 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.dtoMappers.MessageDTOMapper;
+import com.monika.worek.orchestra.mappers.MessageDTOMapper;
 import com.monika.worek.orchestra.dto.ChatMessageDTO;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.ChatMessage;

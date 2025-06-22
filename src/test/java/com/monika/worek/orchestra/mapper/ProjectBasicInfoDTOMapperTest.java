@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.mapper;
 
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
-import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.mappers.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.model.Project;
 import org.junit.jupiter.api.Test;
 

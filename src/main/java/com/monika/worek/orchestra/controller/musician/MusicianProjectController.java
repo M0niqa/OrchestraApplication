@@ -1,12 +1,11 @@
 package com.monika.worek.orchestra.controller.musician;
 
-import com.monika.worek.orchestra.dtoMappers.ProjectDTOMapper;
+import com.monika.worek.orchestra.mappers.ProjectDTOMapper;
 import com.monika.worek.orchestra.dto.ProjectDTO;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;
 import com.monika.worek.orchestra.service.MusicianService;
 import com.monika.worek.orchestra.service.ProjectService;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -2,9 +2,10 @@ package com.monika.worek.orchestra.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 public class PasswordUpdateDTO {
 
     @NotBlank(message = "Old password is required")

@@ -13,12 +13,10 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 public class Token {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
     private String email;
     private LocalDateTime expiryDate;
-
 }

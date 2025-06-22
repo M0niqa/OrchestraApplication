@@ -1,4 +1,4 @@
-package com.monika.worek.orchestra.dtoMappers;
+package com.monika.worek.orchestra.mappers;
 
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.model.User;

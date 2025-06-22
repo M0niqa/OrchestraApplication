@@ -1,7 +1,7 @@
 package com.monika.worek.orchestra.mapper;
 
 import com.monika.worek.orchestra.dto.MusicianDataDTO;
-import com.monika.worek.orchestra.dtoMappers.MusicianDataDTOMapper;
+import com.monika.worek.orchestra.mappers.MusicianDataDTOMapper;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.TaxOffice;
 import org.junit.jupiter.api.Test;

@@ -9,9 +9,9 @@ import java.util.Set;
 
 @Entity(name = "App_user")
 @NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder
-@Data
+@Getter
+@Setter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn()
 @DiscriminatorValue("User")

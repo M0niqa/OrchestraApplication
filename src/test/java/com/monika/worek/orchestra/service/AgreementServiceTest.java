@@ -41,16 +41,16 @@ class AgreementServiceTest {
     @Mock
     private PdfService pdfService;
 
-
     @InjectMocks
     private AgreementService agreementService;
 
     private Project project;
     private Musician musician;
+    private AgreementTemplate template;
 
     @BeforeEach
     void setUp() {
-        AgreementTemplate template = getAgreementTemplate();
+        template = getAgreementTemplate();
 
         musician = Musician.builder()
                 .id(1L)
@@ -101,7 +101,7 @@ class AgreementServiceTest {
         assertThat(content).isEqualTo("This agreement is made on 2025-07-22 for John Smith, " +
                 "Company, 123 Music Lane, Warsaw, Poland (PESEL: 90010112345, nip 543434343). " +
                 "The project 'Symphony No. 7 'Seven Gates of Jerusalem'', conducted by Agnieszka Duczmal, " +
-                "will take place in National Philharmonic, Warsaw from ${project.startDate} to 2025-08-10. " +
+                "will take place in National Philharmonic, Warsaw from 2025-08-01 to 2025-08-10. " +
                 "The net wage for playing Violin I will be 910.00 PLN, payed to PL12345678901234567890123456");
     }
 
@@ -115,6 +115,20 @@ class AgreementServiceTest {
         assertThatThrownBy(() -> agreementService.generateAgreementContent(project, musician))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("does not have an assigned template");
+    }
+
+    @Test
+    void generateAgreementContent_whenGivenValidProjectAndMusicianWithNulls_shouldReturnSubstitutedContent() {
+        // given
+        musician = Musician.builder().id(1L).instrument(Instrument.VIOLIN_I).build();
+        project = Project.builder().id(1L).agreementTemplate(template).build();
+        // when
+        String content = agreementService.generateAgreementContent(project, musician);
+
+        // then
+        assertThat(content).isEqualTo("This agreement is made on N/A for N/A N/A, N/A, N/A (PESEL: N/A, nip N/A). " +
+                "The project 'N/A', conducted by N/A, will take place in N/A from N/A to N/A. " +
+                "The net wage for playing Violin I will be N/A PLN, payed to N/A");
     }
 
     @Test

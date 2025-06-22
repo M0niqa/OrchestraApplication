@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode()
+@EqualsAndHashCode
 public class UserBasicDTO {
     private Long id;
     private String firstName;

@@ -3,7 +3,7 @@ package com.monika.worek.orchestra.controller.admin;
 
 import com.monika.worek.orchestra.dto.InstrumentCountAndSalaryDTO;
 import com.monika.worek.orchestra.dto.ProjectBasicInfoDTO;
-import com.monika.worek.orchestra.dtoMappers.ProjectBasicInfoDTOMapper;
+import com.monika.worek.orchestra.mappers.ProjectBasicInfoDTOMapper;
 import com.monika.worek.orchestra.model.Instrument;
 import com.monika.worek.orchestra.model.Musician;
 import com.monika.worek.orchestra.model.Project;

@@ -9,12 +9,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-@StartDateBeforeEndDate
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@StartDateBeforeEndDate
 public class ProjectBasicInfoDTO {
 
     private Long id;
