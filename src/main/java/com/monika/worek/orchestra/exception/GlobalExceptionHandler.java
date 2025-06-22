@@ -22,14 +22,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception ex, Model model) {
         model.addAttribute("message", ex.getMessage());
-        return "error";
+        return "common/error";
     }
 
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex, Model model) {
         model.addAttribute("message", "File operation failed: " + ex.getMessage());
-        return "error";
+        return "common/error";
     }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String handleMaxSizeException(MaxUploadSizeExceededException ex, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
