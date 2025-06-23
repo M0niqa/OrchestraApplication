@@ -53,19 +53,19 @@
                 <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
             </td>
             <td th:text="${project.startDate}"></td>
-            <td>Pending</td>
+            <td class="text-warning fw-bold">Pending</td>
         </tr>
         <tr th:each="project : ${acceptedProjects}">
             <td>
                 <a th:href="@{/musician/project/{id}(id=${project.id})}" th:text="${project.name}"></a>
             </td>
             <td th:text="${project.startDate}"></td>
-            <td>Accepted</td>
+            <td class="text-success fw-bold">Accepted</td>
         </tr>
         <tr th:each="project : ${rejectedProjects}">
             <td th:text="${project.name}"></td>
             <td th:text="${project.startDate}"></td>
-            <td>Rejected</td>
+            <td class="text-danger fw-bold">Rejected</td>
         </tr>
         </tbody>
     </table>

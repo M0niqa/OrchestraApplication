@@ -4,8 +4,7 @@ import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserLoginDTO;
 import com.monika.worek.orchestra.model.User;
 import com.monika.worek.orchestra.model.UserRole;
-import com.monika.worek.orchestra.repository.UserRepository;
-import com.monika.worek.orchestra.repository.UserRoleRepository;
+import com.monika.worek.orchestra.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +22,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -32,9 +31,18 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private UserRoleRepository roleRepository;
+    @Mock
+    private ChatRepository chatRepository;
+    @Mock
+    private MusicianAgreementRepository musicianAgreementRepository;
+    @Mock
+    private SurveySubmissionRepository surveySubmissionRepository;
+    @Mock
+    private TokenRepository tokenRepository;
+    @Mock
+    private VerificationCodeRepository verificationCodeRepository;
 
     @InjectMocks
     private UserService userService;
@@ -228,15 +236,34 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteUserById_whenCalled_thenShouldInvokeRepositoryDelete() {
+    void deleteUserById_whenUserNotFound_thenShouldThrowEntityNotFoundException() {
         // given
         Long userId = 1L;
+
+        // when
+        // then
+        assertThrows(EntityNotFoundException.class, () -> {
+            userService.deleteUserById(userId);
+        });
+    }
+
+    @Test
+    void deleteUserById_whenCalled_thenShouldInvokeAllAssociatedRepositoryDeletes() {
+        // given
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // when
         userService.deleteUserById(userId);
 
         // then
-        verify(userRepository, times(1)).deleteById(userId);
+        verify(musicianAgreementRepository, times(1)).deleteByMusicianId(userId);
+        verify(surveySubmissionRepository, times(1)).deleteByMusicianId(userId);
+        verify(chatRepository, times(1)).deleteBySenderIdOrReceiverId(userId, userId);
+        verify(tokenRepository, times(1)).deleteByEmail(user.getEmail());
+        verify(verificationCodeRepository, times(1)).deleteByEmail(user.getEmail());
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).delete(user);
     }
 
     @Test
