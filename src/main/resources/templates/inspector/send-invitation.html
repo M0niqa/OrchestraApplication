@@ -47,12 +47,14 @@
     </div>
 
     <div class="mb-3">
-        <label for="date" class="form-label"> Invitation Deadline:</label>
+        <label for="date" class="form-label"> Invitation Deadline: <span class="text-danger">*</span></label>
         <input type="datetime-local" id="date" name="invitationDeadline" class="form-control">
         <p th:if="${deadlineError}" th:text="${deadlineError}" class="text-danger"></p>
     </div>
 
-    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-2"></i> Invite Selected Musicians</button>
+    <button type="submit" class="btn btn-primary mb-3"><i class="bi bi-send-fill me-2"></i> Invite Selected Musicians</button>
+    <p class="text-muted small">* Required field</p>
+
 </form>
 </body>
 </html>

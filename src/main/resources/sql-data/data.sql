@@ -255,18 +255,6 @@ VALUES
     ('Indie Music Fest', 'A showcase of emerging indie artists.', '2026-07-05', '2026-07-07', 1),
     ('Classical Masterpieces', 'A performance of renowned classical compositions.', '2025-11-10', '2025-11-15', 1);
 
-
-UPDATE project SET location = 'Poznań' WHERE name = 'Autumn Gala';
-UPDATE project SET location = 'Warszawa' WHERE name = 'New Year''s Concert';
-UPDATE project SET location = 'Wrocław' WHERE name = 'Spring Awakening';
-UPDATE project SET location = 'Katowice' WHERE name = 'Indie Music Fest';
-UPDATE project SET location = 'Kraków' WHERE name = 'Classical Masterpieces';
-
-UPDATE project SET startDate = '2025-07-20' , endDate = '2025-07-28' WHERE name = 'Film Music Festival';
-DELETE from accepted_musicians_projects where musician_id = 23 and project_id=1;
-select * FROM musicianagreement;
-DELETE FROM musicianagreement where project_id=12;
-
 INSERT INTO ChatMessage (senderId, receiverId, messageContent, timestamp, read) VALUES
                                                                                     (3, 4, 'Hello, how are you Jane?', '2023-10-26 10:00:00', true),
                                                                                     (4, 3, 'I am doing well, thanks Stephen!', '2023-10-26 10:05:00', true),
@@ -320,3 +308,19 @@ INSERT INTO accepted_musicians_projects (musician_id, project_id) VALUES
 -- Musician 3 rejected Project 3
 INSERT INTO rejected_musicians_projects (musician_id, project_id) VALUES (3, 3);
 
+delete from rejected_musicians_projects where musician_id = 55;
+delete from chatmessage where receiverid = 55 or senderid = 55;
+
+
+UPDATE project SET location = 'Poznań' WHERE name = 'Autumn Gala';
+UPDATE project SET location = 'Warszawa' WHERE name = 'New Year''s Concert';
+UPDATE project SET location = 'Wrocław' WHERE name = 'Spring Awakening';
+UPDATE project SET location = 'Katowice' WHERE name = 'Indie Music Fest';
+UPDATE project SET location = 'Kraków' WHERE name = 'Classical Masterpieces';
+
+UPDATE project SET startDate = '2025-07-20' , endDate = '2025-07-28' WHERE name = 'Film Music Festival';
+DELETE from accepted_musicians_projects where musician_id = 23 and project_id=1;
+select * FROM musicianagreement;
+DELETE FROM chatmessage where senderid = 54 or receiverid = 54;
+
+select * from app_user;

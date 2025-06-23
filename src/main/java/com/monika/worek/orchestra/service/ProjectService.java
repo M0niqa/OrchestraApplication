@@ -146,11 +146,6 @@ public class ProjectService {
                 ));
     }
 
-    private Map<Instrument, Long> getProjectMembersCountByInstrument(Project project) {
-        return project.getProjectMembers().stream()
-                .collect(Collectors.groupingBy(Musician::getInstrument, Collectors.counting()));
-    }
-
     public Map<Instrument, Integer> getRemainingInstrumentsCount(Project project) {
         Map<Instrument, Integer> remainingCounts = new EnumMap<>(Instrument.class);
         for (Instrument instrument : Instrument.values()) {
@@ -160,6 +155,11 @@ public class ProjectService {
             remainingCounts.put(instrument, remaining);
         }
         return remainingCounts;
+    }
+
+    private Map<Instrument, Long> getProjectMembersCountByInstrument(Project project) {
+        return project.getProjectMembers().stream()
+                .collect(Collectors.groupingBy(Musician::getInstrument, Collectors.counting()));
     }
 
     @Transactional

@@ -1,5 +1,7 @@
 package com.monika.worek.orchestra.dto;
 
+import com.monika.worek.orchestra.constraint.PESEL;
+import com.monika.worek.orchestra.constraint.nip;
 import com.monika.worek.orchestra.model.TaxOffice;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,8 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.pl.NIP;
-import org.hibernate.validator.constraints.pl.PESEL;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -34,9 +34,9 @@ public class MusicianDataDTO {
     private LocalDate birthdate;
     @NotBlank(message = "Address is required")
     private String address;
-    @PESEL(message = "Invalid Polish national identification number (PESEL)")
+    @PESEL(message = "Invalid Polish National Identification Number (PESEL)")
     private String pesel;
-    @NIP
+    @nip(message = "Invalid VAT Identification Number")
     private String nip;
     private String companyName;
     @NotNull(message = "Tax office must be selected")

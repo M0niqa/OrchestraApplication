@@ -39,7 +39,9 @@ public class InspectorProjectController {
     }
 
     @PostMapping("/inspector/project/{projectId}/sendInvitation")
-    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds, @RequestParam(value = "invitationDeadline", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime invitationDeadline, RedirectAttributes redirectAttributes, Model model) {
+    public String inviteMusicians(@PathVariable Long projectId, @RequestParam(value = "musicianIds", required = false) List<Long> musicianIds,
+                                  @RequestParam(value = "invitationDeadline", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime invitationDeadline,
+                                  RedirectAttributes redirectAttributes, Model model) {
         if (invitationDeadline == null) {
             model.addAttribute("deadlineError", "Please set an invitation deadline.");
             model.addAttribute("musicianIds", musicianIds);

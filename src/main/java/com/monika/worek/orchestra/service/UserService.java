@@ -1,13 +1,12 @@
 package com.monika.worek.orchestra.service;
 
-import com.monika.worek.orchestra.mappers.UserBasicDTOMapper;
-import com.monika.worek.orchestra.mappers.UserLoginDTOMapper;
 import com.monika.worek.orchestra.dto.UserBasicDTO;
 import com.monika.worek.orchestra.dto.UserLoginDTO;
+import com.monika.worek.orchestra.mappers.UserBasicDTOMapper;
+import com.monika.worek.orchestra.mappers.UserLoginDTOMapper;
 import com.monika.worek.orchestra.model.User;
 import com.monika.worek.orchestra.model.UserRole;
-import com.monika.worek.orchestra.repository.UserRepository;
-import com.monika.worek.orchestra.repository.UserRoleRepository;
+import com.monika.worek.orchestra.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -24,10 +23,23 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository roleRepository;
+    private final ChatRepository chatRepository;
+    private final MusicianAgreementRepository musicianAgreementRepository;
+    private final SurveySubmissionRepository surveySubmissionRepository;
+    private final TokenRepository tokenRepository;
+    private final VerificationCodeRepository verificationCodeRepository;
 
-    public UserService(UserRepository userRepository, UserRoleRepository roleRepository) {
+    public UserService(UserRepository userRepository, UserRoleRepository roleRepository,
+                       ChatRepository chatRepository, MusicianAgreementRepository musicianAgreementRepository,
+                       SurveySubmissionRepository surveySubmissionRepository, TokenRepository tokenRepository,
+                       VerificationCodeRepository verificationCodeRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.chatRepository = chatRepository;
+        this.musicianAgreementRepository = musicianAgreementRepository;
+        this.surveySubmissionRepository = surveySubmissionRepository;
+        this.tokenRepository = tokenRepository;
+        this.verificationCodeRepository = verificationCodeRepository;
     }
 
     public List<UserBasicDTO> getAllBasicDTOUsers() {
@@ -71,8 +83,17 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUserById(Long userId) {
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Cannot delete. User not found with id: " + userId));
+
+        musicianAgreementRepository.deleteByMusicianId(userId);
+        surveySubmissionRepository.deleteByMusicianId(userId);
+        chatRepository.deleteBySenderIdOrReceiverId(userId, userId);
+        tokenRepository.deleteByEmail(userToDelete.getEmail());
+        verificationCodeRepository.deleteByEmail(userToDelete.getEmail());
+
+        userRepository.delete(userToDelete);
     }
 
     @Transactional

@@ -30,9 +30,9 @@
         <a th:href="@{/chat}" class="btn btn-grey btn-lg m-2 position-relative" id="chatButton">
             <i class="bi bi-chat-dots-fill me-2"></i>
             Chat
-            <span th:if="${unreads}"
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
-                  id="chatBadge">&#128233;
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  id="chatBadge" th:classappend="${unreads ? '' : 'd-none'}">
+                &#128233;
             </span>
         </a>
         <a th:href="@{admin/archived}" class="btn btn-grey btn-lg m-2">

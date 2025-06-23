@@ -34,4 +34,6 @@ public interface ChatRepository extends CrudRepository<ChatMessage, Long> {
 
     @Query("SELECT COUNT(c) > 0 FROM ChatMessage c WHERE c.receiverId = :receiverId AND c.read = false")
     boolean existsUnreadByReceiverId(@Param("receiverId") Long receiverId);
+
+    void deleteBySenderIdOrReceiverId(Long senderId, Long receiverId);
 }

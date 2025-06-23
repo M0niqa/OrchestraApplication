@@ -23,31 +23,32 @@
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label">Email: <span class="text-danger">*</span></label>
                 <input type="email" th:field="*{email}" class="form-control" id="email"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="firstName" class="form-label">First Name:</label>
+                <label for="firstName" class="form-label">First Name: <span class="text-danger">*</span></label>
                 <input type="text" th:field="*{firstName}" class="form-control" id="firstName"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="lastName" class="form-label">Last Name:</label>
+                <label for="lastName" class="form-label">Last Name: <span class="text-danger">*</span></label>
                 <input type="text" th:field="*{lastName}" class="form-control" id="lastName"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
             </div>
             <div class="mb-4">
-                <label for="instrument" class="form-label">Instrument:</label>
+                <label for="instrument" class="form-label">Instrument: <span class="text-danger">*</span></label>
                 <select th:field="*{instrument}" class="form-select" id="instrument">
                     <option th:each="instrument : ${instruments}" th:value="${instrument.name}"
                             th:text="${instrument.displayName}"></option>
                 </select>
                 <div class="text-danger" th:if="${#fields.hasErrors('instrument')}" th:errors="*{instrument}"></div>
             </div>
-            <button type="submit" class="btn btn-primary">Register Musician</button>
+            <button type="submit" class="btn btn-primary mb-3">Register Musician</button>
+            <p class="text-muted small">* Required fields</p>
         </form>
     </div>
 </div>

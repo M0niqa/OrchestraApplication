@@ -9,5 +9,6 @@ public interface TokenRepository extends CrudRepository<Token, Long> {
 
     Optional<Token> findByToken(String token);
     void deleteByToken(String token);
+    void deleteByEmail(String email);
 }
 

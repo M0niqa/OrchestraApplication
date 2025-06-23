@@ -13,4 +13,5 @@ public interface MusicianAgreementRepository extends CrudRepository<MusicianAgre
     Optional<MusicianAgreement> findByMusicianIdAndProjectId(Long musicianId, Long projectId);
     List<MusicianAgreement> findByProjectId(Long projectId);
     void deleteByMusicianIdAndProjectId(Long musicianId, Long projectId);
+    void deleteByMusicianId(Long projectId);
 }

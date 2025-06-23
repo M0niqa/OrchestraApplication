@@ -9,4 +9,5 @@ public interface SurveySubmissionRepository extends CrudRepository<SurveySubmiss
 
     boolean existsBySurveyAndMusician(Survey survey, Musician musician);
     long countBySurvey(Survey survey);
+    void deleteByMusicianId(Long musicianId);
 }

@@ -23,9 +23,7 @@ import java.util.Set;
 public class Musician extends User {
     private LocalDate birthdate;
     private String address;
-    @PESEL
     private String pesel;
-    @NIP
     private String nip;
     private String companyName;
     @Enumerated(EnumType.STRING)

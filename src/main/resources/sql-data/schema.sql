@@ -96,7 +96,6 @@ CREATE TABLE musicianagreement (
                                    createdAt TIMESTAMP,
                                    user_id BIGINT NOT NULL,
                                    project_id BIGINT NOT NULL,
-
                                    FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
                                    FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
@@ -125,8 +124,8 @@ CREATE TABLE surveyquestion (
 
 CREATE TABLE surveysubmission (
                                    id BIGSERIAL PRIMARY KEY,
-                                   survey_id BIGINT REFERENCES survey(id),
-                                   musician_id BIGINT REFERENCES app_user(id),
+                                   survey_id BIGINT REFERENCES survey(id) ON DELETE CASCADE,
+                                   musician_id BIGINT REFERENCES app_user(id) ON DELETE CASCADE,
                                    UNIQUE (survey_id, musician_id)
 );
 

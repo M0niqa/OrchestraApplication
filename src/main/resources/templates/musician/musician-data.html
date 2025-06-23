@@ -21,32 +21,32 @@
             </div>
 
             <div class="mb-3">
-                <label for="firstName" class="form-label">First name</label>
+                <label for="firstName" class="form-label">First name <span class="text-danger">*</span></label>
                 <input th:field="*{firstName}" type="text" class="form-control" id="firstName"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="lastName" class="form-label">Last name</label>
+                <label for="lastName" class="form-label">Last name <span class="text-danger">*</span></label>
                 <input th:field="*{lastName}" type="text" class="form-control" id="lastName"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                 <input th:field="*{email}" type="text" class="form-control" id="email"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="birthdate" class="form-label">Birthdate</label>
+                <label for="birthdate" class="form-label">Birthdate <span class="text-danger">*</span></label>
                 <input th:field="*{birthdate}" type="date" class="form-control" id="birthdate"
                        th:value="${musician.birthdate != null} ? ${#temporals.format(musician.birthdate, 'yyyy-MM-dd')} : ''"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}"></div>
             </div>
 
             <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
+                <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
                 <input th:field="*{address}" type="text" class="form-control" id="address"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
             </div>
@@ -69,7 +69,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="taxOffice" class="form-label">Tax Office</label>
+                <label for="taxOffice" class="form-label">Tax Office <span class="text-danger">*</span></label>
                 <select th:field="*{taxOffice}" class="form-control" id="taxOffice">
                     <option th:each="office : ${taxOffices}" th:value="${office.name}"
                             th:text="${office.displayName}"></option>
@@ -78,13 +78,14 @@
             </div>
 
             <div class="mb-3">
-                <label for="bankAccountNumber" class="form-label">Bank account number</label>
+                <label for="bankAccountNumber" class="form-label">Bank account number <span class="text-danger">*</span></label>
                 <input th:field="*{bankAccountNumber}" type="text" class="form-control" id="bankAccountNumber"/>
                 <div class="text-danger" th:if="${#fields.hasErrors('bankAccountNumber')}"
                      th:errors="*{bankAccountNumber}"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Update Data</button>
+            <button type="submit" class="btn btn-primary mb-3">Update Data</button>
+            <p class="text-muted small">* Required fields. Please provide either your PESEL (for individuals) or your Company Name and NIP (for companies).</p>
         </form>
     </div>
 </div>
