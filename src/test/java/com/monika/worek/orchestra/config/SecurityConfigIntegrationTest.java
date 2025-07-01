@@ -122,7 +122,7 @@ public class SecurityConfigIntegrationTest {
     @WithMockUser(username = "musician@example.com", roles = {"MUSICIAN"})
     void musicianUser_shouldAccessMusicianPage() throws Exception {
         // given
-        // User authenticated as MUSICIAN via @WithMockUser
+        // User authenticated as a MUSICIAN via @WithMockUser
 
         // when
         mockMvc.perform(get("/musicianPage"))
@@ -134,7 +134,7 @@ public class SecurityConfigIntegrationTest {
     @WithMockUser(username = "musician@example.com", roles = {"MUSICIAN"})
     void musicianUser_shouldBeDeniedAdminPage() throws Exception {
         // given
-        // User authenticated as MUSICIAN via @WithMockUser
+        // User authenticated as a MUSICIAN via @WithMockUser
 
         // when
         mockMvc.perform(get("/adminPage"))

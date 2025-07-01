@@ -324,3 +324,5 @@ select * FROM musicianagreement;
 DELETE FROM chatmessage where senderid = 54 or receiverid = 54;
 
 select * from app_user;
+
+delete from surveysubmission where musician_id = 4;

@@ -13,54 +13,46 @@
             class="bi bi-arrow-left-circle-fill"></i> Back to project</a>
     <a th:href="@{/logout}" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-right"></i> Log out</a>
 </div>
-<h1 class="text-center mb-4">Survey for Project: <span th:text="${projectName}"></span></h1>
+<h2 class="text-center mb-4">Survey for Project: <span th:text="${projectName}"></span></h2>
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div th:if="${noSurvey}" class="alert alert-info text-center">
             <i class="bi bi-info-circle-fill me-2"></i> No survey available for this project.
         </div>
-
         <div th:unless="${noSurvey}">
             <div th:if="${surveyClosed}" class="alert alert-warning text-center">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> The survey for this project has been closed.
             </div>
-
             <div th:unless="${surveyClosed}">
                 <div th:if="${submissionSuccess}" class="alert alert-success text-center">
                     <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${submissionSuccess}"></span>
                 </div>
-
                 <div th:if="${surveySubmitted} and ${#lists.isEmpty(submissionSuccess)}"
                      class="alert alert-success text-center">
                     <i class="bi bi-check-double-fill me-2"></i> You have already submitted the survey for this project.
                 </div>
-
                 <div th:unless="${surveySubmitted}">
                     <form th:action="@{/musician/project/{id}/survey(id=${projectId})}"
                           th:object="${submissionDTO}" method="post" class="mt-4">
-
-                        <div th:each="question : ${questions}" class="mb-3">
-                            <p class="form-label fw-bold" th:text="${question.questionText}">Question text goes here?</p>
-
+                        <div th:each="question : ${questions}" class="mb-4">
+                            <h4 class="form-label" th:text="${question.questionText}"></h4>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio"
                                        th:name="|responses[${question.id}]|"
                                        th:id="|question_${question.id}_yes|"
                                        value="YES"
                                        required>
-                                <label class="form-check-label" th:for="|question_${question.id}_yes|">Yes</label>
+                                <label class="form-check-label fs-5" th:for="|question_${question.id}_yes|">Yes</label>
                             </div>
-
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio"
                                        th:name="|responses[${question.id}]|"
                                        th:id="|question_${question.id}_no|"
                                        value="NO"
                                        required>
-                                <label class="form-check-label" th:for="|question_${question.id}_no|">No</label>
+                                <label class="form-check-label fs-5" th:for="|question_${question.id}_no|">No</label>
                             </div>
-
                         </div>
                         <div class="text-center mt-4">
                             <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-2"></i> Submit
